@@ -1,4 +1,4 @@
-# MediCare+ - AI Healthcare System MVP
+# DiagnoSync - AI Healthcare System MVP
 
 A fully functional React-based MVP for the 7-Day Interim Presentation of the AI-Based Personalized Treatment Recommendation System.
 
