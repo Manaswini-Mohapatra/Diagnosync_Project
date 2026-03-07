@@ -38,7 +38,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center gap-2">
                 <Heart className="w-6 h-6 text-primary" />
-                <span className="text-xl font-bold text-primary">MediCare+</span>
+                <span className="text-xl font-bold text-primary">DiagnoSync</span>
               </div>
               <button
                 onClick={handleLogout}
@@ -100,7 +100,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <Heart className="w-6 h-6 text-primary" />
-              <span className="text-xl font-bold text-primary">MediCare+</span>
+              <span className="text-xl font-bold text-primary">DiagnoSync</span>
             </div>
             <button
               onClick={() => navigate('/patient/dashboard')}

@@ -14,7 +14,13 @@ module.exports = {
         danger: '#FF3333',
         'dark-gray': '#333333',
         'light-gray': '#F5F5F5',
-        'border-gray': '#EEEEEE'
+        'border-gray': '#EEEEEE',
+        green: {
+    50: '#f0fdf4',
+    100: '#dcfce7',
+    500: '#22c55e',
+    600: '#16a34a'
+  }
       }
     }
   },

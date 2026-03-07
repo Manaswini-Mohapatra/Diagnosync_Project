@@ -1,6 +1,6 @@
 ╔════════════════════════════════════════════════════════════════════╗
 ║                                                                    ║
-║     🎉 MEDICARE+ MVP - COMPLETE & READY TO RUN 🎉                ║
+║     🎉 DiagnoSync MVP - COMPLETE & READY TO RUN 🎉                ║
 ║                                                                    ║
 ║     AI-Based Personalized Treatment Recommendation System         ║
 ║     7-Day Interim Presentation Package                            ║

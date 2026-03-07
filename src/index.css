@@ -143,3 +143,14 @@ code {
   border-top-color: #0066FF;
   animation: spin 1s linear infinite;
 }
+.bg-gradient-green {
+  background: linear-gradient(to right, #0066FF, #00B341, #00D4FF);
+}
+
+.bg-gradient-blue-green {
+  background: linear-gradient(135deg, #0066FF 0%, #00B341 50%, #00D4FF 100%);
+}
+
+.section-gradient {
+  background: linear-gradient(to right, rgba(0, 102, 255, 0.1), rgba(0, 179, 65, 0.1), rgba(0, 212, 255, 0.1));
+}

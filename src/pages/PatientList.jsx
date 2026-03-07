@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Heart, LogOut, Search, Filter } from 'lucide-react'
+import Footer from '../components/Footer'
 
 function PatientList({ onLogout, currentUser }) {
   const navigate = useNavigate()
@@ -32,7 +33,7 @@ function PatientList({ onLogout, currentUser }) {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <Heart className="w-6 h-6 text-primary" />
-              <span className="text-xl font-bold text-primary">MediCare+</span>
+              <span className="text-xl font-bold text-primary">DiagnoSync</span>
             </div>
             <div className="flex items-center gap-4">
               <button
@@ -138,6 +139,7 @@ function PatientList({ onLogout, currentUser }) {
           <button className="btn-secondary">Next →</button>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

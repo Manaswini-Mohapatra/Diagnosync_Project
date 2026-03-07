@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, Brain, Activity, Shield, ChevronRight } from 'lucide-react'
+import Footer from '../components/Footer'
 
 function Landing() {
   return (
@@ -27,7 +28,7 @@ function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 bg-gradient-to-br from-blue-50 to-cyan-50">
+      <section className="pt-32 pb-20 px-4 bg-gradient-to-br from-blue-50 via-green-50 to-cyan-50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center animate-fade-in">
             <h1 className="text-5xl md:text-6xl font-bold text-dark-gray mb-6">
@@ -47,7 +48,7 @@ function Landing() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 px-4">
+      <section id="features" className="py-20 px-4 bg-gradient-to-br from-blue-50 via-green-30 to-cyan-50">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-4xl font-bold text-center text-dark-gray mb-16">Key Features</h2>
           
@@ -89,7 +90,7 @@ function Landing() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-20 px-4 bg-light-gray">
+     <section id="how-it-works" className="py-20 px-4 bg-gradient-to-r from-green-50 to-cyan-50">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-4xl font-bold text-center text-dark-gray mb-16">How It Works</h2>
           
@@ -110,7 +111,7 @@ function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-primary to-secondary">
+      <section className="py-20 px-4 bg-gradient-to-r from-primary via-green-500 to-secondary">
         <div className="max-w-4xl mx-auto text-center text-white">
           <h2 className="text-4xl font-bold mb-6">Ready to Transform Your Healthcare?</h2>
           <p className="text-xl mb-8 opacity-90">Start your health journey with AI-powered recommendations today.</p>
@@ -121,7 +122,7 @@ function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-dark-gray text-white py-12 px-4">
+      {/* <footer className="bg-dark-gray text-white py-12 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
@@ -156,7 +157,8 @@ function Landing() {
             <p>&copy; 2026 DiagnoSync. All rights reserved.</p>
           </div>
         </div>
-      </footer>
+      </footer> */}
+      <Footer />
     </div>
   )
 }

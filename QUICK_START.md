@@ -1,4 +1,4 @@
-# ⚡ Quick Start Guide - MediCare+ MVP
+# ⚡ Quick Start Guide - DiagnoSync MVP
 
 ## 🏃 30-Second Setup
 
