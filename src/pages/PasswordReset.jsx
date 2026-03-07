@@ -32,7 +32,12 @@ function PasswordReset() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Heart className="w-8 h-8 text-primary" />
+            {/* <Heart className="w-8 h-8 text-primary" /> */}
+             <img 
+  src="/diagnosync_icon_transparent.svg" 
+  alt="DiagnoSync Logo" 
+  className="w-20 h-20"
+/>
             <span className="text-2xl font-bold text-primary">DiagnoSync</span>
           </div>
           <h1 className="text-3xl font-bold text-dark-gray">Reset Password</h1>

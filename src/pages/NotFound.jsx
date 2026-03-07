@@ -7,7 +7,12 @@ function NotFound() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center p-4">
       <div className="text-center">
         <div className="flex items-center justify-center gap-2 mb-8">
-          <Heart className="w-8 h-8 text-primary" />
+          {/* <Heart className="w-8 h-8 text-primary" /> */}
+           <img 
+  src="/diagnosync_icon_transparent.svg" 
+  alt="DiagnoSync Logo" 
+  className="w-20 h-20"
+/>
           <span className="text-2xl font-bold text-primary">DiagnoSync</span>
         </div>
 

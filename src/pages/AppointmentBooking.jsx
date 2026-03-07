@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Heart, LogOut, Calendar, Clock, CheckCircle } from 'lucide-react'
-
 function AppointmentBooking({ onLogout, currentUser }) {
   const navigate = useNavigate()
   const [step, setStep] = useState(1)
@@ -37,7 +36,12 @@ function AppointmentBooking({ onLogout, currentUser }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center gap-2">
-                <Heart className="w-6 h-6 text-primary" />
+                {/* <Heart className="w-6 h-6 text-primary" /> */}
+                <img 
+  src="/diagnosync_logo_transparent.svg" 
+  alt="DiagnoSync Logo" 
+  className="w-8 h-8"
+/>
                 <span className="text-xl font-bold text-primary">DiagnoSync</span>
               </div>
               <button
@@ -99,7 +103,12 @@ function AppointmentBooking({ onLogout, currentUser }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
-              <Heart className="w-6 h-6 text-primary" />
+              {/* <Heart className="w-6 h-6 text-primary" /> */}
+              <img 
+  src="/diagnosync_icon_transparent.svg" 
+  alt="DiagnoSync Logo" 
+  className="w-20 h-20"
+/>
               <span className="text-xl font-bold text-primary">DiagnoSync</span>
             </div>
             <button
