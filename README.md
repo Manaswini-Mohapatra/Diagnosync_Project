@@ -411,3 +411,5 @@ This is a student project for educational purposes.
 **Version**: 1.0.0 MVP
 **Last Updated**: March 2024
 **Status**: Ready for 7-Day Presentation ✅
+# Diagnosync
+AI Based Individualized Healthcare Management System
