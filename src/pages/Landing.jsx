@@ -11,7 +11,7 @@ function Landing() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <Heart className="w-8 h-8 text-primary" />
-              <span className="text-2xl font-bold text-primary">MediCare+</span>
+              <span className="text-2xl font-bold text-primary">DiagnoSync</span>
             </div>
             <div className="hidden md:flex gap-8">
               <a href="#features" className="text-gray-600 hover:text-primary">Features</a>
@@ -127,7 +127,7 @@ function Landing() {
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <Heart className="w-6 h-6 text-primary" />
-                <span className="font-bold">MediCare+</span>
+                <span className="font-bold">DiagnoSync</span>
               </div>
               <p className="text-gray-400">AI-powered healthcare platform</p>
             </div>
@@ -148,12 +148,12 @@ function Landing() {
             </div>
             <div>
               <h4 className="font-bold mb-4">Contact</h4>
-              <p className="text-gray-400">support@medicare.com</p>
-              <p className="text-gray-400">+1-800-MEDICARE</p>
+              <p className="text-gray-400">support@diagnosync.com</p>
+              <p className="text-gray-400">+1-800-DIAGNOSYNC</p>
             </div>
           </div>
           <div className="border-t border-gray-700 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 MediCare+. All rights reserved.</p>
+            <p>&copy; 2026 DiagnoSync. All rights reserved.</p>
           </div>
         </div>
       </footer>
