@@ -1,29 +1,71 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Heart, LogOut, Search, Filter } from 'lucide-react'
-import Footer from '../components/Footer'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Heart, LogOut, Search, Filter } from "lucide-react";
+import Footer from "../components/Footer";
+import Logo from "../components/Logo";
 
 function PatientList({ onLogout, currentUser }) {
-  const navigate = useNavigate()
-  const [searchTerm, setSearchTerm] = useState('')
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleLogout = () => {
-    onLogout()
-    navigate('/')
-  }
+    onLogout();
+    navigate("/");
+  };
 
   const patients = [
-    { id: 1, name: 'John Doe', age: 45, gender: 'M', lastVisit: '5 days ago', condition: 'Hypertension', email: 'john@example.com' },
-    { id: 2, name: 'Sarah Smith', age: 32, gender: 'F', lastVisit: '2 days ago', condition: 'Diabetes', email: 'sarah@example.com' },
-    { id: 3, name: 'Mike Johnson', age: 56, gender: 'M', lastVisit: '1 week ago', condition: 'Heart Disease', email: 'mike@example.com' },
-    { id: 4, name: 'Lisa Brown', age: 28, gender: 'F', lastVisit: 'Today', condition: 'Asthma', email: 'lisa@example.com' },
-    { id: 5, name: 'David Wilson', age: 52, gender: 'M', lastVisit: '3 days ago', condition: 'Arthritis', email: 'david@example.com' }
-  ]
+    {
+      id: 1,
+      name: "John Doe",
+      age: 45,
+      gender: "M",
+      lastVisit: "5 days ago",
+      condition: "Hypertension",
+      email: "john@example.com",
+    },
+    {
+      id: 2,
+      name: "Sarah Smith",
+      age: 32,
+      gender: "F",
+      lastVisit: "2 days ago",
+      condition: "Diabetes",
+      email: "sarah@example.com",
+    },
+    {
+      id: 3,
+      name: "Mike Johnson",
+      age: 56,
+      gender: "M",
+      lastVisit: "1 week ago",
+      condition: "Heart Disease",
+      email: "mike@example.com",
+    },
+    {
+      id: 4,
+      name: "Lisa Brown",
+      age: 28,
+      gender: "F",
+      lastVisit: "Today",
+      condition: "Asthma",
+      email: "lisa@example.com",
+    },
+    {
+      id: 5,
+      name: "David Wilson",
+      age: 52,
+      gender: "M",
+      lastVisit: "3 days ago",
+      condition: "Arthritis",
+      email: "david@example.com",
+    },
+  ];
 
-  const filteredPatients = patients.filter(p =>
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.email.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredPatients = patients.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.email.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   return (
     <div className="min-h-screen bg-light-gray">
@@ -31,18 +73,19 @@ function PatientList({ onLogout, currentUser }) {
       <nav className="bg-white shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              {/* <Heart className="w-6 h-6 text-primary" /> */}
-               <img 
-  src="/diagnosync_icon_transparent.svg" 
-  alt="DiagnoSync Logo" 
-  className="w-20 h-20"
-/>
-              <span className="text-xl font-bold text-primary">DiagnoSync</span>
-            </div>
+            <Logo/>
+            {/* <div className="flex items-center gap-2">
+              <Heart className="w-6 h-6 text-primary" />
+              <img
+                src="/diagnosync_icon_transparent.svg"
+                alt="DiagnoSync Logo"
+                className="w-20 h-20"
+              />
+              <span className="text-3xl font-bold text-primary">DiagnoSync</span>
+            </div> */}
             <div className="flex items-center gap-4">
               <button
-                onClick={() => navigate('/doctor/dashboard')}
+                onClick={() => navigate("/doctor/dashboard")}
                 className="text-gray-600 hover:text-primary transition-colors"
               >
                 ← Back to Dashboard
@@ -61,7 +104,9 @@ function PatientList({ onLogout, currentUser }) {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-dark-gray mb-2">My Patients</h1>
+          <h1 className="text-4xl font-bold text-dark-gray mb-2">
+            My Patients
+          </h1>
           <p className="text-gray-600">Manage and view your patients</p>
         </div>
 
@@ -97,7 +142,9 @@ function PatientList({ onLogout, currentUser }) {
                         {patient.name.charAt(0)}
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-dark-gray">{patient.name}</h3>
+                        <h3 className="text-lg font-bold text-dark-gray">
+                          {patient.name}
+                        </h3>
                         <p className="text-sm text-gray-600">{patient.email}</p>
                       </div>
                     </div>
@@ -105,26 +152,38 @@ function PatientList({ onLogout, currentUser }) {
                     <div className="grid md:grid-cols-4 gap-4 text-sm mb-4">
                       <div>
                         <p className="text-gray-600">Age</p>
-                        <p className="font-semibold text-dark-gray">{patient.age} years</p>
+                        <p className="font-semibold text-dark-gray">
+                          {patient.age} years
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-600">Gender</p>
-                        <p className="font-semibold text-dark-gray">{patient.gender}</p>
+                        <p className="font-semibold text-dark-gray">
+                          {patient.gender}
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-600">Condition</p>
-                        <p className="font-semibold text-dark-gray">{patient.condition}</p>
+                        <p className="font-semibold text-dark-gray">
+                          {patient.condition}
+                        </p>
                       </div>
                       <div>
                         <p className="text-gray-600">Last Visit</p>
-                        <p className="font-semibold text-dark-gray">{patient.lastVisit}</p>
+                        <p className="font-semibold text-dark-gray">
+                          {patient.lastVisit}
+                        </p>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex gap-2 ml-4">
-                    <button className="btn-primary text-sm px-4 py-2">View Details</button>
-                    <button className="btn-secondary text-sm px-4 py-2">Message</button>
+                    <button className="btn-primary text-sm px-4 py-2">
+                      View Details
+                    </button>
+                    <button className="btn-secondary text-sm px-4 py-2">
+                      Message
+                    </button>
                   </div>
                 </div>
               </div>
@@ -132,7 +191,9 @@ function PatientList({ onLogout, currentUser }) {
           ) : (
             <div className="card text-center py-12">
               <p className="text-gray-600 mb-4">No patients found</p>
-              <p className="text-sm text-gray-500">Try adjusting your search criteria</p>
+              <p className="text-sm text-gray-500">
+                Try adjusting your search criteria
+              </p>
             </div>
           )}
         </div>
@@ -146,7 +207,7 @@ function PatientList({ onLogout, currentUser }) {
       </div>
       <Footer />
     </div>
-  )
+  );
 }
 
-export default PatientList
+export default PatientList;

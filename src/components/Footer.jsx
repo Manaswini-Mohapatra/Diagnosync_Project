@@ -1,21 +1,22 @@
 import React from 'react'
 import { Heart } from 'lucide-react'
+import Logo from './Logo'
 
 function Footer() {
   return (
     <footer className="bg-dark-gray text-white py-12 px-4 mt-auto">
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
+        <div className="grid md:grid-cols-4 gap-8 mb-8 ">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              {/* <Heart className="w-6 h-6 text-primary" /> */}
+<Logo size="small" />            {/* <div className="flex items-center gap-2 mb-4">
+              <Heart className="w-6 h-6 text-primary" />
               <img 
   src="/diagnosync_icon_transparent.svg" 
   alt="DiagnoSync Logo" 
   className="w-20 h-20"
 />
               <span className="font-bold text-xl">DiagnoSync</span>
-            </div>
+            </div> */}
             <p className="text-gray-400">AI-powered healthcare diagnosis platform</p>
           </div>
           <div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Heart, CheckCircle } from 'lucide-react'
+import Logo from '../components/Logo'
 
 function PasswordReset() {
   const navigate = useNavigate()
@@ -31,15 +32,18 @@ function PasswordReset() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            {/* <Heart className="w-8 h-8 text-primary" /> */}
+          <div className="flex justify-center mb-6">
+            <Logo />
+          </div>
+          {/* <div className="flex items-center justify-center gap-2 mb-4">
+            <Heart className="w-8 h-8 text-primary" />
              <img 
   src="/diagnosync_icon_transparent.svg" 
   alt="DiagnoSync Logo" 
   className="w-20 h-20"
 />
-            <span className="text-2xl font-bold text-primary">DiagnoSync</span>
-          </div>
+            <span className="text-3xl font-bold text-primary">DiagnoSync</span>
+          </div> */}
           <h1 className="text-3xl font-bold text-dark-gray">Reset Password</h1>
           <p className="text-gray-600 mt-2">Enter your email to reset your password</p>
         </div>

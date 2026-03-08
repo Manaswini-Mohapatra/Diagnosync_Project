@@ -1,64 +1,65 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Heart, LogOut, Send, AlertCircle } from 'lucide-react'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Heart, LogOut, Send, AlertCircle } from "lucide-react";
+import Logo from "../components/Logo";
 
 function SymptomChecker({ onLogout, currentUser }) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([
-    { type: 'bot', text: 'Hello! I\'m your AI health assistant. What symptoms are you experiencing today?' }
-  ])
-  const [input, setInput] = useState('')
-  const [showResults, setShowResults] = useState(false)
+    {
+      type: "bot",
+      text: "Hello! I'm your AI health assistant. What symptoms are you experiencing today?",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [showResults, setShowResults] = useState(false);
 
-  const symptoms = [
-    'Fever',
-    'Cough',
-    'Headache',
-    'Body ache',
-    'Fatigue'
-  ]
+  const symptoms = ["Fever", "Cough", "Headache", "Body ache", "Fatigue"];
 
   const mockQuestions = [
-    'How long have you had these symptoms?',
-    'Do you have any other symptoms?',
-    'Have you taken any medicine?'
-  ]
+    "How long have you had these symptoms?",
+    "Do you have any other symptoms?",
+    "Have you taken any medicine?",
+  ];
 
-  const [currentQuestion, setCurrentQuestion] = useState(0)
+  const [currentQuestion, setCurrentQuestion] = useState(0);
 
   const handleLogout = () => {
-    onLogout()
-    navigate('/')
-  }
+    onLogout();
+    navigate("/");
+  };
 
   const handleSendMessage = (text) => {
-    if (!text.trim()) return
+    if (!text.trim()) return;
 
     // Add user message
-    setMessages(prev => [...prev, { type: 'user', text }])
-    setInput('')
+    setMessages((prev) => [...prev, { type: "user", text }]);
+    setInput("");
 
     // Simulate bot response
     setTimeout(() => {
       if (currentQuestion < mockQuestions.length - 1) {
-        setMessages(prev => [...prev, { type: 'bot', text: mockQuestions[currentQuestion + 1] }])
-        setCurrentQuestion(prev => prev + 1)
+        setMessages((prev) => [
+          ...prev,
+          { type: "bot", text: mockQuestions[currentQuestion + 1] },
+        ]);
+        setCurrentQuestion((prev) => prev + 1);
       } else {
         // Show results
-        setShowResults(true)
+        setShowResults(true);
       }
-    }, 500)
-  }
+    }, 500);
+  };
 
   const results = {
-    primaryCondition: 'Common Cold',
-    risk: '78%',
+    primaryCondition: "Common Cold",
+    risk: "78%",
     conditions: [
-      { name: 'Common Cold', probability: '78%', severity: 'Low' },
-      { name: 'Flu', probability: '15%', severity: 'Medium' },
-      { name: 'Allergy', probability: '7%', severity: 'Low' }
-    ]
-  }
+      { name: "Common Cold", probability: "78%", severity: "Low" },
+      { name: "Flu", probability: "15%", severity: "Medium" },
+      { name: "Allergy", probability: "7%", severity: "Low" },
+    ],
+  };
 
   return (
     <div className="min-h-screen bg-light-gray flex flex-col">
@@ -66,18 +67,21 @@ function SymptomChecker({ onLogout, currentUser }) {
       <nav className="bg-white shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              {/* <Heart className="w-6 h-6 text-primary" /> */}
-               <img 
-  src="/diagnosync_icon_transparent.svg" 
-  alt="DiagnoSync Logo" 
-  className="w-20 h-20"
-/>
-              <span className="text-xl font-bold text-primary">DiagnoSync</span>
-            </div>
+            <Logo/>
+            {/* <div className="flex items-center gap-2">
+              <Heart className="w-6 h-6 text-primary" />
+              <img
+                src="/diagnosync_icon_transparent.svg"
+                alt="DiagnoSync Logo"
+                className="w-20 h-20"
+              />
+              <span className="text-3xl font-bold text-primary">
+                DiagnoSync
+              </span>
+            </div> */}
             <div className="flex items-center gap-4">
               <button
-                onClick={() => navigate('/patient/dashboard')}
+                onClick={() => navigate("/patient/dashboard")}
                 className="text-gray-600 hover:text-primary transition-colors"
               >
                 ← Back to Dashboard
@@ -100,13 +104,13 @@ function SymptomChecker({ onLogout, currentUser }) {
           {messages.map((message, i) => (
             <div
               key={i}
-              className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
                 className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                  message.type === 'user'
-                    ? 'bg-primary text-white rounded-br-none'
-                    : 'bg-white text-dark-gray border border-border-gray rounded-bl-none'
+                  message.type === "user"
+                    ? "bg-primary text-white rounded-br-none"
+                    : "bg-white text-dark-gray border border-border-gray rounded-bl-none"
                 }`}
               >
                 <p className="text-sm">{message.text}</p>
@@ -135,8 +139,12 @@ function SymptomChecker({ onLogout, currentUser }) {
               <div className="flex items-start gap-4 mb-6">
                 <AlertCircle className="w-6 h-6 text-warning flex-shrink-0 mt-1" />
                 <div className="flex-1">
-                  <h3 className="font-bold text-lg text-dark-gray mb-1">Analysis Results</h3>
-                  <p className="text-gray-600 text-sm">Based on your symptoms, here are the possible conditions:</p>
+                  <h3 className="font-bold text-lg text-dark-gray mb-1">
+                    Analysis Results
+                  </h3>
+                  <p className="text-gray-600 text-sm">
+                    Based on your symptoms, here are the possible conditions:
+                  </p>
                 </div>
               </div>
 
@@ -144,8 +152,12 @@ function SymptomChecker({ onLogout, currentUser }) {
                 {results.conditions.map((condition, i) => (
                   <div key={i} className="p-3 bg-light-gray rounded-lg">
                     <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-semibold text-dark-gray">{condition.name}</h4>
-                      <span className="badge-primary">{condition.probability}</span>
+                      <h4 className="font-semibold text-dark-gray">
+                        {condition.name}
+                      </h4>
+                      <span className="badge-primary">
+                        {condition.probability}
+                      </span>
                     </div>
                     <div className="w-full bg-border-gray rounded-full h-2">
                       <div
@@ -153,29 +165,35 @@ function SymptomChecker({ onLogout, currentUser }) {
                         style={{ width: condition.probability }}
                       />
                     </div>
-                    <p className="text-xs text-gray-600 mt-1">Severity: {condition.severity}</p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      Severity: {condition.severity}
+                    </p>
                   </div>
                 ))}
               </div>
 
               <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm text-dark-gray font-semibold mb-2">Recommendations:</p>
+                <p className="text-sm text-dark-gray font-semibold mb-2">
+                  Recommendations:
+                </p>
                 <ul className="text-sm text-gray-600 space-y-1">
                   <li>• Rest and stay hydrated</li>
                   <li>• Monitor your symptoms</li>
-                  <li>• Book an appointment with a doctor for proper diagnosis</li>
+                  <li>
+                    • Book an appointment with a doctor for proper diagnosis
+                  </li>
                 </ul>
               </div>
 
               <div className="mt-6 flex gap-3">
                 <button
-                  onClick={() => navigate('/patient/treatment-recommendations')}
+                  onClick={() => navigate("/patient/treatment-recommendations")}
                   className="btn-primary flex-1"
                 >
                   View Treatment
                 </button>
                 <button
-                  onClick={() => navigate('/patient/appointments')}
+                  onClick={() => navigate("/patient/appointments")}
                   className="btn-secondary flex-1"
                 >
                   Book Appointment
@@ -193,7 +211,9 @@ function SymptomChecker({ onLogout, currentUser }) {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(input)}
+                onKeyPress={(e) =>
+                  e.key === "Enter" && handleSendMessage(input)
+                }
                 placeholder="Type your symptoms or press Enter..."
                 className="input-field flex-1"
               />
@@ -208,7 +228,7 @@ function SymptomChecker({ onLogout, currentUser }) {
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default SymptomChecker
+export default SymptomChecker;

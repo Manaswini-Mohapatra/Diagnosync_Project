@@ -1,70 +1,75 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Heart, LogOut, ArrowLeft, CheckCircle } from 'lucide-react'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Heart, LogOut, ArrowLeft, CheckCircle } from "lucide-react";
+import Footer from "../components/Footer";
+import Logo from "../components/Logo";
 
 function PatientRegistrationForm({ onLogout, currentUser }) {
-  const navigate = useNavigate()
-  const [step, setStep] = useState(1)
+  const navigate = useNavigate();
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     // Personal Info
-    height: '',
-    weight: '',
-    bloodType: '',
-    gender: '',
-    
+    height: "",
+    weight: "",
+    bloodType: "",
+    gender: "",
+
     // Medical History
     conditions: [],
     allergies: [],
     surgeries: [],
-    familyHistory: '',
+    familyHistory: "",
     medications: [],
-    
+
     // Lifestyle
-    smokingStatus: 'never',
-    alcoholConsumption: 'never',
-    exerciseFrequency: 'moderate',
-    diet: 'balanced',
-    
+    smokingStatus: "never",
+    alcoholConsumption: "never",
+    exerciseFrequency: "moderate",
+    diet: "balanced",
+
     // Emergency
-    emergencyContact: '',
-    emergencyPhone: ''
-  })
-  const [isSubmitted, setIsSubmitted] = useState(false)
+    emergencyContact: "",
+    emergencyPhone: "",
+  });
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleLogout = () => {
-    onLogout()
-    navigate('/')
-  }
+    onLogout();
+    navigate("/");
+  };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
+    const { name, value } = e.target;
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
+  };
 
   const handleAddArray = (field, value) => {
     if (value.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [field]: [...prev[field], value]
-      }))
+        [field]: [...prev[field], value],
+      }));
     }
-  }
+  };
 
   const handleRemoveArray = (field, index) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: prev[field].filter((_, i) => i !== index)
-    }))
-  }
+      [field]: prev[field].filter((_, i) => i !== index),
+    }));
+  };
 
   const handleSubmit = () => {
     // Save to localStorage
-    localStorage.setItem(`patientRegistration_${currentUser?.id}`, JSON.stringify(formData))
-    setIsSubmitted(true)
-  }
+    localStorage.setItem(
+      `patientRegistration_${currentUser?.id}`,
+      JSON.stringify(formData),
+    );
+    setIsSubmitted(true);
+  };
 
   if (isSubmitted) {
     return (
@@ -73,15 +78,18 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
         <nav className="bg-white shadow-sm sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <div className="flex items-center gap-2">
-                {/* <Heart className="w-6 h-6 text-primary" /> */}
-                 <img 
-  src="/diagnosync_icon_transparent.svg" 
-  alt="DiagnoSync Logo" 
-  className="w-20 h-20"
-/>
-                <span className="text-xl font-bold text-primary">DiagnoSync</span>
-              </div>
+              <Logo/>
+              {/* <div className="flex items-center gap-2">
+                <Heart className="w-6 h-6 text-primary" />
+                <img
+                  src="/diagnosync_icon_transparent.svg"
+                  alt="DiagnoSync Logo"
+                  className="w-20 h-20"
+                />
+                <span className="text-3xl font-bold text-primary">
+                  DiagnoSync
+                </span>
+              </div> */}
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
@@ -98,12 +106,15 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
             <div className="flex justify-center mb-6">
               <CheckCircle className="w-16 h-16 text-success" />
             </div>
-            <h1 className="text-3xl font-bold text-dark-gray mb-2">Health Profile Created!</h1>
+            <h1 className="text-3xl font-bold text-dark-gray mb-2">
+              Health Profile Created!
+            </h1>
             <p className="text-gray-600 mb-8">
-              Your health information has been successfully saved. This will help us provide better personalized recommendations.
+              Your health information has been successfully saved. This will
+              help us provide better personalized recommendations.
             </p>
             <button
-              onClick={() => navigate('/patient/dashboard')}
+              onClick={() => navigate("/patient/dashboard")}
               className="btn-primary"
             >
               Back to Dashboard
@@ -111,7 +122,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -120,18 +131,19 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
       <nav className="bg-white shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              {/* <Heart className="w-6 h-6 text-primary" /> */}
-               <img 
-  src="/diagnosync_icon_transparent.svg" 
-  alt="DiagnoSync Logo" 
-  className="w-20 h-20"
-/>
-              <span className="text-xl font-bold text-primary">DiagnoSync</span>
-            </div>
+            <Logo/>
+            {/* <div className="flex items-center gap-2">
+              <Heart className="w-6 h-6 text-primary" />
+              <img
+                src="/diagnosync_icon_transparent.svg"
+                alt="DiagnoSync Logo"
+                className="w-20 h-20"
+              />
+              <span className="text-3xl font-bold text-primary">DiagnoSync</span>
+            </div> */}
             <div className="flex items-center gap-4">
               <button
-                onClick={() => navigate('/patient/dashboard')}
+                onClick={() => navigate("/patient/dashboard")}
                 className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -151,18 +163,26 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-dark-gray mb-2">Health Profile Registration</h1>
-          <p className="text-gray-600">Complete your health information to get personalized recommendations</p>
+          <h1 className="text-4xl font-bold text-dark-gray mb-2">
+            Health Profile Registration
+          </h1>
+          <p className="text-gray-600">
+            Complete your health information to get personalized recommendations
+          </p>
         </div>
 
         {/* Steps */}
         <div className="flex justify-between mb-8">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex-1 flex items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${step >= s ? 'bg-primary' : 'bg-light-gray text-gray-600'}`}>
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${step >= s ? "bg-primary" : "bg-light-gray text-gray-600"}`}
+              >
                 {s}
               </div>
-              <div className={`flex-1 h-1 mx-2 ${step > s ? 'bg-primary' : 'bg-light-gray'}`} />
+              <div
+                className={`flex-1 h-1 mx-2 ${step > s ? "bg-primary" : "bg-light-gray"}`}
+              />
             </div>
           ))}
         </div>
@@ -170,12 +190,16 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
         {/* Step 1: Physical Info */}
         {step === 1 && (
           <div className="card">
-            <h2 className="text-2xl font-bold text-dark-gray mb-6">Physical Information</h2>
-            
+            <h2 className="text-2xl font-bold text-dark-gray mb-6">
+              Physical Information
+            </h2>
+
             <div className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-dark-gray mb-2">Height (cm)</label>
+                  <label className="block text-sm font-semibold text-dark-gray mb-2">
+                    Height (cm)
+                  </label>
                   <input
                     type="number"
                     name="height"
@@ -186,7 +210,9 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-dark-gray mb-2">Weight (kg)</label>
+                  <label className="block text-sm font-semibold text-dark-gray mb-2">
+                    Weight (kg)
+                  </label>
                   <input
                     type="number"
                     name="weight"
@@ -200,8 +226,15 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-dark-gray mb-2">Blood Type</label>
-                  <select name="bloodType" value={formData.bloodType} onChange={handleInputChange} className="input-field w-full">
+                  <label className="block text-sm font-semibold text-dark-gray mb-2">
+                    Blood Type
+                  </label>
+                  <select
+                    name="bloodType"
+                    value={formData.bloodType}
+                    onChange={handleInputChange}
+                    className="input-field w-full"
+                  >
                     <option value="">Select Blood Type</option>
                     <option value="O+">O+</option>
                     <option value="O-">O-</option>
@@ -214,8 +247,15 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-dark-gray mb-2">Gender</label>
-                  <select name="gender" value={formData.gender} onChange={handleInputChange} className="input-field w-full">
+                  <label className="block text-sm font-semibold text-dark-gray mb-2">
+                    Gender
+                  </label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                    className="input-field w-full"
+                  >
                     <option value="">Select Gender</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -225,7 +265,12 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
               </div>
 
               <div className="flex gap-3 pt-4 border-t border-border-gray">
-                <button onClick={() => setStep(2)} className="btn-primary flex-1">Continue</button>
+                <button
+                  onClick={() => setStep(2)}
+                  className="btn-primary flex-1"
+                >
+                  Continue
+                </button>
               </div>
             </div>
           </div>
@@ -234,19 +279,28 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
         {/* Step 2: Medical History */}
         {step === 2 && (
           <div className="card">
-            <h2 className="text-2xl font-bold text-dark-gray mb-6">Medical History</h2>
-            
+            <h2 className="text-2xl font-bold text-dark-gray mb-6">
+              Medical History
+            </h2>
+
             <div className="space-y-6">
               {/* Conditions */}
               <div>
-                <label className="block text-sm font-semibold text-dark-gray mb-2">Existing Conditions</label>
+                <label className="block text-sm font-semibold text-dark-gray mb-2">
+                  Existing Conditions
+                </label>
                 <div className="flex gap-2 mb-2">
-                  <input type="text" id="condition-input" className="input-field flex-1" placeholder="e.g., Diabetes, Hypertension" />
+                  <input
+                    type="text"
+                    id="condition-input"
+                    className="input-field flex-1"
+                    placeholder="e.g., Diabetes, Hypertension"
+                  />
                   <button
                     onClick={() => {
-                      const input = document.getElementById('condition-input')
-                      handleAddArray('conditions', input.value)
-                      input.value = ''
+                      const input = document.getElementById("condition-input");
+                      handleAddArray("conditions", input.value);
+                      input.value = "";
                     }}
                     className="btn-primary px-6"
                   >
@@ -255,9 +309,17 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {formData.conditions.map((c, i) => (
-                    <span key={i} className="badge-primary flex items-center gap-2">
+                    <span
+                      key={i}
+                      className="badge-primary flex items-center gap-2"
+                    >
                       {c}
-                      <button onClick={() => handleRemoveArray('conditions', i)} className="text-sm font-bold">×</button>
+                      <button
+                        onClick={() => handleRemoveArray("conditions", i)}
+                        className="text-sm font-bold"
+                      >
+                        ×
+                      </button>
                     </span>
                   ))}
                 </div>
@@ -265,14 +327,21 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
 
               {/* Allergies */}
               <div>
-                <label className="block text-sm font-semibold text-dark-gray mb-2">Allergies</label>
+                <label className="block text-sm font-semibold text-dark-gray mb-2">
+                  Allergies
+                </label>
                 <div className="flex gap-2 mb-2">
-                  <input type="text" id="allergy-input" className="input-field flex-1" placeholder="e.g., Penicillin, Peanuts" />
+                  <input
+                    type="text"
+                    id="allergy-input"
+                    className="input-field flex-1"
+                    placeholder="e.g., Penicillin, Peanuts"
+                  />
                   <button
                     onClick={() => {
-                      const input = document.getElementById('allergy-input')
-                      handleAddArray('allergies', input.value)
-                      input.value = ''
+                      const input = document.getElementById("allergy-input");
+                      handleAddArray("allergies", input.value);
+                      input.value = "";
                     }}
                     className="btn-primary px-6"
                   >
@@ -281,9 +350,17 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {formData.allergies.map((a, i) => (
-                    <span key={i} className="badge-danger flex items-center gap-2">
+                    <span
+                      key={i}
+                      className="badge-danger flex items-center gap-2"
+                    >
                       {a}
-                      <button onClick={() => handleRemoveArray('allergies', i)} className="text-sm font-bold">×</button>
+                      <button
+                        onClick={() => handleRemoveArray("allergies", i)}
+                        className="text-sm font-bold"
+                      >
+                        ×
+                      </button>
                     </span>
                   ))}
                 </div>
@@ -291,7 +368,9 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
 
               {/* Family History */}
               <div>
-                <label className="block text-sm font-semibold text-dark-gray mb-2">Family Medical History</label>
+                <label className="block text-sm font-semibold text-dark-gray mb-2">
+                  Family Medical History
+                </label>
                 <textarea
                   name="familyHistory"
                   value={formData.familyHistory}
@@ -302,8 +381,18 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
               </div>
 
               <div className="flex gap-3 pt-4 border-t border-border-gray">
-                <button onClick={() => setStep(1)} className="btn-secondary flex-1">Back</button>
-                <button onClick={() => setStep(3)} className="btn-primary flex-1">Continue</button>
+                <button
+                  onClick={() => setStep(1)}
+                  className="btn-secondary flex-1"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={() => setStep(3)}
+                  className="btn-primary flex-1"
+                >
+                  Continue
+                </button>
               </div>
             </div>
           </div>
@@ -312,13 +401,22 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
         {/* Step 3: Lifestyle & Emergency */}
         {step === 3 && (
           <div className="card">
-            <h2 className="text-2xl font-bold text-dark-gray mb-6">Lifestyle & Emergency Info</h2>
-            
+            <h2 className="text-2xl font-bold text-dark-gray mb-6">
+              Lifestyle & Emergency Info
+            </h2>
+
             <div className="space-y-6">
               {/* Smoking */}
               <div>
-                <label className="block text-sm font-semibold text-dark-gray mb-2">Smoking Status</label>
-                <select name="smokingStatus" value={formData.smokingStatus} onChange={handleInputChange} className="input-field w-full">
+                <label className="block text-sm font-semibold text-dark-gray mb-2">
+                  Smoking Status
+                </label>
+                <select
+                  name="smokingStatus"
+                  value={formData.smokingStatus}
+                  onChange={handleInputChange}
+                  className="input-field w-full"
+                >
                   <option value="never">Never Smoked</option>
                   <option value="former">Former Smoker</option>
                   <option value="current">Current Smoker</option>
@@ -327,8 +425,15 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
 
               {/* Alcohol */}
               <div>
-                <label className="block text-sm font-semibold text-dark-gray mb-2">Alcohol Consumption</label>
-                <select name="alcoholConsumption" value={formData.alcoholConsumption} onChange={handleInputChange} className="input-field w-full">
+                <label className="block text-sm font-semibold text-dark-gray mb-2">
+                  Alcohol Consumption
+                </label>
+                <select
+                  name="alcoholConsumption"
+                  value={formData.alcoholConsumption}
+                  onChange={handleInputChange}
+                  className="input-field w-full"
+                >
                   <option value="never">Never</option>
                   <option value="occasional">Occasional</option>
                   <option value="moderate">Moderate</option>
@@ -338,8 +443,15 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
 
               {/* Exercise */}
               <div>
-                <label className="block text-sm font-semibold text-dark-gray mb-2">Exercise Frequency</label>
-                <select name="exerciseFrequency" value={formData.exerciseFrequency} onChange={handleInputChange} className="input-field w-full">
+                <label className="block text-sm font-semibold text-dark-gray mb-2">
+                  Exercise Frequency
+                </label>
+                <select
+                  name="exerciseFrequency"
+                  value={formData.exerciseFrequency}
+                  onChange={handleInputChange}
+                  className="input-field w-full"
+                >
                   <option value="sedentary">Sedentary</option>
                   <option value="light">Light</option>
                   <option value="moderate">Moderate</option>
@@ -350,7 +462,9 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
               {/* Emergency Contact */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold text-dark-gray mb-2">Emergency Contact Name</label>
+                  <label className="block text-sm font-semibold text-dark-gray mb-2">
+                    Emergency Contact Name
+                  </label>
                   <input
                     type="text"
                     name="emergencyContact"
@@ -361,7 +475,9 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-dark-gray mb-2">Emergency Contact Phone</label>
+                  <label className="block text-sm font-semibold text-dark-gray mb-2">
+                    Emergency Contact Phone
+                  </label>
                   <input
                     type="tel"
                     name="emergencyPhone"
@@ -374,15 +490,23 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
               </div>
 
               <div className="flex gap-3 pt-4 border-t border-border-gray">
-                <button onClick={() => setStep(2)} className="btn-secondary flex-1">Back</button>
-                <button onClick={handleSubmit} className="btn-success flex-1">Complete Registration</button>
+                <button
+                  onClick={() => setStep(2)}
+                  className="btn-secondary flex-1"
+                >
+                  Back
+                </button>
+                <button onClick={handleSubmit} className="btn-success flex-1">
+                  Complete Registration
+                </button>
               </div>
             </div>
           </div>
         )}
       </div>
+      <Footer/>
     </div>
-  )
+  );
 }
 
-export default PatientRegistrationForm
+export default PatientRegistrationForm;
