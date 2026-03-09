@@ -21,6 +21,8 @@ import DrugInteractionChecker from "./pages/DrugInteractionChecker";
 import NotFound from "./pages/NotFound";
 import PatientRegistrationForm from "./pages/PatientRegistrationForm";
 import DoctorRegistrationForm from "./pages/DoctorRegistrationForm";
+import PrescriptionPage from "./pages/PrescriptionPage";
+import DoctorAppointmentsPage from "./pages/DoctorAppointmentsPage";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
@@ -126,6 +128,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/patient/prescriptions"
+          element={
+            <ProtectedRoute requiredRole="patient">
+              <PrescriptionPage
+                onLogout={handleLogout}
+                currentUser={currentUser}
+              />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Doctor Routes */}
         <Route
@@ -163,6 +176,17 @@ function App() {
           element={
             <ProtectedRoute requiredRole="doctor">
               <DoctorRegistrationForm
+                onLogout={handleLogout}
+                currentUser={currentUser}
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/appointments"
+          element={
+            <ProtectedRoute requiredRole="doctor">
+              <DoctorAppointmentsPage
                 onLogout={handleLogout}
                 currentUser={currentUser}
               />
