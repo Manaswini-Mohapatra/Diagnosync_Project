@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Heart, LogOut, ArrowLeft, Download, Printer, Share2, Clock, CheckCircle, AlertCircle, Plus, X } from 'lucide-react'
 import Footer from '../components/Footer'
 import Logo from '../components/Logo'
+import { downloadPrescriptionPDF } from '../utils/pdfGenerator'
 
 function PrescriptionPage({ onLogout, currentUser }) {
   const navigate = useNavigate()
@@ -145,7 +146,7 @@ function PrescriptionPage({ onLogout, currentUser }) {
 
   const handlePrint = (prescription) => {
     const printWindow = window.open('', '', 'height=500,width=800')
-    printWindow.document.write(`
+    const htmlContent = `
       <html>
         <head>
           <title>Prescription - ${prescription.medicationName}</title>
@@ -208,13 +209,14 @@ function PrescriptionPage({ onLogout, currentUser }) {
           </div>
         </body>
       </html>
-    `)
+    `
+    printWindow.document.write(htmlContent)
     printWindow.document.close()
     printWindow.print()
   }
 
   const handleDownloadPDF = (prescription) => {
-    alert(`Downloading prescription for ${prescription.medicationName}...\n\nIn a real application, this would generate a PDF file.`)
+    downloadPrescriptionPDF(prescription)
   }
 
   const handleShare = (prescription) => {
@@ -237,10 +239,6 @@ function PrescriptionPage({ onLogout, currentUser }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo/>
-            {/* <div className="flex items-center gap-2">
-              <Heart className="w-6 h-6 text-primary" />
-              <span className="text-xl font-bold text-primary">DiagnoSync</span>
-            </div> */}
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate('/patient/dashboard')}
@@ -412,7 +410,7 @@ function PrescriptionPage({ onLogout, currentUser }) {
                     className="btn-secondary flex items-center gap-2"
                   >
                     <Download className="w-4 h-4" />
-                    Download
+                    Download PDF
                   </button>
                   <button
                     onClick={() => handlePrint(prescription)}

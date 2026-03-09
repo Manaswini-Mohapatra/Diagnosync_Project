@@ -12,10 +12,12 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import PasswordReset from "./pages/PasswordReset";
 import PatientDashboard from "./pages/PatientDashboard";
+import PatientProfilePage from "./pages/PatientProfilePage";
 import SymptomChecker from "./pages/SymptomChecker";
 import TreatmentRecommendations from "./pages/TreatmentRecommendations";
 import AppointmentBooking from "./pages/AppointmentBooking";
 import DoctorDashboard from "./pages/DoctorDashboard";
+import DoctorProfilePage from "./pages/DoctorProfilePage";
 import PatientList from "./pages/PatientList";
 import DrugInteractionChecker from "./pages/DrugInteractionChecker";
 import NotFound from "./pages/NotFound";
@@ -85,6 +87,17 @@ function App() {
           }
         />
         <Route
+          path="/patient/profile"
+          element={
+            <ProtectedRoute requiredRole="patient">
+              <PatientProfilePage
+                onLogout={handleLogout}
+                currentUser={currentUser}
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/patient/symptom-checker"
           element={
             <ProtectedRoute requiredRole="patient">
@@ -146,6 +159,17 @@ function App() {
           element={
             <ProtectedRoute requiredRole="doctor">
               <DoctorDashboard
+                onLogout={handleLogout}
+                currentUser={currentUser}
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/profile"
+          element={
+            <ProtectedRoute requiredRole="doctor">
+              <DoctorProfilePage
                 onLogout={handleLogout}
                 currentUser={currentUser}
               />

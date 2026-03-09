@@ -111,24 +111,12 @@ function DoctorDashboard({ onLogout, currentUser }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo/>
-            {/* <div className="flex items-center gap-2">
-              <Heart className="w-6 h-6 text-primary" />
-              <img
-                src="/diagnosync_icon_transparent.svg"
-                alt="DiagnoSync Logo"
-                className="w-20 h-20"
-              />
-              <span className="text-3xl font-bold text-primary">DiagnoSync</span>
-            </div> */}
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                {/* <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
-                  {currentUser?.name?.charAt(0).toUpperCase() || "D"}
-                </div> */}
-
                 <button
-                  onClick={() => navigate("/doctor/registration")}
-                  className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer hover:bg-blue-700"
+                  onClick={() => navigate("/doctor/profile")}
+                  className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer hover:bg-blue-700 transition-colors"
+                  title="View Profile"
                 >
                   {currentUser?.name?.charAt(0).toUpperCase() || "D"}
                 </button>

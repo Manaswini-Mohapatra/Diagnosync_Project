@@ -74,15 +74,6 @@ function PatientList({ onLogout, currentUser }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo/>
-            {/* <div className="flex items-center gap-2">
-              <Heart className="w-6 h-6 text-primary" />
-              <img
-                src="/diagnosync_icon_transparent.svg"
-                alt="DiagnoSync Logo"
-                className="w-20 h-20"
-              />
-              <span className="text-3xl font-bold text-primary">DiagnoSync</span>
-            </div> */}
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate("/doctor/dashboard")}
@@ -114,7 +105,7 @@ function PatientList({ onLogout, currentUser }) {
         <div className="card mb-8">
           <div className="flex gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search by name or email..."

@@ -8,6 +8,7 @@ export default function Logo({ size = "default" }) {
   const handleLogoClick = () => {
     const currentPath = location.pathname;
 
+    // Auth pages and public pages
     if (
       currentPath.includes("/signin") ||
       currentPath.includes("/signup") ||
@@ -18,21 +19,26 @@ export default function Logo({ size = "default" }) {
       return;
     }
 
-    if (currentPath.includes("/patient")) {
-      navigate("/patient/dashboard");
-      return;
-    }
-
+    // Doctor routes - Check BEFORE patient routes
+    // because /doctor/patients contains /doctor
     if (currentPath.includes("/doctor")) {
       navigate("/doctor/dashboard");
       return;
     }
 
+    // Patient routes
+    if (currentPath.includes("/patient")) {
+      navigate("/patient/dashboard");
+      return;
+    }
+
+    // Admin routes
     if (currentPath.includes("/admin")) {
       navigate("/admin/dashboard");
       return;
     }
 
+    // Fallback
     navigate("/");
   };
 

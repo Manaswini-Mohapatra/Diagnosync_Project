@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, LogOut, Calendar, Clock, CheckCircle } from "lucide-react";
+import { Heart, LogOut, Calendar, Clock, CheckCircle, Download } from "lucide-react";
 import Logo from "../components/Logo";
+import { downloadAppointmentConfirmation } from "../utils/appointmentPdfGenerator";
 
 function AppointmentBooking({ onLogout, currentUser }) {
   const navigate = useNavigate();
@@ -60,6 +61,21 @@ function AppointmentBooking({ onLogout, currentUser }) {
     setIsConfirmed(true);
   };
 
+  const handleDownloadConfirmation = () => {
+    const selectedDoctorData = doctors.find((d) => d.id === selectedDoctor);
+    const appointmentData = {
+      doctorName: selectedDoctorData.name,
+      specialty: selectedDoctorData.specialty,
+      date: selectedDate,
+      time: selectedTime,
+      appointmentType: appointmentType,
+      reason: reason || "General Consultation",
+      fee: selectedDoctorData.fee,
+    };
+    
+    downloadAppointmentConfirmation(appointmentData);
+  };
+
   if (isConfirmed) {
     return (
       <div className="min-h-screen bg-light-gray">
@@ -68,17 +84,6 @@ function AppointmentBooking({ onLogout, currentUser }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <Logo/>
-              {/* <div className="flex items-center gap-2">
-                <Heart className="w-6 h-6 text-primary" />
-                <img
-                  src="/diagnosync_logo_transparent.svg"
-                  alt="DiagnoSync Logo"
-                  className="w-8 h-8"
-                />
-                <span className="text-3xl font-bold text-primary">
-                  DiagnoSync
-                </span>
-              </div> */}
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
@@ -115,6 +120,12 @@ function AppointmentBooking({ onLogout, currentUser }) {
                   </p>
                 </div>
                 <div>
+                  <p className="text-sm text-gray-600">Specialty</p>
+                  <p className="font-semibold text-dark-gray">
+                    {doctors.find((d) => d.id === selectedDoctor)?.specialty}
+                  </p>
+                </div>
+                <div>
                   <p className="text-sm text-gray-600">Date & Time</p>
                   <p className="font-semibold text-dark-gray">
                     {selectedDate} at {selectedTime}
@@ -128,17 +139,27 @@ function AppointmentBooking({ onLogout, currentUser }) {
                       : "In-Person Visit"}
                   </p>
                 </div>
+                {reason && (
+                  <div>
+                    <p className="text-sm text-gray-600">Reason</p>
+                    <p className="font-semibold text-dark-gray">{reason}</p>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => navigate("/patient/dashboard")}
                 className="btn-primary flex-1"
               >
                 Back to Dashboard
               </button>
-              <button className="btn-secondary flex-1">
+              <button
+                onClick={handleDownloadConfirmation}
+                className="btn-secondary flex-1 flex items-center justify-center gap-2"
+              >
+                <Download className="w-4 h-4" />
                 Download Confirmation
               </button>
             </div>
@@ -155,15 +176,6 @@ function AppointmentBooking({ onLogout, currentUser }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo/>
-            {/* <div className="flex items-center gap-2">
-              <Heart className="w-6 h-6 text-primary" />
-              <img
-                src="/diagnosync_icon_transparent.svg"
-                alt="DiagnoSync Logo"
-                className="w-20 h-20"
-              />
-              <span className="text-3xl font-bold text-primary">DiagnoSync</span>
-            </div> */}
             <button
               onClick={() => navigate("/patient/dashboard")}
               className="text-gray-600 hover:text-primary transition-colors"
