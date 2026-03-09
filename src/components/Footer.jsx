@@ -8,7 +8,8 @@ function Footer() {
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-4 gap-8 mb-8 ">
           <div>
-<Logo size="small" />            {/* <div className="flex items-center gap-2 mb-4">
+          <Logo size="small" />
+            {/* <div className="flex items-center gap-2 mb-4">
               <Heart className="w-6 h-6 text-primary" />
               <img 
   src="/diagnosync_icon_transparent.svg" 
