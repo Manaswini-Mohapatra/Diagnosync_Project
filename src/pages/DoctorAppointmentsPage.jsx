@@ -224,8 +224,23 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
   };
 
   const handleDeleteAppointment = (id) => {
-    if (window.confirm("Are you sure you want to delete this appointment?")) {
-      setAppointments(appointments.filter((a) => a.id !== id));
+    const appointment = appointments.find(a => a.id === id);
+    if (appointment && appointment.status === "cancelled") {
+      // Permanently delete cancelled appointments
+      if (window.confirm("Are you sure you want to permanently delete this appointment?")) {
+        setAppointments(appointments.filter((a) => a.id !== id));
+        alert("Appointment permanently deleted.");
+      }
+    } else {
+      // Move active appointments to cancelled
+      if (window.confirm("Are you sure you want to cancel this appointment?")) {
+        setAppointments(
+          appointments.map((a) =>
+            a.id === id ? { ...a, status: "cancelled" } : a
+          )
+        );
+        alert("Appointment moved to cancelled section.");
+      }
     }
   };
 
@@ -334,14 +349,14 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
         {/* Search and Filter */}
         <div className="card mb-6">
           <div className="flex gap-4 flex-wrap">
-            <div className="flex-1 min-w-[250px] relative ">
-              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <div className="flex-1 min-w-[250px] relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search by patient name, email, or phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="input-field pl-20 w-full"
+                className="input-field pl-10 w-full"
               />
             </div>
           </div>
@@ -439,7 +454,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
                     <button
                       onClick={() => handleDeleteAppointment(appointment.id)}
                       className="text-danger hover:bg-red-100 p-2 rounded transition-colors"
-                      title="Delete appointment"
+                      title={appointment.status === "cancelled" ? "Permanently delete" : "Move to cancelled"}
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
