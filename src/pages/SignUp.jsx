@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
 import Logo from "../components/Logo";
+import api from "../utils/api";
+import TermsPopup from "../components/TermsPopup";
 
 function SignUp({ onLogin }) {
   const navigate = useNavigate();
@@ -14,43 +16,68 @@ function SignUp({ onLogin }) {
     dob: "",
     role: "patient",
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors]         = useState({});
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [isLoading, setIsLoading]   = useState(false);
+  const [apiError, setApiError]     = useState("");
+  const [showTerms, setShowTerms]   = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.name.trim()) newErrors.name = "Full name is required";
+    if (!formData.email)       newErrors.email = "Email is required";
     if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Email is invalid";
-    if (!formData.password) newErrors.password = "Password is required";
-    if (formData.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters";
-    if (!formData.phone) newErrors.phone = "Phone is required";
-    if (!formData.dob) newErrors.dob = "Date of birth is required";
+    if (!formData.password)    newErrors.password = "Password is required";
+    if (formData.password.length < 8)
+      newErrors.password = "Password must be at least 8 characters";
+    if (!/\d/.test(formData.password))
+      newErrors.password = "Password must contain at least 1 number";
+    if (!/[A-Z]/.test(formData.password))
+      newErrors.password = "Password must contain at least 1 uppercase letter";
+    if (!formData.phone)       newErrors.phone = "Phone number is required";
+    if (!formData.dob)         newErrors.dob = "Date of birth is required";
+    if (!agreedToTerms)        newErrors.terms = "You must agree to the Terms & Conditions";
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiError("");
     const newErrors = validateForm();
 
-    if (Object.keys(newErrors).length === 0) {
-      const userData = {
-        id: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        dob: formData.dob,
-        role: formData.role,
-      };
-      onLogin(formData.role, userData);
-      navigate(
-        formData.role === "patient"
-          ? "/patient/dashboard"
-          : "/doctor/dashboard",
-      );
-    } else {
+    if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      return;
+    }
+
+    // ── Real API call ────────────────────────────────────────────────
+    setIsLoading(true);
+    try {
+      const res = await api.post('/auth/register', {
+        name:     formData.name.trim(),
+        email:    formData.email,
+        password: formData.password,
+        phone:    formData.phone,
+        role:     formData.role,
+      });
+
+      const { token, user } = res.data;
+
+      // Store token — same pattern as SignIn
+      localStorage.setItem('token',           token);
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userRole',         user.role);
+      localStorage.setItem('currentUser',      JSON.stringify(user));
+
+      onLogin(user.role, user);
+      navigate(user.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
+
+    } catch (err) {
+      const msg = err.response?.data?.error || 'Registration failed. Please try again.';
+      setApiError(msg);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -222,19 +249,52 @@ function SignUp({ onLogin }) {
             </div>
 
             {/* Terms Checkbox */}
-            <div className="flex items-center gap-2">
-              <input type="checkbox" id="terms" className="w-4 h-4 rounded" />
-              <label htmlFor="terms" className="text-sm text-gray-600">
-                I agree to the{" "}
-                <a href="/" className="text-primary hover:underline">
-                  Terms & Conditions
-                </a>
-              </label>
+            <div className="space-y-1">
+              <div className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  checked={agreedToTerms}
+                  onChange={(e) => {
+                    setAgreedToTerms(e.target.checked);
+                    if (errors.terms) setErrors(prev => ({ ...prev, terms: '' }));
+                  }}
+                  className="w-4 h-4 rounded mt-0.5 flex-shrink-0"
+                />
+                <label htmlFor="terms" className="text-sm text-gray-600">
+                  I agree to the{" "}
+                  <button
+                    type="button"
+                    onClick={() => setShowTerms(true)}
+                    className="text-primary hover:underline font-medium"
+                  >
+                    Terms &amp; Conditions
+                  </button>
+                </label>
+              </div>
+              {errors.terms && (
+                <p className="text-danger text-xs ml-6">{errors.terms}</p>
+              )}
             </div>
 
+            {/* API Error */}
+            {apiError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-danger text-sm text-center">{apiError}</p>
+              </div>
+            )}
+
             {/* Submit Button */}
-            <button type="submit" className="btn-primary w-full">
-              Create Account
+            <button
+              type="submit"
+              className="btn-primary w-full flex items-center justify-center gap-2"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <><Loader className="w-4 h-4 animate-spin" /> Creating account...</>
+              ) : (
+                'Create Account'
+              )}
             </button>
 
             {/* Sign In Link */}
@@ -250,6 +310,9 @@ function SignUp({ onLogin }) {
           </form>
         </div>
       </div>
+
+      {/* Terms & Conditions Modal */}
+      {showTerms && <TermsPopup onClose={() => setShowTerms(false)} />}
     </div>
   );
 }

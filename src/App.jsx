@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -25,31 +25,58 @@ import PatientRegistrationForm from "./pages/PatientRegistrationForm";
 import DoctorRegistrationForm from "./pages/DoctorRegistrationForm";
 import PrescriptionPage from "./pages/PrescriptionPage";
 import DoctorAppointmentsPage from "./pages/DoctorAppointmentsPage";
+import api from "./utils/api";
 
 function App() {
+  // ── Auth state — source of truth is the JWT token in localStorage ──
   const [isAuthenticated, setIsAuthenticated] = useState(
-    localStorage.getItem("isAuthenticated") === "true",
+    () => !!localStorage.getItem("token")  // true if token exists
   );
   const [userRole, setUserRole] = useState(
     localStorage.getItem("userRole") || "patient",
   );
   const [currentUser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem("currentUser")) || null,
+    () => {
+      try {
+        return JSON.parse(localStorage.getItem("currentUser")) || null;
+      } catch { return null; }
+    }
   );
+
+  // ── Validate stored token on every app load/refresh ─────────────────────
+  // If the token is expired or invalid, silently clears auth and redirects
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;  // not logged in, nothing to check
+
+    api.get("/auth/me")
+      .then((res) => {
+        // Token is valid — refresh currentUser from DB in case profile changed
+        setCurrentUser(res.data.user);
+        setUserRole(res.data.user.role);
+        localStorage.setItem("currentUser", JSON.stringify(res.data.user));
+      })
+      .catch(() => {
+        // Token invalid or expired — api.js interceptor already clears localStorage
+        setIsAuthenticated(false);
+        setUserRole("patient");
+        setCurrentUser(null);
+      });
+  }, []);
 
   const handleLogin = (role, userData) => {
     setIsAuthenticated(true);
     setUserRole(role);
     setCurrentUser(userData);
-    localStorage.setItem("isAuthenticated", "true");
-    localStorage.setItem("userRole", role);
-    localStorage.setItem("currentUser", JSON.stringify(userData));
+    // Note: token + user already stored in localStorage by SignIn.jsx / SignUp.jsx
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     setUserRole("patient");
     setCurrentUser(null);
+    // Clear all auth keys including the JWT token
+    localStorage.removeItem("token");
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userRole");
     localStorage.removeItem("currentUser");

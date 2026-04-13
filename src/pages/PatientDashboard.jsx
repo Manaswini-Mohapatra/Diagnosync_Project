@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
+import NotificationBell from "../components/NotificationBell";
 
 function PatientDashboard({ onLogout, currentUser }) {
   const navigate = useNavigate();
@@ -106,12 +107,13 @@ function PatientDashboard({ onLogout, currentUser }) {
                   <p className="text-xs text-gray-600">Patient</p>
                 </div>
               </div>
+              <NotificationBell />
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm">Logout</span>
+                <span className="text-sm hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>
