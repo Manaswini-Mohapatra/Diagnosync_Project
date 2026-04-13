@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Heart, LogOut, Calendar, Clock, CheckCircle, Download } from "lucide-react";
 import Logo from "../components/Logo";
 import { downloadAppointmentConfirmation } from "../utils/appointmentPdfGenerator";
+import NotificationBell from "../components/NotificationBell";
 
 function AppointmentBooking({ onLogout, currentUser }) {
   const navigate = useNavigate();
@@ -84,6 +85,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <Logo/>
+              <NotificationBell />
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader } from "lucide-react";
 import Logo from "../components/Logo";
+import api from "../utils/api";
 
 function SignIn({ onLogin }) {
   const navigate = useNavigate();
@@ -11,31 +12,51 @@ function SignIn({ onLogin }) {
     password: "",
     role: "patient",
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors]     = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError]   = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiError("");
     const newErrors = {};
 
-    if (!formData.email) newErrors.email = "Email is required";
+    // Frontend validation
+    if (!formData.email)    newErrors.email    = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
 
-    if (Object.keys(newErrors).length === 0) {
-      // Mock authentication
-      const userData = {
-        id: Date.now(),
-        name: formData.email.split("@")[0],
-        email: formData.email,
-        role: formData.role,
-      };
-      onLogin(formData.role, userData);
-      navigate(
-        formData.role === "patient"
-          ? "/patient/dashboard"
-          : "/doctor/dashboard",
-      );
-    } else {
+    if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      return;
+    }
+
+    // ── Real API call ────────────────────────────────────────────────
+    setIsLoading(true);
+    try {
+      const res = await api.post('/auth/login', {
+        email:    formData.email,
+        password: formData.password,
+      });
+
+      const { token, user } = res.data;
+
+      // Store token — api.js will attach it automatically from now on
+      localStorage.setItem('token',           token);
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userRole',         user.role);
+      localStorage.setItem('currentUser',      JSON.stringify(user));
+
+      // Pass real user (with _id from DB) to App.jsx
+      onLogin(user.role, user);
+
+      // Navigate based on actual role from DB
+      navigate(user.role === 'patient' ? '/patient/dashboard' : '/doctor/dashboard');
+
+    } catch (err) {
+      const msg = err.response?.data?.error || 'Login failed. Please check your credentials.';
+      setApiError(msg);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -164,9 +185,24 @@ function SignIn({ onLogin }) {
               </Link>
             </div>
 
+            {/* API Error Message */}
+            {apiError && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-danger text-sm text-center">{apiError}</p>
+              </div>
+            )}
+
             {/* Submit Button */}
-            <button type="submit" className="btn-primary w-full">
-              Sign In
+            <button
+              type="submit"
+              className="btn-primary w-full flex items-center justify-center gap-2"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <><Loader className="w-4 h-4 animate-spin" /> Signing in...</>
+              ) : (
+                'Sign In'
+              )}
             </button>
 
             {/* Sign Up Link */}
@@ -185,13 +221,13 @@ function SignIn({ onLogin }) {
         {/* Demo Credentials */}
         <div className="mt-6 p-4 bg-white rounded-lg border border-border-gray">
           <p className="text-sm font-semibold text-dark-gray mb-2">
-            Demo Credentials:
+            Test Credentials:
           </p>
           <p className="text-xs text-gray-600 mb-1">
-            <strong>Patient:</strong> patient@demo.com
+            <strong>Patient:</strong> rahul@test.com / TestPass1
           </p>
           <p className="text-xs text-gray-600">
-            <strong>Doctor:</strong> doctor@demo.com
+            <strong>Doctor:</strong> drpriya@test.com / DocPass1
           </p>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { LogOut, ArrowLeft, Edit, Save, X } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
+import NotificationBell from "../components/NotificationBell";
 
 function PatientProfilePage({ onLogout, currentUser }) {
   const navigate = useNavigate();
@@ -88,6 +89,7 @@ function PatientProfilePage({ onLogout, currentUser }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <Logo />
+              <NotificationBell />
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
@@ -131,6 +133,7 @@ function PatientProfilePage({ onLogout, currentUser }) {
                 <ArrowLeft className="w-4 h-4" />
                 Back
               </button>
+              <NotificationBell />
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
