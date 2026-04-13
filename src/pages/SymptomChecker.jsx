@@ -249,6 +249,7 @@ function SymptomChecker({ onLogout, currentUser }) {
                 className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
               >
                 <LogOut className="w-4 h-4" />
+                <span className="text-sm hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>
