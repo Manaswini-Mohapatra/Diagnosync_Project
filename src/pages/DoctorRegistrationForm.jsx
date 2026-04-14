@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Heart, LogOut, ArrowLeft, CheckCircle, Upload, X, Download, Eye, Edit, Trash2 } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
+import api from "../utils/api";
 import {
   validateFile,
   fileToBase64,
@@ -32,6 +33,7 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [documentDescription, setDocumentDescription] = useState("");
   const [documentType, setDocumentType] = useState("certificate");
   const [editingDocumentId, setEditingDocumentId] = useState(null);
@@ -204,13 +206,28 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
     }
   };
 
-  const handleSubmit = () => {
-    // Save to localStorage
-    localStorage.setItem(
-      `doctorRegistration_${currentUser?.id}`,
-      JSON.stringify(formData),
-    );
-    setIsSubmitted(true);
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+      // Build payload — strip empty strings so backend upsert only sets provided fields
+      const payload = {
+        ...(formData.yearsOfExperience && { yearsOfExperience: Number(formData.yearsOfExperience) }),
+        ...(formData.licenseNumber     && { licenseNumber: formData.licenseNumber }),
+        ...(formData.licenseState      && { licenseState: formData.licenseState }),
+        ...(formData.hospitalAffiliation && { hospitalAffiliation: formData.hospitalAffiliation }),
+        ...(formData.consultationFee   && { consultationFee: Number(formData.consultationFee) }),
+        specialties:    formData.specialties,
+        qualifications: formData.qualifications,
+        languages:      formData.languages,
+      };
+      await api.put('/doctors/me', payload);
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Registration failed:', error);
+      alert('Failed to save profile: ' + (error.response?.data?.error || error.message));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const specialtyOptions = [
@@ -680,8 +697,12 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
               >
                 Back
               </button>
-              <button onClick={handleSubmit} className="btn-success flex-1">
-                Complete Registration
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="btn-success flex-1 disabled:opacity-60"
+              >
+                {isSubmitting ? 'Saving...' : 'Complete Registration'}
               </button>
             </div>
           </div>

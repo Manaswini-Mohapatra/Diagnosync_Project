@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Heart, LogOut, ArrowLeft, CheckCircle } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
+import api from "../utils/api";
 
 function PatientRegistrationForm({ onLogout, currentUser }) {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
     emergencyPhone: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogout = () => {
     onLogout();
@@ -62,13 +64,17 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
     }));
   };
 
-  const handleSubmit = () => {
-    // Save to localStorage
-    localStorage.setItem(
-      `patientRegistration_${currentUser?.id}`,
-      JSON.stringify(formData),
-    );
-    setIsSubmitted(true);
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+      await api.put('/patients/me', formData);
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Failed to save health profile:', error);
+      alert('Failed to save profile: ' + (error.response?.data?.error || error.message));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (isSubmitted) {
@@ -498,8 +504,8 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
                 >
                   Back
                 </button>
-                <button onClick={handleSubmit} className="btn-success flex-1">
-                  Complete Registration
+                <button onClick={handleSubmit} disabled={isSubmitting} className="btn-success flex-1 disabled:opacity-60">
+                  {isSubmitting ? 'Saving...' : 'Complete Registration'}
                 </button>
               </div>
             </div>

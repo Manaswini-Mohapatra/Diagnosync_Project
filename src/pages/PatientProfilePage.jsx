@@ -4,6 +4,7 @@ import { LogOut, ArrowLeft, Edit, Save, X } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
 import NotificationBell from "../components/NotificationBell";
+import api from "../utils/api";
 
 function PatientProfilePage({ onLogout, currentUser }) {
   const navigate = useNavigate();
@@ -13,17 +14,27 @@ function PatientProfilePage({ onLogout, currentUser }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load patient registration data from localStorage
-    const savedData = localStorage.getItem(
-      `patientRegistration_${currentUser?.id}`
-    );
-    if (savedData) {
-      const data = JSON.parse(savedData);
-      setProfileData(data);
-      setEditData(data);
-    }
-    setLoading(false);
-  }, [currentUser?.id]);
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get('/patients/me');
+        const { profile } = res.data.data;
+        if (profile) {
+          // Normalize backend field 'medicalConditions' → 'conditions' for the UI
+          const normalized = {
+            ...profile,
+            conditions: profile.medicalConditions || profile.conditions || []
+          };
+          setProfileData(normalized);
+          setEditData(normalized);
+        }
+      } catch (error) {
+        console.error('Failed to load profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleLogout = () => {
     onLogout();
@@ -35,14 +46,27 @@ function PatientProfilePage({ onLogout, currentUser }) {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
-    localStorage.setItem(
-      `patientRegistration_${currentUser?.id}`,
-      JSON.stringify(editData)
-    );
-    setProfileData(editData);
-    setIsEditing(false);
-    alert("Profile updated successfully!");
+  const handleSave = async () => {
+    try {
+      // Map 'conditions' back to the field name the backend accepts
+      const payload = {
+        ...editData,
+        conditions: editData.conditions
+      };
+      const res = await api.put('/patients/me', payload);
+      const { profile } = res.data.data;
+      const normalized = {
+        ...profile,
+        conditions: profile.medicalConditions || profile.conditions || []
+      };
+      setProfileData(normalized);
+      setEditData(normalized);
+      setIsEditing(false);
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+      alert("Failed to save profile: " + (error.response?.data?.error || error.message));
+    }
   };
 
   const handleCancel = () => {

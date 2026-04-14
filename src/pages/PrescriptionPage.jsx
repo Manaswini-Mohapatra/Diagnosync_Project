@@ -1,88 +1,34 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Heart, LogOut, ArrowLeft, Download, Printer, Share2, Clock, CheckCircle, AlertCircle, Plus, X } from 'lucide-react'
 import Footer from '../components/Footer'
 import Logo from '../components/Logo'
 import { downloadPrescriptionPDF } from '../utils/pdfGenerator'
+import api from '../utils/api'
 
 function PrescriptionPage({ onLogout, currentUser }) {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('active')
   const [showAddModal, setShowAddModal] = useState(false)
-  const [prescriptions, setPrescriptions] = useState([
-    {
-      id: 1,
-      medicationName: 'Aspirin',
-      strength: '500mg',
-      form: 'Tablet',
-      frequency: 'Once daily',
-      quantity: '30 tablets',
-      refillsRemaining: 2,
-      prescribedDate: '2024-01-15',
-      expiryDate: '2024-04-15',
-      doctor: 'Dr. Sarah Johnson',
-      indication: 'Pain relief and cardiovascular health',
-      instructions: 'Take with food to avoid stomach upset',
-      status: 'active',
-      pharmacy: 'Central Pharmacy',
-      prescriptionNumber: 'RX-2024-001',
-      notes: 'Do not exceed recommended dose'
-    },
-    {
-      id: 2,
-      medicationName: 'Lisinopril',
-      strength: '10mg',
-      form: 'Tablet',
-      frequency: 'Twice daily',
-      quantity: '60 tablets',
-      refillsRemaining: 1,
-      prescribedDate: '2024-02-01',
-      expiryDate: '2024-05-01',
-      doctor: 'Dr. Michael Chen',
-      indication: 'Blood pressure control',
-      instructions: 'Take at the same time each day',
-      status: 'active',
-      pharmacy: 'Central Pharmacy',
-      prescriptionNumber: 'RX-2024-002',
-      notes: 'Monitor blood pressure regularly'
-    },
-    {
-      id: 3,
-      medicationName: 'Atorvastatin',
-      strength: '20mg',
-      form: 'Tablet',
-      frequency: 'Once daily at night',
-      quantity: '30 tablets',
-      refillsRemaining: 0,
-      prescribedDate: '2023-12-10',
-      expiryDate: '2024-03-10',
-      doctor: 'Dr. Sarah Johnson',
-      indication: 'Cholesterol management',
-      instructions: 'Take at bedtime for better absorption',
-      status: 'discontinued',
-      pharmacy: 'Central Pharmacy',
-      prescriptionNumber: 'RX-2023-045',
-      notes: 'Requires regular cholesterol monitoring'
-    },
-    {
-      id: 4,
-      medicationName: 'Metformin',
-      strength: '1000mg',
-      form: 'Tablet',
-      frequency: 'Three times daily',
-      quantity: '90 tablets',
-      refillsRemaining: 3,
-      prescribedDate: '2024-01-20',
-      expiryDate: '2024-04-20',
-      doctor: 'Dr. Emily Davis',
-      indication: 'Diabetes management',
-      instructions: 'Take with meals to minimize GI upset',
-      status: 'active',
-      pharmacy: 'Central Pharmacy',
-      prescriptionNumber: 'RX-2024-003',
-      notes: 'Monitor blood sugar levels weekly'
+  const [prescriptions, setPrescriptions] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  
+  const isDoctor = currentUser?.role === 'doctor' || currentUser?.role === 'admin'
+
+  useEffect(() => {
+    fetchPrescriptions()
+  }, [])
+
+  const fetchPrescriptions = async () => {
+    try {
+      setIsLoading(true)
+      const res = await api.get('/prescriptions')
+      setPrescriptions(res.data.prescriptions || res.data.data || [])
+    } catch (error) {
+    } finally {
+      setIsLoading(false)
     }
-  ])
+  }
 
   const [newPrescription, setNewPrescription] = useState({
     medicationName: '',
@@ -104,44 +50,49 @@ function PrescriptionPage({ onLogout, currentUser }) {
   const activePrescriptions = prescriptions.filter(p => p.status === 'active')
   const discontinuedPrescriptions = prescriptions.filter(p => p.status === 'discontinued')
 
-  const handleAddPrescription = () => {
+  const handleAddPrescription = async () => {
     if (newPrescription.medicationName.trim() && newPrescription.strength.trim()) {
-      const prescription = {
-        id: prescriptions.length + 1,
-        ...newPrescription,
-        refillsRemaining: 3,
-        prescribedDate: new Date().toISOString().split('T')[0],
-        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        status: 'active',
-        pharmacy: 'Central Pharmacy',
-        prescriptionNumber: `RX-2024-${String(prescriptions.length + 1).padStart(3, '0')}`
+      try {
+        await api.post('/prescriptions', newPrescription)
+        fetchPrescriptions()
+        setNewPrescription({
+          medicationName: '',
+          strength: '',
+          form: 'Tablet',
+          frequency: '',
+          quantity: '',
+          doctor: '',
+          indication: '',
+          instructions: '',
+          notes: ''
+        })
+        setShowAddModal(false)
+      } catch (error) {
+        console.error("Failed to add prescription", error)
       }
-      setPrescriptions([...prescriptions, prescription])
-      setNewPrescription({
-        medicationName: '',
-        strength: '',
-        form: 'Tablet',
-        frequency: '',
-        quantity: '',
-        doctor: '',
-        indication: '',
-        instructions: '',
-        notes: ''
-      })
-      setShowAddModal(false)
     }
   }
 
-  const handleDeletePrescription = (id) => {
-    setPrescriptions(prescriptions.filter(p => p.id !== id))
+  const handleDeletePrescription = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this prescription?")) return;
+    try {
+      await api.delete(`/prescriptions/${id}`);
+      setPrescriptions(prescriptions.filter(p => (p.id || p._id) !== id));
+    } catch (error) {
+      console.error("Failed to delete", error);
+      alert("Failed to delete prescription. " + (error.response?.data?.error || ""));
+    }
   }
 
-  const handleRefill = (id) => {
-    setPrescriptions(prescriptions.map(p =>
-      p.id === id && p.refillsRemaining > 0
-        ? { ...p, refillsRemaining: p.refillsRemaining - 1 }
-        : p
-    ))
+  const handleRefill = async (id) => {
+    try {
+      await api.post(`/prescriptions/${id}/refill`);
+      alert("Refill request sent to your doctor successfully.");
+      fetchPrescriptions(); // Refresh the list from the server
+    } catch (error) {
+      console.error("Failed to request refill", error);
+      alert("Failed to submit refill request. " + (error.response?.data?.error || ""));
+    }
   }
 
   const handlePrint = (prescription) => {
@@ -187,7 +138,7 @@ function PrescriptionPage({ onLogout, currentUser }) {
               <div class="info-value">${prescription.instructions}</div>
               
               <div class="info-label">Prescribed by:</div>
-              <div class="info-value">${prescription.doctor}</div>
+              <div class="info-value">${prescription.doctorName || 'Unknown'}</div>
               
               <div class="info-label">Pharmacy:</div>
               <div class="info-value">${prescription.pharmacy}</div>
@@ -220,7 +171,7 @@ function PrescriptionPage({ onLogout, currentUser }) {
   }
 
   const handleShare = (prescription) => {
-    const shareText = `Prescription Details:\n\nMedication: ${prescription.medicationName} ${prescription.strength}\nFrequency: ${prescription.frequency}\nDoctor: ${prescription.doctor}\nPrescription #: ${prescription.prescriptionNumber}`
+    const shareText = `Prescription Details:\n\nMedication: ${prescription.medicationName} ${prescription.strength}\nFrequency: ${prescription.frequency}\nDoctor: ${prescription.doctorName || prescription.doctor || 'Unknown'}\nPrescription #: ${prescription.prescriptionNumber}`
     
     if (navigator.share) {
       navigator.share({
@@ -267,13 +218,15 @@ function PrescriptionPage({ onLogout, currentUser }) {
             <h1 className="text-4xl font-bold text-dark-gray mb-2">My Prescriptions</h1>
             <p className="text-gray-600">Manage and view your medications</p>
           </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="btn-primary flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Add Prescription
-          </button>
+          {isDoctor && (
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="btn-primary flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Add Prescription
+            </button>
+          )}
         </div>
 
         {/* Tabs */}
@@ -316,15 +269,17 @@ function PrescriptionPage({ onLogout, currentUser }) {
                       <span className="badge-success">Active</span>
                     </div>
                     <p className="text-sm text-gray-600">
-                      Prescribed by: <span className="font-semibold">{prescription.doctor}</span>
+                      Prescribed by: <span className="font-semibold">{prescription.doctorName || prescription.doctor || 'Unknown'}</span>
                     </p>
                   </div>
-                  <button
-                    onClick={() => handleDeletePrescription(prescription.id)}
-                    className="text-danger hover:bg-red-100 p-2 rounded transition-colors"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
+                  {isDoctor && (
+                    <button
+                      onClick={() => handleDeletePrescription(prescription.id || prescription._id)}
+                      className="text-danger hover:bg-red-100 p-2 rounded transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  )}
                 </div>
 
                 {/* Prescription Details Grid */}
@@ -445,15 +400,17 @@ function PrescriptionPage({ onLogout, currentUser }) {
                       <span className="badge-danger">Discontinued</span>
                     </div>
                     <p className="text-sm text-gray-600">
-                      Prescribed by: <span className="font-semibold">{prescription.doctor}</span>
+                      Prescribed by: <span className="font-semibold">{prescription.doctorName || prescription.doctor || 'Unknown'}</span>
                     </p>
                   </div>
-                  <button
-                    onClick={() => handleDeletePrescription(prescription.id)}
-                    className="text-danger hover:bg-red-100 p-2 rounded transition-colors"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
+                  {isDoctor && (
+                    <button
+                      onClick={() => handleDeletePrescription(prescription.id || prescription._id)}
+                      className="text-danger hover:bg-red-100 p-2 rounded transition-colors"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  )}
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-6 mb-6">

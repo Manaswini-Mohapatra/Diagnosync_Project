@@ -1,19 +1,73 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Heart,
   LogOut,
   Users,
   Calendar,
   AlertCircle,
   TrendingUp,
+  ArrowRight,
+  Clock,
+  CheckCircle,
+  Activity,
 } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
 import NotificationBell from "../components/NotificationBell";
+import api from "../utils/api";
 
 function DoctorDashboard({ onLogout, currentUser }) {
   const navigate = useNavigate();
+
+  const [todayCount, setTodayCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [todayAppointments, setTodayAppointments] = useState([]);
+  const [urgentNotifs, setUrgentNotifs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchDashboard() {
+      try {
+        // Fetch all doctor appointments
+        const aptRes = await api.get("/appointments");
+        const all = aptRes.data.appointments || [];
+
+        // Filter to today's appointments
+        const todayStr = new Date().toISOString().split("T")[0];
+        const todayApts = all.filter((a) => {
+          const aptDate = new Date(a.date).toISOString().split("T")[0];
+          return aptDate === todayStr;
+        });
+
+        setTodayCount(todayApts.length);
+        setTotalCount(all.length);
+        setPendingCount(
+          all.filter((a) => a.status === "scheduled").length
+        );
+        setTodayAppointments(todayApts.slice(0, 5));
+
+        // Fetch high-priority notifications
+        const notifRes = await api.get("/notifications?limit=50");
+        const notifs = notifRes.data.data || notifRes.data.notifications || [];
+        const urgent = notifs
+          .filter(
+            (n) =>
+              !n.read &&
+              (n.type === "refill" ||
+                n.type === "appointment" ||
+                n.priority === "high")
+          )
+          .slice(0, 3);
+        setUrgentNotifs(urgent);
+      } catch (error) {
+        console.error("DoctorDashboard fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchDashboard();
+  }, []);
 
   const handleLogout = () => {
     onLogout();
@@ -23,24 +77,27 @@ function DoctorDashboard({ onLogout, currentUser }) {
   const stats = [
     {
       label: "Patients Today",
-      value: 8,
+      value: loading ? "…" : todayCount,
       icon: Users,
       color: "bg-blue-100",
       textColor: "text-primary",
+      onClick: () => navigate("/doctor/appointments"),
     },
     {
-      label: "Consultations",
-      value: 45,
+      label: "Total Consultations",
+      value: loading ? "…" : totalCount,
       icon: Calendar,
       color: "bg-green-100",
       textColor: "text-success",
+      onClick: () => navigate("/doctor/appointments"),
     },
     {
       label: "Pending Cases",
-      value: 3,
+      value: loading ? "…" : pendingCount,
       icon: AlertCircle,
-      color: "bg-warning bg-opacity-20",
+      color: "bg-yellow-100",
       textColor: "text-warning",
+      onClick: () => navigate("/doctor/appointments"),
     },
     {
       label: "Patient Rating",
@@ -48,62 +105,24 @@ function DoctorDashboard({ onLogout, currentUser }) {
       icon: TrendingUp,
       color: "bg-purple-100",
       textColor: "text-purple-600",
-    },
-  ];
-
-  const todayAppointments = [
-    {
-      id: 1,
-      patient: "John Doe",
-      time: "9:00 AM",
-      type: "Video",
-      status: "Completed",
-    },
-    {
-      id: 2,
-      patient: "Sarah Smith",
-      time: "10:30 AM",
-      type: "In-Person",
-      status: "In Progress",
-    },
-    {
-      id: 3,
-      patient: "Mike Johnson",
-      time: "11:30 AM",
-      type: "Video",
-      status: "Upcoming",
-    },
-    {
-      id: 4,
-      patient: "Lisa Brown",
-      time: "2:00 PM",
-      type: "In-Person",
-      status: "Upcoming",
-    },
-  ];
-
-  const urgentCases = [
-    {
-      id: 1,
-      patient: "Alex Wilson",
-      issue: "High fever (102°F)",
-      urgency: "High",
-      time: "15 minutes ago",
-    },
-    {
-      id: 2,
-      patient: "Emma Davis",
-      issue: "Chest discomfort",
-      urgency: "Critical",
-      time: "5 minutes ago",
+      onClick: () => {},
     },
   ];
 
   const actions = [
-    { title: "My Patients", icon: Users, to: "/doctor/patients" },
-    { title: "Drug Checker", icon: AlertCircle, to: "/doctor/drug-checker" },
-    { title: "Appointments", icon: Calendar, to: "/doctor/appointments" },
+    { title: "My Patients", icon: Users, to: "/doctor/patients", color: "bg-blue-50", desc: "View & manage patients" },
+    { title: "Appointments", icon: Calendar, to: "/doctor/appointments", color: "bg-green-50", desc: "Schedule & consultations" },
+    { title: "Drug Checker", icon: Activity, to: "/doctor/drug-checker", color: "bg-purple-50", desc: "Check interactions" },
   ];
+
+  const statusBadge = (status) => {
+    switch (status) {
+      case "completed": return "badge-success";
+      case "cancelled": return "badge-danger";
+      case "scheduled": return "badge-primary";
+      default: return "badge-primary";
+    }
+  };
 
   return (
     <div className="min-h-screen bg-light-gray">
@@ -111,7 +130,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
       <nav className="bg-white shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Logo/>
+            <Logo />
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <button
@@ -143,25 +162,30 @@ function DoctorDashboard({ onLogout, currentUser }) {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <h1 className="text-4xl font-bold text-dark-gray mb-8">
-          Doctor Dashboard 
-        </h1>
+
+        {/* Welcome */}
+        <div className="mb-8 animate-fade-in">
+          <h1 className="text-4xl font-bold text-dark-gray mb-2">
+            Welcome, {currentUser?.name?.split(" ")[0] || "Doctor"} 👋
+          </h1>
+          <p className="text-gray-600">Here's your practice overview for today</p>
+        </div>
 
         {/* Stats */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           {stats.map((stat, i) => {
             const Icon = stat.icon;
             return (
-              <div key={i} className="card">
-                <div
-                  className={`flex items-center justify-center w-12 h-12 rounded-lg ${stat.color} mb-4`}
-                >
+              <div
+                key={i}
+                onClick={stat.onClick}
+                className="card cursor-pointer hover:shadow-md transition-shadow animate-slide-in"
+              >
+                <div className={`flex items-center justify-center w-12 h-12 rounded-lg ${stat.color} mb-4`}>
                   <Icon className={`w-6 h-6 ${stat.textColor}`} />
                 </div>
                 <p className="text-gray-600 text-sm mb-2">{stat.label}</p>
-                <p className="text-3xl font-bold text-dark-gray">
-                  {stat.value}
-                </p>
+                <p className="text-3xl font-bold text-dark-gray">{stat.value}</p>
               </div>
             );
           })}
@@ -175,44 +199,44 @@ function DoctorDashboard({ onLogout, currentUser }) {
               <button
                 key={i}
                 onClick={() => navigate(action.to)}
-                className="card-hover p-6 flex items-center gap-4"
+                className={`card hover:shadow-md transition-shadow p-6 flex items-center gap-4 text-left ${action.color} border border-border-gray rounded-xl`}
               >
-                <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-blue-100">
+                <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-white shadow-sm">
                   <Icon className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="font-bold text-dark-gray text-lg">
-                  {action.title}
-                </h3>
+                <div>
+                  <h3 className="font-bold text-dark-gray text-lg">{action.title}</h3>
+                  <p className="text-sm text-gray-500">{action.desc}</p>
+                </div>
+                <ArrowRight className="w-5 h-5 text-gray-400 ml-auto" />
               </button>
             );
           })}
         </div>
 
-        {/* Urgent Cases */}
-        {urgentCases.length > 0 && (
+        {/* Urgent Notifications */}
+        {urgentNotifs.length > 0 && (
           <div className="mb-8 card border-l-4 border-danger">
             <h2 className="text-xl font-bold text-dark-gray mb-4 flex items-center gap-2">
               <AlertCircle className="w-6 h-6 text-danger" />
-              Urgent Cases
+              Urgent Alerts
+              <span className="ml-2 text-sm bg-danger text-white px-2 py-0.5 rounded-full">{urgentNotifs.length}</span>
             </h2>
             <div className="space-y-3">
-              {urgentCases.map((case_) => (
+              {urgentNotifs.map((notif, i) => (
                 <div
-                  key={case_.id}
-                  className="p-4 bg-red-50 rounded-lg border border-red-200"
+                  key={notif._id || i}
+                  onClick={() => navigate("/doctor/appointments")}
+                  className="p-4 bg-red-50 rounded-lg border border-red-200 cursor-pointer hover:bg-red-100 transition-colors"
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-dark-gray">
-                      {case_.patient}
-                    </h3>
-                    <span
-                      className={`badge-${case_.urgency === "Critical" ? "danger" : "warning"}`}
-                    >
-                      {case_.urgency}
-                    </span>
+                  <div className="flex justify-between items-start mb-1">
+                    <h3 className="font-semibold text-dark-gray">{notif.title}</h3>
+                    <span className="badge-danger text-xs">Unread</span>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">{case_.issue}</p>
-                  <p className="text-xs text-gray-500">{case_.time}</p>
+                  <p className="text-sm text-gray-600">{notif.message}</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {new Date(notif.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  </p>
                 </div>
               ))}
             </div>
@@ -221,62 +245,66 @@ function DoctorDashboard({ onLogout, currentUser }) {
 
         {/* Today's Appointments */}
         <div className="card">
-          <h2 className="text-xl font-bold text-dark-gray mb-4">
-            Today's Appointments
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border-gray">
-                  <th className="text-left py-3 px-4 font-semibold text-dark-gray">
-                    Patient
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-dark-gray">
-                    Time
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-dark-gray">
-                    Type
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-dark-gray">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-dark-gray">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {todayAppointments.map((apt) => (
-                  <tr
-                    key={apt.id}
-                    className="border-b border-border-gray hover:bg-light-gray"
-                  >
-                    <td className="py-3 px-4">{apt.patient}</td>
-                    <td className="py-3 px-4">{apt.time}</td>
-                    <td className="py-3 px-4">{apt.type}</td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                          apt.status === "Completed"
-                            ? "badge-success"
-                            : apt.status === "In Progress"
-                              ? "badge-primary"
-                              : "badge-primary"
-                        }`}
-                      >
-                        {apt.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <button className="text-primary hover:underline text-sm font-semibold">
-                        {apt.status === "In Progress" ? "Continue" : "View"}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-dark-gray flex items-center gap-2">
+              <Clock className="w-5 h-5 text-primary" />
+              Today's Appointments
+            </h2>
+            <button
+              onClick={() => navigate("/doctor/appointments")}
+              className="text-primary text-sm font-semibold hover:underline flex items-center gap-1"
+            >
+              View all <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
+
+          {loading ? (
+            <p className="text-gray-500 text-center py-8">Loading appointments…</p>
+          ) : todayAppointments.length === 0 ? (
+            <div className="text-center py-12">
+              <CheckCircle className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500">No appointments scheduled for today</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border-gray">
+                    <th className="text-left py-3 px-4 font-semibold text-dark-gray">Patient</th>
+                    <th className="text-left py-3 px-4 font-semibold text-dark-gray">Time</th>
+                    <th className="text-left py-3 px-4 font-semibold text-dark-gray">Type</th>
+                    <th className="text-left py-3 px-4 font-semibold text-dark-gray">Status</th>
+                    <th className="text-left py-3 px-4 font-semibold text-dark-gray">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {todayAppointments.map((apt) => (
+                    <tr
+                      key={apt.id}
+                      className="border-b border-border-gray hover:bg-light-gray transition-colors"
+                    >
+                      <td className="py-3 px-4 font-medium">{apt.patientName}</td>
+                      <td className="py-3 px-4 text-gray-600">{apt.time}</td>
+                      <td className="py-3 px-4 capitalize text-gray-600">{apt.type}</td>
+                      <td className="py-3 px-4">
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold capitalize ${statusBadge(apt.status)}`}>
+                          {apt.status}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <button
+                          onClick={() => navigate("/doctor/appointments")}
+                          className="text-primary hover:underline text-sm font-semibold"
+                        >
+                          {apt.status === "scheduled" ? "View" : "Details"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
       <Footer />
