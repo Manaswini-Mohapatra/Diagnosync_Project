@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, LogOut, Calendar, Clock, CheckCircle, Download, Search, XCircle, AlertTriangle } from "lucide-react";
+import { Heart, LogOut, Calendar, Clock, CheckCircle, Download, Search, XCircle, AlertTriangle, Video } from "lucide-react";
 import Logo from "../components/Logo";
 import { downloadAppointmentConfirmation } from "../utils/appointmentPdfGenerator";
+import { joinVideoCall } from "../utils/videoCall";
 import NotificationBell from "../components/NotificationBell";
 import api from "../utils/api";
 
@@ -278,6 +279,20 @@ function AppointmentBooking({ onLogout, currentUser }) {
                 )}
               </button>
             </div>
+
+            {/* Join Video Call — only shown for video appointments */}
+            {appointmentType === "video" && (
+              <button
+                onClick={() => joinVideoCall(
+                  confirmedAppointment?._id || confirmedAppointment?.id,
+                  currentUser?.name
+                )}
+                className="mt-4 w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-md"
+              >
+                <Video className="w-5 h-5" />
+                Join Video Call Now
+              </button>
+            )}
           </div>
         </div>
       </div>

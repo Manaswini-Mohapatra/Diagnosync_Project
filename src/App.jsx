@@ -25,6 +25,7 @@ import PatientRegistrationForm from "./pages/PatientRegistrationForm";
 import DoctorRegistrationForm from "./pages/DoctorRegistrationForm";
 import PrescriptionPage from "./pages/PrescriptionPage";
 import DoctorAppointmentsPage from "./pages/DoctorAppointmentsPage";
+import PatientAppointmentsPage from "./pages/PatientAppointmentsPage";
 import api from "./utils/api";
 
 function App() {
@@ -173,6 +174,17 @@ function App() {
           element={
             <ProtectedRoute requiredRole="patient">
               <PrescriptionPage
+                onLogout={handleLogout}
+                currentUser={currentUser}
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/patient/my-appointments"
+          element={
+            <ProtectedRoute requiredRole="patient">
+              <PatientAppointmentsPage
                 onLogout={handleLogout}
                 currentUser={currentUser}
               />

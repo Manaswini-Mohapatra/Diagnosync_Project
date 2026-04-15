@@ -10,10 +10,12 @@ import {
   Clock,
   CheckCircle,
   Activity,
+  Video,
 } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
 import NotificationBell from "../components/NotificationBell";
+import { joinVideoCall } from "../utils/videoCall";
 import api from "../utils/api";
 
 function DoctorDashboard({ onLogout, currentUser }) {
@@ -292,12 +294,25 @@ function DoctorDashboard({ onLogout, currentUser }) {
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        <button
-                          onClick={() => navigate("/doctor/appointments")}
-                          className="text-primary hover:underline text-sm font-semibold"
-                        >
-                          {apt.status === "scheduled" ? "View" : "Details"}
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => navigate("/doctor/appointments")}
+                            className="text-primary hover:underline text-sm font-semibold"
+                          >
+                            {apt.status === "scheduled" ? "View" : "Details"}
+                          </button>
+                          {/* Show Start Call for video appointments */}
+                          {apt.type === "video" && apt.status === "scheduled" && (
+                            <button
+                              onClick={() => joinVideoCall(apt._id || apt.id, currentUser?.name)}
+                              className="flex items-center gap-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors"
+                              title="Start video call"
+                            >
+                              <Video className="w-3 h-3" />
+                              Start Call
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}

@@ -15,11 +15,13 @@ import {
   Search,
   Bell,
   Pill,
+  Video,
 } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
 import NotificationBell from "../components/NotificationBell";
 import api from "../utils/api";
+import { joinVideoCall } from "../utils/videoCall";
 
 function DoctorAppointmentsPage({ onLogout, currentUser }) {
   const navigate = useNavigate();
@@ -312,6 +314,18 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
                         >
                           <X className="w-5 h-5" />
                         </button>
+
+                        {/* Join Video Call — only for video-type appointments */}
+                        {apt.type === "video" && (
+                          <button
+                            onClick={() => joinVideoCall(apt._id || apt.id, currentUser?.name)}
+                            className="flex items-center gap-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors"
+                            title="Join video call"
+                          >
+                            <Video className="w-4 h-4" />
+                            Join Call
+                          </button>
+                        )}
                       </>
                     )}
 
