@@ -71,17 +71,11 @@ function AppointmentBooking({ onLogout, currentUser }) {
     const fetchSlots = async () => {
       try {
         const res = await api.get(`/doctors/${selectedDoctor}/slots?date=${selectedDate}`);
-        if (res.data.data && res.data.data.length > 0) {
-          setTimeSlots(res.data.data);
-        } else {
-          throw new Error("No slots returned, degrading to fallback list");
-        }
+        // The API returns { success: true, date, slots } 
+        // So we strictly read from res.data.slots
+        setTimeSlots(res.data.slots || []);
       } catch {
-        // Safe backend degradation to keep UI operable
-        setTimeSlots([
-          "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM", 
-          "11:00 AM", "2:00 PM", "2:30 PM", "3:00 PM"
-        ]);
+        setTimeSlots([]);
       }
       setSelectedTime(""); // Ensure the patient re-selects time for different days
     };

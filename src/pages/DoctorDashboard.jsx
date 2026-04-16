@@ -17,6 +17,7 @@ import Logo from "../components/Logo";
 import NotificationBell from "../components/NotificationBell";
 import { joinVideoCall } from "../utils/videoCall";
 import api from "../utils/api";
+import DoctorScheduleModal from "../components/DoctorScheduleModal";
 
 function DoctorDashboard({ onLogout, currentUser }) {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
   const [todayAppointments, setTodayAppointments] = useState([]);
   const [urgentNotifs, setUrgentNotifs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   useEffect(() => {
     async function fetchDashboard() {
@@ -94,20 +96,12 @@ function DoctorDashboard({ onLogout, currentUser }) {
       onClick: () => navigate("/doctor/appointments"),
     },
     {
-      label: "Pending Cases",
-      value: loading ? "…" : pendingCount,
-      icon: AlertCircle,
-      color: "bg-yellow-100",
-      textColor: "text-warning",
-      onClick: () => navigate("/doctor/appointments"),
-    },
-    {
-      label: "Patient Rating",
-      value: "4.8",
-      icon: TrendingUp,
+      label: "My Schedule",
+      value: "Manage",
+      icon: Clock,
       color: "bg-purple-100",
       textColor: "text-purple-600",
-      onClick: () => {},
+      onClick: () => setShowScheduleModal(true),
     },
   ];
 
@@ -174,7 +168,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
         </div>
 
         {/* Stats */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, i) => {
             const Icon = stat.icon;
             return (
@@ -228,8 +222,18 @@ function DoctorDashboard({ onLogout, currentUser }) {
               {urgentNotifs.map((notif, i) => (
                 <div
                   key={notif._id || i}
-                  onClick={() => navigate("/doctor/appointments")}
+                  onClick={async () => {
+                    try {
+                      // Call backend to mark read in MongoDB
+                      await api.patch(`/notifications/${notif._id}/read`);
+                      // Remove from UI
+                      setUrgentNotifs(prev => prev.filter(n => n._id !== notif._id));
+                    } catch (err) {
+                      console.error("Failed to mark alert as read:", err);
+                    }
+                  }}
                   className="p-4 bg-red-50 rounded-lg border border-red-200 cursor-pointer hover:bg-red-100 transition-colors"
+                  title="Click to dismiss"
                 >
                   <div className="flex justify-between items-start mb-1">
                     <h3 className="font-semibold text-dark-gray">{notif.title}</h3>
@@ -321,6 +325,11 @@ function DoctorDashboard({ onLogout, currentUser }) {
             </div>
           )}
         </div>
+
+        {/* Modals */}
+        {showScheduleModal && (
+          <DoctorScheduleModal onClose={() => setShowScheduleModal(false)} />
+        )}
       </div>
       <Footer />
     </div>

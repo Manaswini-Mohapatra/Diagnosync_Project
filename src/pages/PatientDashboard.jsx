@@ -86,14 +86,6 @@ function PatientDashboard({ onLogout, currentUser }) {
       textColor: healthScoreColor.split(' ')[1],
       onClick: () => { if (healthScoreData?.status && healthScoreData?.status !== "None") setShowHealthModal(true); else navigate('/patient/profile'); }
     },
-    {
-      label: "Urgent Alerts",
-      value: unreadAlerts,
-      icon: AlertCircle,
-      color: "bg-red-100",
-      textColor: "text-danger",
-      onClick: () => navigate("/patient/symptom-checker")
-    },
   ];
 
   const actions = [
@@ -196,7 +188,7 @@ function PatientDashboard({ onLogout, currentUser }) {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, i) => {
             const Icon = stat.icon;
             return (
@@ -313,10 +305,9 @@ function PatientDashboard({ onLogout, currentUser }) {
           </div>
 
           {/* Health Alerts */}
-          <div className="card cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate('/patient/symptom-checker')}>
+          <div className="card">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-dark-gray">Health Alerts</h3>
-              <ArrowRight className="w-5 h-5 text-gray-400" />
             </div>
             <div className="space-y-3">
               {unreadAlerts === 0 ? (
@@ -478,6 +469,12 @@ function PatientDashboard({ onLogout, currentUser }) {
                 <span className="text-gray-600">Physical Activity</span>
                 <span className={`font-semibold ${healthScoreData.breakdown.exercisePenalty > 0 ? "text-red-500" : healthScoreData.breakdown.exercisePenalty < 0 ? "text-green-600" : "text-gray-400"}`}>
                   {healthScoreData.breakdown.exercisePenalty > 0 ? `-${healthScoreData.breakdown.exercisePenalty}` : healthScoreData.breakdown.exercisePenalty < 0 ? `+${Math.abs(healthScoreData.breakdown.exercisePenalty)}` : "-"}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm py-1 border-b border-gray-50">
+                <span className="text-gray-600">Age Factor</span>
+                <span className={`font-semibold ${healthScoreData.breakdown.agePenalty > 0 ? "text-red-500" : healthScoreData.breakdown.agePenalty < 0 ? "text-green-600" : "text-gray-400"}`}>
+                  {healthScoreData.breakdown.agePenalty > 0 ? `-${healthScoreData.breakdown.agePenalty}` : healthScoreData.breakdown.agePenalty < 0 ? `+${Math.abs(healthScoreData.breakdown.agePenalty)}` : "-"}
                 </span>
               </div>
             </div>

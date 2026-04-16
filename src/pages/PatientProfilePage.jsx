@@ -200,11 +200,23 @@ function PatientProfilePage({ onLogout, currentUser }) {
               </h2>
 
               <div className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
+                {/* Age / Height / Weight — 3 cols */}
+                <div className="grid md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-dark-gray mb-2">
-                      Height (cm)
-                    </label>
+                    <label className="block text-sm font-semibold text-dark-gray mb-2">Age (years)</label>
+                    <input
+                      type="number"
+                      name="age"
+                      value={editData.age || ""}
+                      onChange={handleInputChange}
+                      className="input-field w-full"
+                      placeholder="25"
+                      min="0"
+                      max="120"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-dark-gray mb-2">Height (cm)</label>
                     <input
                       type="number"
                       name="height"
@@ -214,9 +226,7 @@ function PatientProfilePage({ onLogout, currentUser }) {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-dark-gray mb-2">
-                      Weight (kg)
-                    </label>
+                    <label className="block text-sm font-semibold text-dark-gray mb-2">Weight (kg)</label>
                     <input
                       type="number"
                       name="weight"
@@ -502,6 +512,10 @@ function PatientProfilePage({ onLogout, currentUser }) {
               </h2>
 
               <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <p className="text-sm text-gray-600 font-semibold">Age</p>
+                  <p className="text-lg text-dark-gray">{profileData.age ? `${profileData.age} years` : "Not specified"}</p>
+                </div>
                 <div>
                   <p className="text-sm text-gray-600 font-semibold">Height</p>
                   <p className="text-lg text-dark-gray">{profileData.height || "Not specified"} cm</p>

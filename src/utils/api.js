@@ -39,13 +39,17 @@ api.interceptors.response.use(
   (error) => {
     const status = error.response?.status;
 
-    // 401 — Token expired or invalid: force logout
+    // 401 — Token expired or invalid: force logout only if user was logged in
     if (status === 401) {
+      const hadToken = !!localStorage.getItem('token');
       localStorage.removeItem('token');
       localStorage.removeItem('currentUser');
       localStorage.removeItem('userRole');
       localStorage.removeItem('isAuthenticated');
-      window.location.href = '/signin';
+      // Only redirect to /signin if the user was actually authenticated
+      if (hadToken) {
+        window.location.href = '/signin';
+      }
       return Promise.reject(error);
     }
 

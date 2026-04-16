@@ -10,6 +10,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     // Personal Info
+    age: "",
     height: "",
     weight: "",
     bloodType: "",
@@ -203,7 +204,23 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
             </h2>
 
             <div className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-4">
+              {/* Age + Height + Weight row */}
+              <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-dark-gray mb-2">
+                    Age (years)
+                  </label>
+                  <input
+                    type="number"
+                    name="age"
+                    value={formData.age}
+                    onChange={handleInputChange}
+                    className="input-field w-full"
+                    placeholder="25"
+                    min="0"
+                    max="120"
+                  />
+                </div>
                 <div>
                   <label className="block text-sm font-semibold text-dark-gray mb-2">
                     Height (cm)

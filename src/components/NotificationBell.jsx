@@ -21,6 +21,7 @@ function NotificationBell() {
   const [isOpen, setIsOpen]                 = useState(false);
   const [loading, setLoading]               = useState(false);
   const [error, setError]                   = useState(null);
+  const [selectedNotification, setSelectedNotification] = useState(null);
   const dropdownRef                         = useRef(null);
 
   // ── Fetch unread count (lightweight, runs every 30s) ──────────────────
@@ -68,6 +69,15 @@ function NotificationBell() {
       setUnreadCount(0);
     } catch {
       // Silent fail
+    }
+  };
+
+  // ── Handle Notification Click ─────────────────────────────────────────
+  const handleNotificationClick = async (n) => {
+    setSelectedNotification(n);
+    setIsOpen(false); // Auto-close the dropdown
+    if (!n.read) {
+      await markAsRead(n._id);
     }
   };
 
@@ -192,7 +202,7 @@ function NotificationBell() {
             {!loading && !error && notifications.map((n) => (
               <div
                 key={n._id}
-                onClick={() => !n.read && markAsRead(n._id)}
+                onClick={() => handleNotificationClick(n)}
                 className={`px-4 py-3 border-b border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors ${
                   !n.read ? 'bg-blue-50 border-l-4 border-l-blue-400' : ''
                 }`}
@@ -224,6 +234,40 @@ function NotificationBell() {
           )}
         </div>
       )}
+
+      {/* ── Notification Modal ── */}
+      {selectedNotification && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 animate-fade-in" style={{ position: 'fixed', left: 0, top: 0, width: '100%', height: '100%' }}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden relative">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50">
+              <div className="flex items-center gap-2">
+                <span className={`text-xs px-2 py-1 rounded-full font-medium capitalize ${typeColor(selectedNotification.type)}`}>
+                  {selectedNotification.type}
+                </span>
+              </div>
+              <button onClick={() => setSelectedNotification(null)} className="text-gray-400 hover:text-gray-600 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6">
+              <h2 className="text-xl font-bold text-gray-800 mb-3">{selectedNotification.title}</h2>
+              <p className="text-gray-600 text-sm mb-6 leading-relaxed whitespace-pre-wrap">{selectedNotification.message}</p>
+              <p className="text-xs text-gray-400 font-medium">
+                {new Date(selectedNotification.createdAt).toLocaleString([], { dateStyle: 'long', timeStyle: 'short' })}
+              </p>
+            </div>
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+              <button
+                onClick={() => setSelectedNotification(null)}
+                className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors font-medium text-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
