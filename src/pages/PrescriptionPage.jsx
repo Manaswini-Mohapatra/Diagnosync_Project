@@ -48,7 +48,7 @@ function PrescriptionPage({ onLogout, currentUser }) {
   }
 
   const activePrescriptions = prescriptions.filter(p => p.status === 'active')
-  const discontinuedPrescriptions = prescriptions.filter(p => p.status === 'discontinued')
+  const historyPrescriptions = prescriptions.filter(p => p.status !== 'active')
 
   const handleAddPrescription = async () => {
     if (newPrescription.medicationName.trim() && newPrescription.strength.trim()) {
@@ -249,7 +249,7 @@ function PrescriptionPage({ onLogout, currentUser }) {
                 : 'text-gray-600 hover:text-primary'
             }`}
           >
-            Discontinued ({discontinuedPrescriptions.length})
+            History ({historyPrescriptions.length})
           </button>
         </div>
 
@@ -387,8 +387,8 @@ function PrescriptionPage({ onLogout, currentUser }) {
             ))
           )}
 
-          {activeTab === 'discontinued' && discontinuedPrescriptions.length > 0 && (
-            discontinuedPrescriptions.map((prescription) => (
+          {activeTab === 'discontinued' && historyPrescriptions.length > 0 && (
+            historyPrescriptions.map((prescription) => (
               <div key={prescription.id} className="card opacity-75">
                 <div className="flex items-start justify-between mb-4 pb-4 border-b border-border-gray">
                   <div className="flex-1">
@@ -447,10 +447,10 @@ function PrescriptionPage({ onLogout, currentUser }) {
             </div>
           )}
 
-          {(activeTab === 'discontinued' && discontinuedPrescriptions.length === 0) && (
+          {(activeTab === 'discontinued' && historyPrescriptions.length === 0) && (
             <div className="card text-center py-12">
               <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 text-lg">No discontinued prescriptions</p>
+              <p className="text-gray-600 text-lg">No prescription history</p>
             </div>
           )}
         </div>

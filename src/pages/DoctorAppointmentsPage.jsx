@@ -22,6 +22,7 @@ import Logo from "../components/Logo";
 import NotificationBell from "../components/NotificationBell";
 import api from "../utils/api";
 import { joinVideoCall } from "../utils/videoCall";
+import PrescriptionManagementModal from "../components/PrescriptionManagementModal";
 
 function DoctorAppointmentsPage({ onLogout, currentUser }) {
   const navigate = useNavigate();
@@ -32,6 +33,9 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Modal state for prescriptions
+  const [prescriptionPatient, setPrescriptionPatient] = useState(null);
 
   useEffect(() => {
     fetchAppointments();
@@ -335,12 +339,13 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
                       apt.status === "completed") && (
                       <button
                         onClick={() =>
-                          navigate(
-                            `/doctor/prescriptions/new?patientId=${apt.patientId}&patientName=${encodeURIComponent(apt.patientName)}`
-                          )
+                          setPrescriptionPatient({
+                            _id: apt.patientId,
+                            name: apt.patientName,
+                          })
                         }
                         className="text-purple-600 hover:bg-purple-100 p-2 rounded transition-colors"
-                        title="Create prescription for this patient"
+                        title="Manage prescriptions for this patient"
                       >
                         <Pill className="w-5 h-5" />
                       </button>
@@ -486,6 +491,15 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
           </div>
         </div>
       )}
+
+      {/* Prescription Management Modal */}
+      <PrescriptionManagementModal 
+        isOpen={!!prescriptionPatient}
+        onClose={() => setPrescriptionPatient(null)}
+        patientId={prescriptionPatient?._id}
+        patientName={prescriptionPatient?.name}
+        doctorId={currentUser?._id}
+      />
 
       <Footer />
     </div>

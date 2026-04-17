@@ -26,6 +26,8 @@ import DoctorRegistrationForm from "./pages/DoctorRegistrationForm";
 import PrescriptionPage from "./pages/PrescriptionPage";
 import DoctorAppointmentsPage from "./pages/DoctorAppointmentsPage";
 import PatientAppointmentsPage from "./pages/PatientAppointmentsPage";
+import PatientReports from "./pages/PatientReports";
+import AnalyticsPage from "./pages/AnalyticsPage";
 import api from "./utils/api";
 
 function App() {
@@ -192,6 +194,18 @@ function App() {
           }
         />
 
+        <Route
+          path="/patient/reports"
+          element={
+            <ProtectedRoute requiredRole="patient">
+              <PatientReports
+                onLogout={handleLogout}
+                currentUser={currentUser}
+              />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Doctor Routes */}
         <Route
           path="/doctor/dashboard"
@@ -253,6 +267,14 @@ function App() {
                 onLogout={handleLogout}
                 currentUser={currentUser}
               />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/analytics"
+          element={
+            <ProtectedRoute requiredRole="doctor">
+              <AnalyticsPage onLogout={handleLogout} currentUser={currentUser} />
             </ProtectedRoute>
           }
         />

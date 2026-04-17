@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, LogOut, Search, Filter, ArrowLeft, X, MessageSquare, AlertCircle } from "lucide-react";
+import { Heart, LogOut, Search, Filter, ArrowLeft, X, Pill, AlertCircle, FileText, ExternalLink } from "lucide-react";
+import PrescriptionManagementModal from "../components/PrescriptionManagementModal";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
 import NotificationBell from "../components/NotificationBell";
@@ -17,6 +18,9 @@ function PatientList({ onLogout, currentUser }) {
   
   // Modal state for View Details
   const [selectedPatient, setSelectedPatient] = useState(null);
+  
+  // Modal state for prescriptions
+  const [prescriptionPatient, setPrescriptionPatient] = useState(null);
 
   const handleLogout = () => { onLogout(); navigate("/"); };
 
@@ -148,15 +152,12 @@ function PatientList({ onLogout, currentUser }) {
                     >
                       View Profile
                     </button>
-                    {/* Share with Doctor disabled as per Phase 4.6 note, messaging deferred */}
-                    <div className="group relative">
-                       <button className="btn-secondary text-sm px-4 py-2 opacity-50 cursor-not-allowed flex items-center gap-2 h-[40px]">
-                         <MessageSquare className="w-4 h-4" /> Message
-                       </button>
-                       <span className="absolute bottom-full mb-2 left-1/2 min-w-[200px] -translate-x-1/2 p-2 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none text-center">
-                         Messaging system is slated for future release.
-                       </span>
-                    </div>
+                    <button 
+                      onClick={() => setPrescriptionPatient(patient)}
+                      className="btn-secondary text-sm px-4 py-2 flex items-center gap-2 h-[40px] border-primary/20 text-primary hover:bg-blue-50"
+                    >
+                      <Pill className="w-4 h-4" /> Prescription
+                    </button>
                   </div>
                 </div>
               </div>
@@ -311,10 +312,53 @@ function PatientList({ onLogout, currentUser }) {
                 </div>
               </div>
 
+              {/* Medical Reports */}
+              <div>
+                <h3 className="text-lg font-bold text-dark-gray border-b pb-2 mb-3 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-primary" />
+                  Medical Reports
+                </h3>
+                {selectedPatient.profile?.reports?.length > 0 ? (
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {selectedPatient.profile.reports.map((report, i) => (
+                      <a
+                        key={report._id || i}
+                        href={report.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-primary hover:bg-blue-50 transition-all group"
+                      >
+                        <div className="w-9 h-9 rounded-lg bg-blue-100 text-primary flex items-center justify-center shrink-0">
+                          <FileText className="w-4 h-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-dark-gray text-sm truncate">{report.title}</p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(report.uploadedAt).toLocaleDateString()} · {(report.fileType || 'file').toUpperCase()}
+                          </p>
+                        </div>
+                        <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-primary shrink-0" />
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-sm italic">No reports uploaded by this patient yet.</p>
+                )}
+              </div>
+
             </div>
           </div>
         </div>
       )}
+
+      {/* Prescription Management Modal */}
+      <PrescriptionManagementModal 
+        isOpen={!!prescriptionPatient}
+        onClose={() => setPrescriptionPatient(null)}
+        patientId={prescriptionPatient?._id}
+        patientName={prescriptionPatient?.name}
+        doctorId={currentUser?._id}
+      />
 
       <Footer />
     </div>

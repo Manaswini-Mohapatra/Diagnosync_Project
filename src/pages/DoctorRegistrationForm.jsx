@@ -27,9 +27,7 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
     qualifications: [],
     languages: [],
   });
-  const [uploadedDocuments, setUploadedDocuments] = useState(
-    getDoctorDocuments(currentUser?.id) || []
-  );
+  const [uploadedDocuments, setUploadedDocuments] = useState([]);
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -37,8 +35,6 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
   const [documentDescription, setDocumentDescription] = useState("");
   const [documentType, setDocumentType] = useState("certificate");
   const [editingDocumentId, setEditingDocumentId] = useState(null);
-  const [editDocumentType, setEditDocumentType] = useState("");
-  const [editDocumentDescription, setEditDocumentDescription] = useState("");
 
   const handleLogout = () => {
     onLogout();
@@ -71,139 +67,52 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
-    setUploadError("");
-    setUploadSuccess("");
-
+    setUploadError(""); setUploadSuccess("");
     if (!file) return;
 
-    // Validate file
     const validation = validateFile(file);
-    if (!validation.isValid) {
-      setUploadError(validation.error);
-      return;
-    }
+    if (!validation.isValid) { setUploadError(validation.error); return; }
 
     try {
-      // Convert to base64
-      const base64Data = await fileToBase64(file);
+      setIsSubmitting(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("documentType", documentType);
+      formData.append("description", documentDescription);
 
-      // Save to localStorage
-      const result = saveDoctorDocument(currentUser?.id, {
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
-        fileData: base64Data,
-        documentType: documentType,
-        description: documentDescription,
+      const res = await api.post("/doctors/me/documents", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
       });
 
-      if (result.success) {
-        // Update local state
-        const updatedDocuments = getDoctorDocuments(currentUser?.id);
-        setUploadedDocuments(updatedDocuments);
-        setUploadSuccess(`Document "${file.name}" uploaded successfully!`);
-        
-        // Reset form
-        e.target.value = "";
-        setDocumentDescription("");
-        setDocumentType("certificate");
-
-        // Clear success message after 3 seconds
+      if (res.data.success) {
+        setUploadedDocuments(res.data.documents);
+        setUploadSuccess(`"${file.name}" uploaded successfully!`);
+        e.target.value = ""; setDocumentDescription(""); setDocumentType("certificate");
         setTimeout(() => setUploadSuccess(""), 3000);
-      } else {
-        setUploadError("Failed to save document. Please try again.");
       }
     } catch (error) {
-      setUploadError("Error processing file. Please try again.");
-      console.error("Upload error:", error);
+      setUploadError(error.response?.data?.error || "Upload failed.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // Re-upload document (replace existing)
-  const handleReuploadDocument = async (e, documentId) => {
-    const file = e.target.files[0];
-    setUploadError("");
-    setUploadSuccess("");
-
-    if (!file) return;
-
-    // Validate file
-    const validation = validateFile(file);
-    if (!validation.isValid) {
-      setUploadError(validation.error);
-      return;
-    }
-
+  const handleDeleteDocument = async (documentId) => {
+    if (!window.confirm("Delete this document?")) return;
     try {
-      // Convert to base64
-      const base64Data = await fileToBase64(file);
-
-      // Get existing document to preserve metadata
-      const existingDoc = uploadedDocuments.find(doc => doc.id === documentId);
-
-      // Delete old document
-      deleteDoctorDocument(currentUser?.id, documentId);
-
-      // Save new document with same type and description
-      const result = saveDoctorDocument(currentUser?.id, {
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
-        fileData: base64Data,
-        documentType: editDocumentType || existingDoc.documentType,
-        description: editDocumentDescription || existingDoc.description,
-      });
-
-      if (result.success) {
-        // Update local state
-        const updatedDocuments = getDoctorDocuments(currentUser?.id);
-        setUploadedDocuments(updatedDocuments);
-        setUploadSuccess(`Document "${file.name}" replaced successfully!`);
-
-        // Reset form
-        e.target.value = "";
-        setEditingDocumentId(null);
-        setEditDocumentType("");
-        setEditDocumentDescription("");
-
-        // Clear success message after 3 seconds
+      const res = await api.delete(`/doctors/me/documents/${documentId}`);
+      if (res.data.success) {
+        setUploadedDocuments(res.data.documents);
+        setUploadSuccess("Document deleted.");
         setTimeout(() => setUploadSuccess(""), 3000);
-      } else {
-        setUploadError("Failed to replace document. Please try again.");
       }
     } catch (error) {
-      setUploadError("Error processing file. Please try again.");
-      console.error("Upload error:", error);
+      setUploadError("Failed to delete document.");
     }
   };
 
-  const handleDeleteDocument = (documentId) => {
-    if (window.confirm("Are you sure you want to delete this document?")) {
-      const result = deleteDoctorDocument(currentUser?.id, documentId);
-      if (result.success) {
-        const updatedDocuments = getDoctorDocuments(currentUser?.id);
-        setUploadedDocuments(updatedDocuments);
-        setUploadSuccess("Document deleted successfully!");
-        setTimeout(() => setUploadSuccess(""), 3000);
-      } else {
-        setUploadError("Failed to delete document.");
-      }
-    }
-  };
-
-  // Download document
   const handleDownloadDocument = (doc) => {
-    try {
-      const link = document.createElement('a');
-      link.href = doc.fileData;
-      link.download = doc.fileName;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (error) {
-      setUploadError("Error downloading document. Please try again.");
-      console.error('Download error:', error);
-    }
+    if (doc.fileUrl) window.open(doc.fileUrl, "_blank");
   };
 
   const handleSubmit = async () => {
@@ -564,10 +473,10 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
                 <div className="space-y-3">
                   {uploadedDocuments.map((doc) => (
                     <div
-                      key={doc.id}
+                      key={doc._id}
                       className="p-4 border border-border-gray rounded-lg"
                     >
-                      {editingDocumentId === doc.id ? (
+                      {editingDocumentId === doc._id ? (
                         // Edit Mode for Document
                         <div className="space-y-4">
                           <div>
@@ -663,22 +572,11 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
                               <Download className="w-5 h-5 text-primary" />
                             </button>
                             <button
-                              onClick={() => {
-                                setEditingDocumentId(doc.id);
-                                setEditDocumentType(doc.documentType);
-                                setEditDocumentDescription(doc.description);
-                              }}
-                              className="p-2 hover:bg-blue-50 rounded transition-colors"
-                              title="Edit"
-                            >
-                              <Edit className="w-5 h-5 text-primary" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteDocument(doc.id)}
+                              onClick={() => handleDeleteDocument(doc._id)}
                               className="p-2 hover:bg-red-50 rounded transition-colors"
                               title="Delete"
                             >
-                              <X className="w-5 h-5 text-danger" />
+                              <Trash2 className="w-5 h-5 text-danger" />
                             </button>
                           </div>
                         </div>

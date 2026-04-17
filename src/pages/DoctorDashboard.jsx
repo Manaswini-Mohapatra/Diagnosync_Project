@@ -22,12 +22,13 @@ import DoctorScheduleModal from "../components/DoctorScheduleModal";
 function DoctorDashboard({ onLogout, currentUser }) {
   const navigate = useNavigate();
 
-  const [todayCount, setTodayCount] = useState(0);
+
   const [totalCount, setTotalCount] = useState(0);
   const [pendingCount, setPendingCount] = useState(0);
   const [todayAppointments, setTodayAppointments] = useState([]);
   const [urgentNotifs, setUrgentNotifs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [profileComplete, setProfileComplete] = useState(true);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   useEffect(() => {
@@ -44,7 +45,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
           return aptDate === todayStr;
         });
 
-        setTodayCount(todayApts.length);
+
         setTotalCount(all.length);
         setPendingCount(
           all.filter((a) => a.status === "scheduled").length
@@ -64,6 +65,14 @@ function DoctorDashboard({ onLogout, currentUser }) {
           )
           .slice(0, 3);
         setUrgentNotifs(urgent);
+
+        // Fetch doctor profile to check completeness
+        try {
+          const profileRes = await api.get("/doctors/me");
+          setProfileComplete(!!profileRes.data.data);
+        } catch (err) {
+          if (err.response?.status === 404) setProfileComplete(false);
+        }
       } catch (error) {
         console.error("DoctorDashboard fetch error:", error);
       } finally {
@@ -80,20 +89,12 @@ function DoctorDashboard({ onLogout, currentUser }) {
 
   const stats = [
     {
-      label: "Patients Today",
-      value: loading ? "…" : todayCount,
-      icon: Users,
+      label: "View Analytics",
+      value: "Insights",
+      icon: TrendingUp,
       color: "bg-blue-100",
       textColor: "text-primary",
-      onClick: () => navigate("/doctor/appointments"),
-    },
-    {
-      label: "Total Consultations",
-      value: loading ? "…" : totalCount,
-      icon: Calendar,
-      color: "bg-green-100",
-      textColor: "text-success",
-      onClick: () => navigate("/doctor/appointments"),
+      onClick: () => navigate("/doctor/analytics"),
     },
     {
       label: "My Schedule",
@@ -159,6 +160,25 @@ function DoctorDashboard({ onLogout, currentUser }) {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        {/* Profile Completion Warning */}
+        {!profileComplete && !loading && (
+          <div className="mb-6 animate-fade-in p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-6 h-6 text-yellow-600" />
+              <div>
+                <h3 className="font-bold text-yellow-800">Complete your professional profile</h3>
+                <p className="text-sm text-yellow-700">Please provide your medical qualifications and verification documents to start consulting.</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => navigate('/doctor/registration')}
+              className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              Complete Now
+            </button>
+          </div>
+        )}
+
         {/* Welcome */}
         <div className="mb-8 animate-fade-in">
           <h1 className="text-4xl font-bold text-dark-gray mb-2">
@@ -168,7 +188,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
         </div>
 
         {/* Stats */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
           {stats.map((stat, i) => {
             const Icon = stat.icon;
             return (

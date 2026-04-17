@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart, LogOut, Calendar, Pill, Activity, AlertCircle,
-  MessageSquare, User, ArrowRight, Video, Clock, X, MapPin, Phone,
+  MessageSquare, User, ArrowRight, Video, Clock, X, MapPin, Phone, FileText,
 } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
@@ -15,7 +15,7 @@ function PatientDashboard({ onLogout, currentUser }) {
 
   const [totalAppointments, setTotalAppointments]     = useState(0);
   const [upcomingAppointments, setUpcomingAppointments] = useState([]);  // 24-72hr window
-  const [prescriptionsCount, setPrescriptionsCount]   = useState(0);
+  const [reportsCount, setReportsCount]               = useState(0);
   const [unreadAlerts, setUnreadAlerts]               = useState(0);
   const [profileComplete, setProfileComplete]         = useState(true);
   const [selectedAppointment, setSelectedAppointment] = useState(null); // detail modal
@@ -29,6 +29,7 @@ function PatientDashboard({ onLogout, currentUser }) {
         const profile = meRes.data?.data?.profile;
         setProfileComplete(!!profile);
         if (profile?.healthScore) setHealthScoreData(profile.healthScore);
+        if (profile?.reports) setReportsCount(profile.reports.length);
 
         // Total count (all scheduled) for stat card
         const totalRes = await api.get("/appointments?status=scheduled");
@@ -37,9 +38,6 @@ function PatientDashboard({ onLogout, currentUser }) {
         // 24-72hr window for dashboard widget
         const windowRes = await api.get("/appointments?upcoming=true&hours=72");
         setUpcomingAppointments(windowRes.data.appointments || []);
-
-        const rxRes = await api.get("/prescriptions?status=active");
-        setPrescriptionsCount(rxRes.data.prescriptions?.length || 0);
 
         const notifRes = await api.get("/notifications/unread-count");
         setUnreadAlerts(notifRes.data.data?.unreadCount || 0);
@@ -71,12 +69,12 @@ function PatientDashboard({ onLogout, currentUser }) {
       onClick: () => navigate("/patient/my-appointments")
     },
     {
-      label: "Active Prescriptions",
-      value: prescriptionsCount,
-      icon: Pill,
-      color: "bg-green-100",
-      textColor: "text-success",
-      onClick: () => navigate("/patient/prescriptions")
+      label: "My Reports",
+      value: reportsCount,
+      icon: FileText,
+      color: "bg-blue-50",
+      textColor: "text-blue-600",
+      onClick: () => navigate("/patient/reports")
     },
     {
       label: "Health Status",
@@ -321,10 +319,10 @@ function PatientDashboard({ onLogout, currentUser }) {
                   <p className="text-xs text-gray-600">You have {unreadAlerts} unread urgent alerts.</p>
                 </div>
               )}
-              {prescriptionsCount > 0 && (
-                <div className="p-3 bg-blue-50 rounded-lg border border-blue-200" onClick={(e) => { e.stopPropagation(); navigate('/patient/prescriptions'); }}>
-                  <p className="text-sm font-semibold text-primary">💊 Medication Reminder</p>
-                  <p className="text-xs text-gray-600">You have {prescriptionsCount} active prescriptions.</p>
+              {reportsCount > 0 && (
+                <div className="p-3 bg-blue-50 rounded-lg border border-blue-200 cursor-pointer" onClick={() => navigate('/patient/reports')}>
+                  <p className="text-sm font-semibold text-primary">📋 My Reports</p>
+                  <p className="text-xs text-gray-600">You have {reportsCount} medical report(s) uploaded.</p>
                 </div>
               )}
             </div>

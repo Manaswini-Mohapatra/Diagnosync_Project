@@ -40,16 +40,11 @@ function DoctorProfilePage({ onLogout, currentUser }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // Documents (kept in localStorage — server upload is Phase 5.4)
-  const [uploadedDocuments, setUploadedDocuments] = useState([]);
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState("");
   const [documentDescription, setDocumentDescription] = useState("");
   const [documentType, setDocumentType] = useState("certificate");
-  const [editingDocumentId, setEditingDocumentId] = useState(null);
-  const [editDocumentType, setEditDocumentType] = useState("");
-  const [editDocumentDescription, setEditDocumentDescription] = useState("");
 
   // ── Fetch profile from backend ─────────────────────────────────────────────
   useEffect(() => {
@@ -72,8 +67,6 @@ function DoctorProfilePage({ onLogout, currentUser }) {
       }
     };
     fetchProfile();
-    // Load documents from localStorage
-    setUploadedDocuments(getDoctorDocuments(currentUser?.id || currentUser?._id));
   }, []);
 
   const handleLogout = () => { onLogout(); navigate("/"); };
@@ -139,46 +132,60 @@ function DoctorProfilePage({ onLogout, currentUser }) {
     });
   };
 
-  // ── Document handlers (localStorage) ─────────────────────────────────────
-  const userId = currentUser?.id || currentUser?._id;
-
+  // ── Document handlers (Cloudinary) ───────────────────────────────────────
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     setUploadError(""); setUploadSuccess("");
     if (!file) return;
+
     const validation = validateFile(file);
     if (!validation.isValid) { setUploadError(validation.error); return; }
+
     try {
-      const base64Data = await fileToBase64(file);
-      const result = saveDoctorDocument(userId, {
-        fileName: file.name, fileType: file.type, fileSize: file.size,
-        fileData: base64Data, documentType, description: documentDescription,
+      setSaving(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("documentType", documentType);
+      formData.append("description", documentDescription);
+
+      const res = await api.post("/doctors/me/documents", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
       });
-      if (result.success) {
-        setUploadedDocuments(getDoctorDocuments(userId));
-        setUploadSuccess(`"${file.name}" uploaded successfully!`);
+
+      if (res.data.success) {
+        setProfileData(prev => ({ ...prev, documents: res.data.documents }));
+        setUploadSuccess(`"${file.name}" uploaded to Cloud successfully!`);
         e.target.value = ""; setDocumentDescription(""); setDocumentType("certificate");
         setShowUploadForm(false);
         setTimeout(() => setUploadSuccess(""), 3000);
-      } else { setUploadError("Failed to save document."); }
-    } catch { setUploadError("Error processing file."); }
+      }
+    } catch (err) {
+      setUploadError(err.response?.data?.error || "Upload failed. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDeleteDocument = (documentId) => {
-    if (!window.confirm("Delete this document?")) return;
-    const result = deleteDoctorDocument(userId, documentId);
-    if (result.success) {
-      setUploadedDocuments(getDoctorDocuments(userId));
-      setUploadSuccess("Document deleted."); setTimeout(() => setUploadSuccess(""), 3000);
-    } else { setUploadError("Failed to delete document."); }
+  const handleDeleteDocument = async (documentId) => {
+    if (!window.confirm("Delete this document from cloud storage?")) return;
+    try {
+      setSaving(true);
+      const res = await api.delete(`/doctors/me/documents/${documentId}`);
+      if (res.data.success) {
+        setProfileData(prev => ({ ...prev, documents: res.data.documents }));
+        setUploadSuccess("Document deleted from cloud.");
+        setTimeout(() => setUploadSuccess(""), 3000);
+      }
+    } catch (err) {
+      setUploadError("Failed to delete document.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDownloadDocument = (doc) => {
-    try {
-      const link = document.createElement("a");
-      link.href = doc.fileData; link.download = doc.fileName;
-      document.body.appendChild(link); link.click(); document.body.removeChild(link);
-    } catch { setUploadError("Error downloading document."); }
+    if (!doc.fileUrl) return;
+    window.open(doc.fileUrl, "_blank");
   };
 
   // ── Loading / empty states ─────────────────────────────────────────────────
@@ -431,11 +438,11 @@ function DoctorProfilePage({ onLogout, currentUser }) {
                 </div>
               )}
 
-              {uploadedDocuments.length > 0 ? (
+              {profileData.documents?.length > 0 ? (
                 <div className="space-y-3">
-                  <p className="text-sm font-semibold text-gray-600 mb-4">Total: {uploadedDocuments.length} document(s)</p>
-                  {uploadedDocuments.map((doc) => (
-                    <div key={doc.id} className={`p-4 border rounded-lg flex items-start justify-between ${doc.verified ? "border-green-200 bg-green-50" : "border-border-gray bg-white"}`}>
+                  <p className="text-sm font-semibold text-gray-600 mb-4">Total: {profileData.documents.length} document(s)</p>
+                  {profileData.documents.map((doc) => (
+                    <div key={doc._id} className={`p-4 border rounded-lg flex items-start justify-between ${doc.verified ? "border-green-200 bg-green-50" : "border-border-gray bg-white"}`}>
                       <div className="flex items-start gap-3">
                         <span className="text-2xl">{getFileIcon(doc.fileType)}</span>
                         <div>
@@ -449,7 +456,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
                       </div>
                       <div className="flex gap-2 ml-4">
                         <button onClick={() => handleDownloadDocument(doc)} className="p-2 hover:bg-light-gray rounded" title="Download"><Download className="w-5 h-5 text-primary" /></button>
-                        <button onClick={() => handleDeleteDocument(doc.id)} className="p-2 hover:bg-red-50 rounded" title="Delete"><Trash2 className="w-5 h-5 text-danger" /></button>
+                        <button onClick={() => handleDeleteDocument(doc._id)} className="p-2 hover:bg-red-50 rounded" title="Delete"><Trash2 className="w-5 h-5 text-danger" /></button>
                       </div>
                     </div>
                   ))}
