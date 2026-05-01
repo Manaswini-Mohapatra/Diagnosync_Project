@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Bell, X, CheckCheck, Loader } from 'lucide-react';
 import api from '../utils/api';
 
@@ -236,7 +237,7 @@ function NotificationBell() {
       )}
 
       {/* ── Notification Modal ── */}
-      {selectedNotification && (
+      {selectedNotification && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 animate-fade-in" style={{ position: 'fixed', left: 0, top: 0, width: '100%', height: '100%' }}>
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden relative">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50">
@@ -265,7 +266,8 @@ function NotificationBell() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

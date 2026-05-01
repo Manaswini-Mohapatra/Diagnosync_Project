@@ -27,12 +27,14 @@ import {
   Cell, 
   Legend 
 } from "recharts";
+import CountUp from "react-countup";
+import { motion } from "framer-motion";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
 import NotificationBell from "../components/NotificationBell";
 import api from "../utils/api";
 
-const COLORS = ["#3B82F6", "#8B5CF6", "#EC4899", "#F59E0B"];
+const COLORS = ["#1F5F7A", "#4C1D95", "#EC4899", "#F59E0B"];
 
 function AnalyticsPage({ onLogout, currentUser }) {
   const navigate = useNavigate();
@@ -122,7 +124,12 @@ function AnalyticsPage({ onLogout, currentUser }) {
 
         {/* Metric Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="card border-l-4 border-blue-500">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+            animate={{ opacity: 1, scale: 1, y: 0 }} 
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.1 }}
+            className="card border-l-4 border-blue-500"
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 bg-blue-50 rounded-lg">
                 <Calendar className="w-6 h-6 text-blue-500" />
@@ -130,11 +137,18 @@ function AnalyticsPage({ onLogout, currentUser }) {
               <TrendingUp className="w-4 h-4 text-success" />
             </div>
             <p className="text-gray-500 text-sm font-semibold uppercase tracking-wider">Total Consultations</p>
-            <h3 className="text-3xl font-black text-dark-gray mt-1">{summary.totalConsultations}</h3>
+            <h3 className="text-3xl font-black text-dark-gray mt-1">
+              <CountUp end={summary.totalConsultations} duration={1.5} />
+            </h3>
             <p className="text-xs text-gray-400 mt-2">{summary.rangeConsultations} in selected period</p>
-          </div>
+          </motion.div>
 
-          <div className="card border-l-4 border-purple-500">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+            animate={{ opacity: 1, scale: 1, y: 0 }} 
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.2 }}
+            className="card border-l-4 border-purple-500"
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 bg-purple-50 rounded-lg">
                 <Users className="w-6 h-6 text-purple-500" />
@@ -142,11 +156,18 @@ function AnalyticsPage({ onLogout, currentUser }) {
               <ChevronUp className="w-4 h-4 text-success" />
             </div>
             <p className="text-gray-500 text-sm font-semibold uppercase tracking-wider">Retention Rate</p>
-            <h3 className="text-3xl font-black text-dark-gray mt-1">{summary.retentionRate}%</h3>
+            <h3 className="text-3xl font-black text-dark-gray mt-1">
+              <CountUp end={summary.retentionRate} duration={1.5} suffix="%" />
+            </h3>
             <p className="text-xs text-gray-400 mt-2">Recurring vs unique patients</p>
-          </div>
+          </motion.div>
 
-          <div className="card border-l-4 border-pink-500">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+            animate={{ opacity: 1, scale: 1, y: 0 }} 
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.3 }}
+            className="card border-l-4 border-pink-500"
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 bg-pink-50 rounded-lg">
                 <Clock className="w-6 h-6 text-pink-500" />
@@ -154,11 +175,18 @@ function AnalyticsPage({ onLogout, currentUser }) {
               <Activity className="w-4 h-4 text-gray-400" />
             </div>
             <p className="text-gray-500 text-sm font-semibold uppercase tracking-wider">Avg. Duration</p>
-            <h3 className="text-3xl font-black text-dark-gray mt-1">{summary.avgDuration}m</h3>
+            <h3 className="text-3xl font-black text-dark-gray mt-1">
+              <CountUp end={summary.avgDuration} duration={1.5} suffix="m" />
+            </h3>
             <p className="text-xs text-gray-400 mt-2">Minutes per session</p>
-          </div>
+          </motion.div>
 
-          <div className="card border-l-4 border-orange-500">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+            animate={{ opacity: 1, scale: 1, y: 0 }} 
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.4 }}
+            className="card border-l-4 border-orange-500"
+          >
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 bg-orange-50 rounded-lg">
                 <UserPlus className="w-6 h-6 text-orange-500" />
@@ -166,9 +194,11 @@ function AnalyticsPage({ onLogout, currentUser }) {
               <ChevronDown className="w-4 h-4 text-warning" />
             </div>
             <p className="text-gray-500 text-sm font-semibold uppercase tracking-wider">New Patients</p>
-            <h3 className="text-3xl font-black text-dark-gray mt-1">{patientRetention.new}</h3>
+            <h3 className="text-3xl font-black text-dark-gray mt-1">
+              <CountUp end={patientRetention.new} duration={1.5} />
+            </h3>
             <p className="text-xs text-gray-400 mt-2">Acquired in this period</p>
-          </div>
+          </motion.div>
         </div>
 
         {/* Charts Section */}
@@ -203,9 +233,9 @@ function AnalyticsPage({ onLogout, currentUser }) {
                     <Line 
                       type="monotone" 
                       dataKey="consultations" 
-                      stroke="#3B82F6" 
+                      stroke="#1F5F7A" 
                       strokeWidth={4} 
-                      dot={{ r: 6, fill: '#3B82F6', strokeWidth: 2, stroke: '#fff' }}
+                      dot={{ r: 6, fill: '#1F5F7A', strokeWidth: 2, stroke: '#fff' }}
                       activeDot={{ r: 8, strokeWidth: 0 }}
                     />
                   </LineChart>

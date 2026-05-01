@@ -45,7 +45,31 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
     try {
       setIsLoading(true);
       const res = await api.get("/appointments");
-      setAppointments(res.data.appointments || []);
+      const all = res.data.appointments || [];
+
+      // Auto-complete any "scheduled" appointments whose date has already passed
+      const now = new Date();
+      const pastScheduled = all.filter(
+        (a) => a.status === "scheduled" && new Date(a.date) < now
+      );
+
+      if (pastScheduled.length > 0) {
+        // Fire-and-forget PATCH calls; update local state immediately
+        await Promise.allSettled(
+          pastScheduled.map((a) =>
+            api.patch(`/appointments/${a._id || a.id}/status`, { status: "completed" })
+          )
+        );
+        // Mark them completed in state without re-fetching
+        const updatedIds = new Set(pastScheduled.map((a) => a._id || a.id));
+        setAppointments(
+          all.map((a) =>
+            updatedIds.has(a._id || a.id) ? { ...a, status: "completed" } : a
+          )
+        );
+      } else {
+        setAppointments(all);
+      }
     } catch (error) {
       console.error("Failed to load appointments:", error);
     } finally {
@@ -59,11 +83,20 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
   };
 
   // ── Derived lists ──────────────────────────────────────────────────────────
+  // A "scheduled" appointment whose date has already passed is treated as
+  // completed for display — it stays in the DB as-is but appears in the
+  // Completed tab so the Upcoming tab stays clean.
+  const now = new Date();
+  const isPast = (apt) => new Date(apt.date) < now;
+
   const upcomingAppointments = appointments.filter(
-    (a) => a.status === "scheduled" || a.status === "in-progress"
+    (a) =>
+      (a.status === "scheduled" || a.status === "in-progress") && !isPast(a)
   );
   const completedAppointments = appointments.filter(
-    (a) => a.status === "completed"
+    (a) =>
+      a.status === "completed" ||
+      ((a.status === "scheduled" || a.status === "in-progress") && isPast(a))
   );
   const cancelledAppointments = appointments.filter(
     (a) => a.status === "cancelled"
@@ -173,9 +206,9 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
     d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
 
   return (
-    <div className="min-h-screen bg-light-gray flex flex-col">
+    <div className="min-h-screen bg-transparent relative pb-20 flex flex-col">
       {/* Navbar */}
-      <nav className="bg-white shadow-sm sticky top-0 z-40">
+      <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo />
@@ -218,15 +251,15 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
         </div>
 
         {/* Search */}
-        <div className="card mb-6">
+        <div className="glass-panel border-none shadow-soft p-2 mb-6 rounded-2xl">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
               type="text"
               placeholder="Search by patient name, email, or phone…"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input-field pl-10 w-full"
+              className="w-full bg-transparent border-none focus:ring-0 pr-11 pr-4 py-3 text-dark-gray placeholder-gray-400 font-medium"
             />
           </div>
         </div>
@@ -258,11 +291,11 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
         {/* Appointment Cards */}
         <div className="space-y-4">
           {isLoading ? (
-            <div className="card text-center py-16">
-              <p className="text-gray-500">Loading appointments…</p>
+            <div className="glass-panel border-none shadow-soft text-center py-16">
+              <p className="text-gray-500 font-medium">Loading appointments…</p>
             </div>
           ) : activeList().length === 0 ? (
-            <div className="card text-center py-12">
+            <div className="glass-panel border-none shadow-soft text-center py-12">
               <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-4" />
               <p className="text-gray-600 text-lg">No {activeTab} appointments</p>
               <p className="text-gray-500 text-sm mt-2">
@@ -273,9 +306,9 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
             </div>
           ) : (
             activeList().map((apt) => (
-              <div key={apt.id} className="card">
+              <div key={apt.id} className="glass-panel p-6 border-none shadow-soft hover-lift group">
                 {/* Card Header */}
-                <div className="flex items-start justify-between mb-4 pb-4 border-b border-border-gray">
+                <div className="flex flex-col md:flex-row md:items-start justify-between mb-4 pb-4 border-b border-border-gray/50 gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2 flex-wrap">
                       <h3 className="text-xl font-bold text-dark-gray">{apt.patientName}</h3>
@@ -323,7 +356,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
                         {apt.type === "video" && (
                           <button
                             onClick={() => joinVideoCall(apt._id || apt.id, currentUser?.name)}
-                            className="flex items-center gap-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors"
+                            className="flex items-center gap-1 px-2 py-1 bg-[#1F5F7A] text-white text-xs font-semibold rounded-lg transition-colors"
                             title="Join video call"
                           >
                             <Video className="w-4 h-4" />

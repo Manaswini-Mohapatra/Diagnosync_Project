@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Heart, LogOut, Calendar, Pill, Activity, AlertCircle,
-  MessageSquare, User, ArrowRight, Video, Clock, X, MapPin, Phone, FileText,
+  MessageSquare, User, ArrowRight, Video, Clock, X, MapPin, Phone, FileText, Plus
 } from "lucide-react";
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
 import NotificationBell from "../components/NotificationBell";
@@ -27,7 +29,8 @@ function PatientDashboard({ onLogout, currentUser }) {
       try {
         const meRes = await api.get("/patients/me");
         const profile = meRes.data?.data?.profile;
-        setProfileComplete(!!profile);
+        // Profile is complete if it exists AND has some basic info filled (like age)
+        setProfileComplete(!!profile && profile.age != null);
         if (profile?.healthScore) setHealthScoreData(profile.healthScore);
         if (profile?.reports) setReportsCount(profile.reports.length);
 
@@ -118,9 +121,9 @@ function PatientDashboard({ onLogout, currentUser }) {
   ];
 
   return (
-    <div className="min-h-screen bg-light-gray">
+    <div className="min-h-screen bg-transparent relative pb-20">
       {/* Navbar */}
-      <nav className="bg-white shadow-sm sticky top-0 z-40">
+      <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo/>
@@ -128,7 +131,7 @@ function PatientDashboard({ onLogout, currentUser }) {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => navigate("/patient/profile")}
-                  className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer hover:bg-blue-700 transition-colors"
+                  className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer transition-colors"
                   title="View Profile"
                 >
                   {currentUser?.name?.charAt(0).toUpperCase() || "P"}
@@ -167,7 +170,7 @@ function PatientDashboard({ onLogout, currentUser }) {
               </div>
             </div>
             <button 
-              onClick={() => navigate('/patient/profile')}
+              onClick={() => navigate('/patient/registration')}
               className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition-colors"
             >
               Complete Now
@@ -189,22 +192,46 @@ function PatientDashboard({ onLogout, currentUser }) {
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, i) => {
             const Icon = stat.icon;
+            const isHealthScore = stat.label === "Health Status";
+            const scoreValue = healthScoreData?.score || 0;
+            const pathColor = scoreValue >= 80 ? '#15803d' : scoreValue >= 50 ? '#a16207' : '#b91c1c';
+
             return (
               <div
                 key={i}
                 onClick={stat.onClick}
-                className="card animate-slide-in cursor-pointer hover:shadow-md transition-shadow"
+                className="glass-panel p-6 animate-slide-in cursor-pointer hover-lift border-none shadow-soft group"
                 style={{ animationDelay: `${i * 0.1}s` }}
               >
-                <div
-                  className={`flex items-center justify-center w-12 h-12 rounded-lg ${stat.color} mb-4`}
-                >
-                  <Icon className={`w-6 h-6 ${stat.textColor}`} />
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div
+                      className={`flex items-center justify-center w-12 h-12 rounded-xl border border-white/50 ${stat.color} mb-4 group-hover:scale-110 transition-transform duration-300`}
+                    >
+                      <Icon className={`w-6 h-6 ${stat.textColor}`} />
+                    </div>
+                    <p className="text-gray-500 font-medium text-sm mb-1">{stat.label}</p>
+                    <p className="text-3xl font-extrabold text-dark-gray">
+                      {stat.value}
+                    </p>
+                  </div>
+                  {isHealthScore && scoreValue > 0 && (
+                    <div className="w-20 h-20 drop-shadow-sm group-hover:scale-105 transition-transform duration-300">
+                      <CircularProgressbar
+                        value={scoreValue}
+                        text={`${scoreValue}`}
+                        strokeWidth={10}
+                        styles={buildStyles({
+                          pathColor: pathColor,
+                          textColor: '#1f2937',
+                          trailColor: 'rgba(0,0,0,0.05)',
+                          textSize: '28px',
+                          pathTransitionDuration: 1.5,
+                        })}
+                      />
+                    </div>
+                  )}
                 </div>
-                <p className="text-gray-600 text-sm mb-2">{stat.label}</p>
-                <p className="text-3xl font-bold text-dark-gray">
-                  {stat.value}
-                </p>
               </div>
             );
           })}
@@ -222,15 +249,15 @@ function PatientDashboard({ onLogout, currentUser }) {
                 <button
                   key={i}
                   onClick={() => navigate(action.to)}
-                  className={`card-hover p-6 text-left ${action.color}`}
+                  className={`glass-panel p-6 text-left border-none shadow-soft hover-lift group ${action.color}`}
                 >
-                  <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-white mb-4">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-white/60 backdrop-blur border border-white/40 mb-4 group-hover:scale-110 transition-transform duration-300">
                     <Icon className="w-6 h-6 text-primary" />
                   </div>
                   <h3 className="font-bold text-dark-gray mb-1">
                     {action.title}
                   </h3>
-                  <p className="text-sm text-gray-600">{action.description}</p>
+                  <p className="text-sm text-gray-500 font-medium">{action.description}</p>
                 </button>
               );
             })}
@@ -239,62 +266,72 @@ function PatientDashboard({ onLogout, currentUser }) {
 
         {/* Recent Activity */}
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Upcoming Appointments */}
-          <div className="lg:col-span-2 card hover:shadow-md transition-shadow">
+          {/* Upcoming Appointments Timeline */}
+          <div className="lg:col-span-2 glass-panel p-6 border-none shadow-soft hover-lift">
             <div
               className="flex justify-between items-center mb-4 cursor-pointer"
               onClick={() => navigate('/patient/my-appointments')}
             >
               <div>
-                <h3 className="text-lg font-bold text-dark-gray">Upcoming Appointments</h3>
-                <p className="text-xs text-gray-500 mt-0.5">Next 72 hours — click a card for details</p>
+                <h3 className="text-lg font-bold text-dark-gray">Health Journey</h3>
+                <p className="text-xs text-gray-500 mt-0.5">Upcoming schedule in the next 72 hours</p>
               </div>
               <ArrowRight className="w-5 h-5 text-gray-400" />
             </div>
-            <div className="space-y-3">
+            
+            <div className="relative border-l-2 border-primary/20 ml-2 md:ml-4 py-2 space-y-6 mt-4">
               {upcomingAppointments.length === 0 ? (
-                <div className="p-4 text-center text-gray-500 border border-dashed border-gray-300 rounded-lg">
-                  <Calendar className="w-6 h-6 text-gray-300 mx-auto mb-1" />
-                  <p className="text-sm">No appointments in the next 72 hours.</p>
+                <div className="relative pl-6 md:pl-8">
+                  <div className="absolute -left-[9px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-gray-200 border-2 border-white"></div>
+                  <div className="p-4 bg-white/50 backdrop-blur rounded-xl border border-dashed border-gray-300 flex items-center justify-center text-gray-500">
+                    <Calendar className="w-5 h-5 mr-2 text-gray-300" />
+                    <p className="text-sm font-medium">No appointments currently scheduled.</p>
+                  </div>
                 </div>
               ) : (
                 upcomingAppointments.map((apt) => {
                   const diffHrs = Math.round((new Date(apt.date) - Date.now()) / 3600000);
                   const timeLabel = diffHrs < 1 ? "Very soon" : diffHrs < 24 ? `in ${diffHrs}h` : `in ${Math.round(diffHrs/24)}d`;
+                  
                   return (
-                    <div
-                      key={apt._id || apt.id}
-                      className="p-3 border border-border-gray rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-200 transition-all"
-                      onClick={() => setSelectedAppointment(apt)}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-dark-gray text-sm truncate">
-                            Dr. {apt.doctor?.name || apt.doctorName || "Unknown"}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="flex items-center gap-1 text-xs text-gray-500">
-                              <Clock className="w-3 h-3" /> {apt.time}
-                            </span>
-                            <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium capitalize ${
-                              apt.type === "video" ? "bg-blue-100 text-blue-700" :
-                              apt.type === "in-person" ? "bg-green-100 text-green-700" :
-                              "bg-gray-100 text-gray-600"
-                            }`}>{apt.type}</span>
+                    <div key={apt._id || apt.id} className="relative pl-6 md:pl-8 group">
+                      {/* Timeline Dot */}
+                      <div className="absolute -left-[9px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-primary ring-4 ring-white border-2 border-primary group-hover:scale-125 transition-transform duration-300 shadow-sm z-10"></div>
+                      
+                      {/* Card Content */}
+                      <div
+                        className="bg-white/80 p-4 border border-white/40 rounded-xl cursor-pointer hover:bg-blue-50/80 hover:border-blue-200 shadow-sm hover:shadow-soft transition-all"
+                        onClick={() => setSelectedAppointment(apt)}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-dark-gray text-sm md:text-base truncate">
+                              Dr. {apt.doctor?.name || apt.doctorName || "Unknown"}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="flex items-center gap-1 text-xs text-gray-500 font-medium">
+                                <Clock className="w-3.5 h-3.5 text-primary/70" /> {apt.time}
+                              </span>
+                              <span className={`text-xs px-2 py-0.5 rounded-full font-bold capitalize ${
+                                apt.type === "video" ? "bg-blue-100 text-blue-700" :
+                                apt.type === "in-person" ? "bg-green-100 text-green-700" :
+                                "bg-gray-100 text-gray-600"
+                              }`}>{apt.type}</span>
+                            </div>
                           </div>
+                          <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-full flex-shrink-0">
+                            {timeLabel}
+                          </span>
                         </div>
-                        <span className="text-xs font-semibold text-primary bg-blue-50 px-2 py-1 rounded-full flex-shrink-0">
-                          {timeLabel}
-                        </span>
+                        {apt.type?.toLowerCase() === "video" && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); joinVideoCall(apt._id || apt.id, currentUser?.name); }}
+                            className="mt-3 w-full flex items-center justify-center gap-2 py-2 bg-[#1F5F7A] text-white text-xs font-semibold rounded-lg transition-colors shadow-sm"
+                          >
+                            <Video className="w-4 h-4" /> Join Video Call
+                          </button>
+                        )}
                       </div>
-                      {apt.type?.toLowerCase() === "video" && (
-                        <button
-                          onClick={(e) => { e.stopPropagation(); joinVideoCall(apt._id || apt.id, currentUser?.name); }}
-                          className="mt-2 w-full flex items-center justify-center gap-1 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors"
-                        >
-                          <Video className="w-3 h-3" /> Join Video Call
-                        </button>
-                      )}
                     </div>
                   );
                 })
@@ -377,7 +414,7 @@ function PatientDashboard({ onLogout, currentUser }) {
               {selectedAppointment.type?.toLowerCase() === "video" && (
                 <button
                   onClick={() => joinVideoCall(selectedAppointment._id || selectedAppointment.id, currentUser?.name)}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#1F5F7A] text-white font-semibold rounded-xl transition-colors"
                 >
                   <Video className="w-4 h-4" /> Join Video Call
                 </button>
@@ -392,6 +429,7 @@ function PatientDashboard({ onLogout, currentUser }) {
           </div>
         </div>
       )}
+
 
       {/* ── Health Score Modal ── */}
       {showHealthModal && healthScoreData && (

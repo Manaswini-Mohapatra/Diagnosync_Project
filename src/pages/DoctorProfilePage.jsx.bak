@@ -5,18 +5,6 @@ import Footer from "../components/Footer";
 import Logo from "../components/Logo";
 import NotificationBell from "../components/NotificationBell";
 import api from "../utils/api";
-import RegistrationStepper from "../components/RegistrationStepper";
-import {
-  FormSection,
-  FormTile,
-  TextInput,
-  TextArea,
-  NumberInput,
-  CheckboxGrid,
-  SpecialtyTags,
-  StepNav,
-} from "../components/FormComponents";
-import { AnimatePresence } from "framer-motion";
 import {
   validateFile,
   fileToBase64,
@@ -52,23 +40,6 @@ function DoctorProfilePage({ onLogout, currentUser }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const [step, setStep] = useState(1);
-  const [direction, setDirection] = useState("forward");
-  
-  const STEPS = [
-    { id: 1, label: "Personal Information" },
-    { id: 2, label: "Education & License" },
-    { id: 3, label: "Specialties & Fees" },
-    { id: 4, label: "Documents" },
-  ];
-
-  const goTo = (target) => {
-    setDirection(target > step ? "forward" : "backward");
-    setStep(target);
-  };
-  const next = () => goTo(step + 1);
-  const back = () => goTo(step - 1);
-
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState("");
@@ -86,7 +57,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
         if (error.response?.status === 404) {
           // No Doctor document yet — open blank edit form so they can create one
           setProfileData(null);
-          setEditData({ ...EMPTY_PROFILE, fullName: currentUser?.name || "", phone: currentUser?.phone || "" });
+          setEditData({ ...EMPTY_PROFILE });
           setIsEditing(true);
         } else {
           console.error("Failed to load doctor profile:", error);
@@ -101,12 +72,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
   const handleLogout = () => { onLogout(); navigate("/"); };
 
   const handleEditClick = () => {
-    setEditData({
-      fullName: currentUser?.name || "",
-      phone: currentUser?.phone || "",
-      ...JSON.parse(JSON.stringify(profileData))
-    });
-    setStep(1);
+    setEditData(JSON.parse(JSON.stringify(profileData)));
     setIsEditing(true);
   };
 
@@ -114,8 +80,6 @@ function DoctorProfilePage({ onLogout, currentUser }) {
     try {
       setSaving(true);
       const payload = {
-        fullName: editData.fullName || undefined,
-        phone: editData.phone || undefined,
         yearsOfExperience: editData.yearsOfExperience ? Number(editData.yearsOfExperience) : undefined,
         licenseNumber: editData.licenseNumber || undefined,
         licenseState: editData.licenseState || undefined,
@@ -235,6 +199,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
 
   // If no profile exists yet, we stay in edit mode (set in useEffect on 404)
   // so profileData === null is not a blocking render state anymore
+
   return (
     <div className="min-h-screen bg-light-gray flex flex-col">
       {/* Navbar */}
@@ -255,7 +220,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
         </div>
       </nav>
 
-      <div className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -275,174 +240,93 @@ function DoctorProfilePage({ onLogout, currentUser }) {
 
         {isEditing ? (
           // ── EDIT MODE ──────────────────────────────────────────────────────
-          <div className="bg-white/95 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="grid md:grid-cols-[280px_1fr]">
-              {/* Sidebar */}
-              <aside className="bg-white border-b md:border-b-0 md:border-r border-gray-100 p-6 md:p-8">
-                <div className="mb-6 hidden md:block">
-                  <h1 className="text-xl font-bold text-gray-900">Professional Profile</h1>
-                  <p className="text-xs text-gray-400 mt-1">Complete your information step by step.</p>
+          <div className="space-y-6">
+            {/* Identity banner */}
+            <div className="card bg-blue-50 border border-blue-100">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold">
+                  {currentUser?.name?.charAt(0).toUpperCase() || "D"}
                 </div>
-                <RegistrationStepper steps={STEPS} currentStep={step} onStepClick={(id) => id < step && goTo(id)} />
-              </aside>
-
-              {/* Content */}
-              <main className="p-6 md:p-10 lg:p-12">
-                <AnimatePresence mode="wait">
-
-                  {/* ── Step 1: Personal Information ── */}
-                  {step === 1 && (
-                    <FormSection key="s1" direction={direction}>
-                      <div className="space-y-2">
-                        <FormTile label="Personal Information" hint="Update your personal details that will be displayed on your profile.">
-                          <div className="grid gap-4 sm:grid-cols-2">
-                            <TextInput label="Full Name" value={editData.fullName} onChange={(e) => setEditData(prev => ({ ...prev, fullName: e.target.value }))} placeholder="Dr. John Doe" />
-                            <TextInput label="Phone Number" type="tel" value={editData.phone} onChange={(e) => setEditData(prev => ({ ...prev, phone: e.target.value }))} placeholder="+91 98765 43210" />
-                          </div>
-                        </FormTile>
-                        <FormTile label="About" hint="Write a brief description about yourself and your practice.">
-                          <TextArea label="About Me" value={editData.bio} onChange={(e) => setEditData(prev => ({ ...prev, bio: e.target.value }))} placeholder="Experienced doctor specialising in..." rows={4} />
-                        </FormTile>
-                      </div>
-                      <div className="flex flex-col sm:flex-row items-center gap-4 mt-8 pt-6 border-t border-gray-100">
-                        <button type="button" onClick={handleCancel} className="w-full sm:w-auto px-6 py-2.5 text-sm font-semibold text-gray-600 hover:text-gray-900 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
-                          Cancel
-                        </button>
-                        <div className="hidden sm:block flex-1"></div>
-                        <div className="w-full sm:w-auto -mt-6 sm:mt-0 border-none pt-0">
-                          <StepNav isFirst onNext={next} />
-                        </div>
-                      </div>
-                    </FormSection>
-                  )}
-
-                  {/* ── Step 2: Education & License ── */}
-                  {step === 2 && (
-                    <FormSection key="s2" direction={direction}>
-                      <div className="space-y-2">
-                        <FormTile label="Experience & Education" hint="Provide details about your professional qualifications.">
-                          <div className="grid gap-4 sm:grid-cols-2">
-                            <NumberInput label="Years of Experience" value={editData.yearsOfExperience} onChange={(e) => setEditData(prev => ({ ...prev, yearsOfExperience: e.target.value }))} min={0} max={60} placeholder="e.g. 15" />
-                          </div>
-                        </FormTile>
-                        <FormTile label="License Information" hint="Your medical license details for verification.">
-                          <div className="grid gap-4 sm:grid-cols-2">
-                            <TextInput label="License Number" value={editData.licenseNumber} onChange={(e) => setEditData(prev => ({ ...prev, licenseNumber: e.target.value }))} placeholder="MD-123456" />
-                            <TextInput label="License State / Region" value={editData.licenseState} onChange={(e) => setEditData(prev => ({ ...prev, licenseState: e.target.value }))} placeholder="Maharashtra" />
-                          </div>
-                        </FormTile>
-                        <FormTile label="Hospital Affiliation" hint="The hospital or clinic you are currently affiliated with.">
-                          <TextInput label="Hospital Name" value={editData.hospitalAffiliation} onChange={(e) => setEditData(prev => ({ ...prev, hospitalAffiliation: e.target.value }))} placeholder="Apollo Hospitals, Mumbai" />
-                        </FormTile>
-                      </div>
-                      <StepNav onBack={back} onNext={next} />
-                    </FormSection>
-                  )}
-
-                  {/* ── Step 3: Specialties & Fees ── */}
-                  {step === 3 && (
-                    <FormSection key="s3" direction={direction}>
-                      <div className="space-y-2">
-                        <FormTile label="Select Specialties" hint="Choose the medical specialties you practice. You can select multiple.">
-                          <CheckboxGrid
-                            options={SPECIALTY_OPTIONS.map(s => ({ value: s, label: s }))}
-                            selected={editData.specialties || []}
-                            onChange={(selected) => setEditData(prev => ({ ...prev, specialties: selected }))}
-                            columns={2}
-                          />
-                          <SpecialtyTags
-                            tags={editData.specialties || []}
-                            onRemove={(label) => setEditData(prev => ({ ...prev, specialties: (prev.specialties || []).filter((s) => s !== label) }))}
-                            className="mt-4"
-                          />
-                        </FormTile>
-                        <FormTile label="Consultation Fee" hint="Set your standard fee per consultation session.">
-                          <NumberInput label="Fee Amount" prefix="₹" value={editData.consultationFee} onChange={(e) => setEditData(prev => ({ ...prev, consultationFee: e.target.value }))} min={0} placeholder="e.g. 800" />
-                        </FormTile>
-                      </div>
-                      <StepNav onBack={back} onNext={next} nextLabel="Continue to Documents" />
-                    </FormSection>
-                  )}
-
-                  {/* ── Step 4: Documents ── */}
-                  {step === 4 && (
-                    <FormSection key="s4" direction={direction}>
-                      <div className="space-y-2">
-                        <FormTile label="Verification Documents" hint="Upload your medical license, certificates, and other verification documents.">
-                          
-                          {/* Upload Form */}
-                          {!showUploadForm ? (
-                            <button onClick={() => setShowUploadForm(true)} className="w-full py-6 border-dashed border-2 border-gray-300 rounded-xl bg-gray-50 flex flex-col items-center justify-center gap-2 mb-4 hover:border-[#1F5F7A] hover:bg-[#1F5F7A]/5 transition-all text-gray-500 hover:text-[#1F5F7A]">
-                              <Upload className="w-6 h-6" />
-                              <span className="font-semibold text-sm">Click here to upload a new document</span>
-                            </button>
-                          ) : (
-                            <div className="mb-6 p-6 bg-gray-50 rounded-xl border border-gray-200">
-                              <div className="grid gap-4 sm:grid-cols-2 mb-4">
-                                <div className="flex flex-col gap-1.5 w-full">
-                                  <label className="text-sm font-semibold text-gray-700">Document Type</label>
-                                  <select value={documentType} onChange={(e) => setDocumentType(e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1F5F7A]/20 focus:border-[#1F5F7A] transition-all">
-                                    <option value="certificate">Medical Certificate</option>
-                                    <option value="license">License</option>
-                                    <option value="degree">Medical Degree</option>
-                                    <option value="specialization">Specialization Certificate</option>
-                                    <option value="other">Other</option>
-                                  </select>
-                                </div>
-                                <div className="flex flex-col gap-1.5 w-full">
-                                  <label className="text-sm font-semibold text-gray-700 flex justify-between">
-                                    <span>Description</span>
-                                    <span className="text-sm text-gray-400 font-normal">Optional</span>
-                                  </label>
-                                  <input type="text" value={documentDescription} onChange={(e) => setDocumentDescription(e.target.value)} className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1F5F7A]/20 focus:border-[#1F5F7A] transition-all" placeholder="e.g., MBBS from AIIMS" />
-                                </div>
-                              </div>
-                              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 bg-white rounded-xl cursor-pointer hover:border-[#1F5F7A] hover:bg-[#1F5F7A]/5 transition-all duration-200">
-                                <input type="file" onChange={handleFileUpload} accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" className="hidden" id="file-input-profile" />
-                                <Upload className="w-8 h-8 text-[#1F5F7A] mb-2" />
-                                <p className="text-sm font-semibold text-gray-700">Click to upload file</p>
-                                <p className="text-xs text-gray-500 mt-1">PDF, JPG, PNG, DOC (Max 5MB)</p>
-                              </label>
-                              <div className="mt-4 flex justify-end">
-                                <button onClick={() => { setShowUploadForm(false); setDocumentDescription(""); setDocumentType("certificate"); }} className="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-gray-900 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
-                                  Cancel Upload
-                                </button>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Document List */}
-                          {profileData?.documents?.length > 0 && (
-                            <div className="mt-4 space-y-2">
-                              <p className="text-xs font-bold text-gray-500">Uploaded Documents</p>
-                              {profileData.documents.map((doc) => (
-                                <div key={doc._id} className="flex items-center justify-between p-3 bg-gray-50 border border-gray-100 rounded-xl">
-                                  <div className="flex items-center gap-3 min-w-0">
-                                    <span className="text-xl">{getFileIcon(doc.fileType)}</span>
-                                    <div className="min-w-0">
-                                      <p className="text-sm font-semibold text-gray-800 truncate">{doc.fileName}</p>
-                                      <p className="text-xs text-gray-400">{formatFileSize(doc.fileSize)} · {doc.documentType}</p>
-                                    </div>
-                                  </div>
-                                  <div className="flex gap-1">
-                                    <button onClick={() => handleDownloadDocument(doc)} className="p-2 rounded-lg hover:bg-white text-primary" title="Download"><Download className="w-4 h-4" /></button>
-                                    <button onClick={() => handleDeleteDocument(doc._id)} className="p-2 rounded-lg hover:bg-red-50 text-red-400" title="Delete"><Trash2 className="w-4 h-4" /></button>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-
-                        </FormTile>
-                      </div>
-                      <StepNav onBack={back} isLast onSubmit={handleSave} isSubmitting={saving} submitLabel="Save Profile" />
-                    </FormSection>
-                  )}
-
-                </AnimatePresence>
-              </main>
+                <div>
+                  <p className="text-xl font-bold text-dark-gray">{currentUser?.name}</p>
+                  <p className="text-gray-600">{currentUser?.email}</p>
+                </div>
+              </div>
             </div>
-          </div>) : (
+
+            {/* Education & License */}
+            <div className="card">
+              <h2 className="text-2xl font-bold text-dark-gray mb-6">Education & License</h2>
+              <div className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-dark-gray mb-2">Years of Experience</label>
+                    <input type="number" name="yearsOfExperience" value={editData.yearsOfExperience || ""} onChange={handleInputChange} className="input-field w-full" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-dark-gray mb-2">License Number</label>
+                    <input type="text" name="licenseNumber" value={editData.licenseNumber || ""} onChange={handleInputChange} className="input-field w-full" />
+                  </div>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-dark-gray mb-2">License State</label>
+                    <input type="text" name="licenseState" value={editData.licenseState || ""} onChange={handleInputChange} className="input-field w-full" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-dark-gray mb-2">Hospital Affiliation</label>
+                    <input type="text" name="hospitalAffiliation" value={editData.hospitalAffiliation || ""} onChange={handleInputChange} className="input-field w-full" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-dark-gray mb-2">Bio / About</label>
+                  <textarea name="bio" value={editData.bio || ""} onChange={handleInputChange} className="input-field w-full h-24" placeholder="Brief professional summary…" />
+                </div>
+              </div>
+            </div>
+
+            {/* Specialties & Fee */}
+            <div className="card">
+              <h2 className="text-2xl font-bold text-dark-gray mb-6">Specialties & Consultation</h2>
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-dark-gray mb-3">Select Specialties</label>
+                  <div className="grid md:grid-cols-2 gap-2 mb-4">
+                    {SPECIALTY_OPTIONS.map((s) => (
+                      <label key={s} className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={(editData.specialties || []).includes(s)} onChange={() => toggleSpecialty(s)} className="w-4 h-4" />
+                        <span className="text-sm">{s}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {(editData.specialties || []).map((spec, i) => (
+                      <span key={i} className="badge-primary flex items-center gap-2">
+                        {spec}
+                        <button onClick={() => toggleSpecialty(spec)} className="text-sm font-bold">×</button>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-dark-gray mb-2">Consultation Fee (₹)</label>
+                  <input type="number" name="consultationFee" value={editData.consultationFee || ""} onChange={handleInputChange} className="input-field w-full" />
+                </div>
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex gap-3">
+              <button onClick={handleCancel} className="btn-secondary flex-1">
+                <X className="w-4 h-4 inline mr-2" />Cancel
+              </button>
+              <button onClick={handleSave} disabled={saving} className="btn-primary flex-1 disabled:opacity-60">
+                <Save className="w-4 h-4 inline mr-2" />
+                {saving ? "Saving…" : "Save Changes"}
+              </button>
+            </div>
+          </div>
+        ) : (
           // ── VIEW MODE ──────────────────────────────────────────────────────
           <div className="space-y-6">
             {/* Identity card */}

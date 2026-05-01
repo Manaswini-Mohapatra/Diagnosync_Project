@@ -92,13 +92,13 @@ function PatientList({ onLogout, currentUser }) {
         <div className="card mb-8">
           <div className="flex gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search by name or email..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="input-field pl-10 w-full"
+                className="input-field pr-11 w-full"
               />
             </div>
           </div>

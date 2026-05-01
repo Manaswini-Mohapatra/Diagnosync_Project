@@ -1,12 +1,13 @@
 // src/components/PrivacyPopup.jsx
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 // Simple Button component - inline to avoid import issues
 function Button({ children, onClick, variant = 'primary' }) {
   const baseStyles = 'px-6 py-2 rounded-lg font-semibold transition-colors border-none cursor-pointer';
   const variants = {
-    primary: 'bg-primary text-white hover:bg-blue-700',
+    primary: 'bg-primary text-white',
     outline: 'border border-primary text-primary hover:bg-primary hover:text-white'
   };
   
@@ -20,8 +21,8 @@ function Button({ children, onClick, variant = 'primary' }) {
 export default function PrivacyPopup({ isOpen, onClose }) {
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[200] p-4">
       <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-white flex justify-between items-center p-6 border-b">
@@ -175,6 +176,7 @@ export default function PrivacyPopup({ isOpen, onClose }) {
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

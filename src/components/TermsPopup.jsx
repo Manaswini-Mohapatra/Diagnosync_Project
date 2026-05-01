@@ -1,12 +1,13 @@
 // src/components/TermsPopup.jsx
 import React from 'react';
-import { X } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { X, CheckCircle } from 'lucide-react';
 
 // Simple Button component - inline to avoid import issues
 function Button({ children, onClick, variant = 'primary' }) {
   const baseStyles = 'px-6 py-2 rounded-lg font-semibold transition-colors border-none cursor-pointer';
   const variants = {
-    primary: 'bg-primary text-white hover:bg-blue-700',
+    primary: 'bg-primary text-white',
     outline: 'border border-primary text-primary hover:bg-primary hover:text-white'
   };
   
@@ -17,15 +18,15 @@ function Button({ children, onClick, variant = 'primary' }) {
   );
 }
 
-export default function TermsPopup({ isOpen, onClose }) {
+export default function TermsPopup({ isOpen, onClose, onAgree }) {
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  return createPortal(
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[200] p-4">
       <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-white flex justify-between items-center p-6 border-b">
-          <h2 className="text-2xl font-bold">Terms & Conditions</h2>
+          <h2 className="text-2xl font-bold">Terms &amp; Conditions</h2>
           <button
             onClick={onClose}
             className="hover:bg-light-gray p-2 rounded transition-colors"
@@ -52,9 +53,7 @@ export default function TermsPopup({ isOpen, onClose }) {
               <li>Modifying or copying the materials</li>
               <li>Using the materials for any commercial purpose or for any public display</li>
               <li>Attempting to decompile or reverse engineer any software contained on DiagnoSync's website</li>
-              <li>Transferring the materials to another person or "mirroring" the materials on any other server</li>
               <li>Removing any copyright or other proprietary notations from the materials</li>
-              <li>Transferring the materials to another person or "mirroring" the materials on any other server</li>
             </ul>
           </section>
 
@@ -75,14 +74,14 @@ export default function TermsPopup({ isOpen, onClose }) {
           <section>
             <h3 className="text-lg font-bold mb-3">5. Accuracy of Materials</h3>
             <p>
-              The materials appearing on DiagnoSync's website could include technical, typographical, or photographic errors. DiagnoSync does not warrant that any of the materials on its website are accurate, complete, or current. DiagnoSync may make changes to the materials contained on its website at any time without notice.
+              The materials appearing on DiagnoSync's website could include technical, typographical, or photographic errors. DiagnoSync does not warrant that any of the materials on its website are accurate, complete, or current.
             </p>
           </section>
 
           <section>
             <h3 className="text-lg font-bold mb-3">6. Links</h3>
             <p>
-              DiagnoSync has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by DiagnoSync of the site. Use of any such linked website is at the user's own risk.
+              DiagnoSync has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by DiagnoSync of the site.
             </p>
           </section>
 
@@ -96,33 +95,45 @@ export default function TermsPopup({ isOpen, onClose }) {
           <section>
             <h3 className="text-lg font-bold mb-3">8. Governing Law</h3>
             <p>
-              These terms and conditions are governed by and construed in accordance with the laws of [Your Country/State] and you irrevocably submit to the exclusive jurisdiction of the courts located in that location.
+              These terms and conditions are governed by and construed in accordance with the laws of India and you irrevocably submit to the exclusive jurisdiction of the courts located in that location.
             </p>
           </section>
 
           <section>
             <h3 className="text-lg font-bold mb-3">9. Medical Disclaimer</h3>
             <p>
-              DiagnoSync is an AI-powered platform designed to provide general health information and should not be construed as medical advice. Always consult with a qualified healthcare professional for diagnosis, treatment, and medical advice. DiagnoSync does not replace professional medical evaluation or treatment.
+              DiagnoSync is an AI-powered platform designed to provide general health information and should not be construed as medical advice. Always consult with a qualified healthcare professional for diagnosis, treatment, and medical advice.
             </p>
           </section>
 
           <section>
             <h3 className="text-lg font-bold mb-3">10. User Responsibilities</h3>
             <p>
-              Users are responsible for maintaining the confidentiality of their account information and passwords. Users agree to notify DiagnoSync of any unauthorized use of their accounts and to accept all risks of unauthorized access to the information provided.
+              Users are responsible for maintaining the confidentiality of their account information and passwords. Users agree to notify DiagnoSync of any unauthorized use of their accounts.
             </p>
           </section>
         </div>
 
         {/* Footer */}
         <div className="sticky bottom-0 bg-white border-t p-6 flex justify-end gap-3">
-          <Button onClick={onClose}>Close</Button>
-          <Button variant="primary" onClick={onClose}>
-            I Agree
-          </Button>
+          <button
+            onClick={onClose}
+            className="px-6 py-2 rounded-lg font-semibold border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
+          >
+            Close
+          </button>
+          {onAgree && (
+            <button
+              onClick={() => { onAgree(); onClose(); }}
+              className="px-6 py-2 rounded-lg font-semibold bg-primary text-white hover:bg-primary/90 transition-colors cursor-pointer flex items-center gap-2"
+            >
+              <CheckCircle className="w-4 h-4" />
+              I Agree
+            </button>
+          )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

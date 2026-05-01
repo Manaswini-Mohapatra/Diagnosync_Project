@@ -71,10 +71,37 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
   const [showRate, setShowRate]       = useState(false);
   const [newDate, setNewDate]         = useState("");
   const [newTime, setNewTime]         = useState("");
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
   const [ratingScore, setRatingScore] = useState(0);
   const [ratingComment, setRatingComment] = useState("");
   const [loading, setLoading]         = useState(false);
   const [error, setError]             = useState("");
+
+  // Fetch available slots when a new date is selected
+  useEffect(() => {
+    if (!showReschedule || !newDate) return;
+    const fetchSlots = async () => {
+      setLoadingSlots(true);
+      try {
+        const docId = apt.doctorId || apt.doctor?._id;
+        if (!docId) return;
+        const res = await api.get(`/doctors/${docId}/slots?date=${newDate}`);
+        const slots = res.data.slots || [];
+        setAvailableSlots(slots);
+        // Clear selected time if it's no longer available
+        if (newTime && !slots.includes(newTime)) {
+          setNewTime("");
+        }
+      } catch (err) {
+        console.error("Failed to fetch slots", err);
+        setAvailableSlots([]);
+      } finally {
+        setLoadingSlots(false);
+      }
+    };
+    fetchSlots();
+  }, [newDate, showReschedule, apt]);
 
   const isScheduled = apt.status === "scheduled";
   const isFuture    = isUpcoming(apt);
@@ -109,14 +136,8 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
   const today = new Date().toISOString().split("T")[0];
   const maxDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
 
-  const timeSlots = [
-    "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
-    "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM",
-    "05:00 PM", "05:30 PM", "06:00 PM"
-  ];
-
   return (
-    <div className="bg-white border border-border-gray rounded-xl shadow-sm overflow-hidden">
+    <div className="glass-panel border-none shadow-soft overflow-hidden hover-lift group">
       {/* Card Header — always visible */}
       <div
         className="p-5 cursor-pointer hover:bg-gray-50 transition-colors"
@@ -169,7 +190,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
 
       {/* Expanded section */}
       {expanded && (
-        <div className="border-t border-border-gray bg-gray-50 p-5 space-y-4">
+        <div className="border-t border-white/40 bg-white/40 backdrop-blur p-5 space-y-4">
           {/* Reason */}
           {apt.reason && (
             <div>
@@ -199,7 +220,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
             {apt.type === "video" && isScheduled && isFuture && (
               <button
                 onClick={() => joinVideoCall(apt._id || apt.id)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-[#1F5F7A] text-white text-sm font-semibold rounded-lg transition-colors"
               >
                 <Video className="w-4 h-4" /> Join Video Call
               </button>
@@ -268,9 +289,20 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
                     value={newTime}
                     onChange={(e) => setNewTime(e.target.value)}
                     className="input-field w-full text-sm"
+                    disabled={!newDate || loadingSlots}
                   >
-                    <option value="">Select time</option>
-                    {timeSlots.map((t) => <option key={t} value={t}>{t}</option>)}
+                    {!newDate ? (
+                      <option value="">Select a date first</option>
+                    ) : loadingSlots ? (
+                      <option value="">Loading slots...</option>
+                    ) : availableSlots.length === 0 ? (
+                      <option value="">No slots available</option>
+                    ) : (
+                      <>
+                        <option value="">Select time</option>
+                        {availableSlots.map((t) => <option key={t} value={t}>{t}</option>)}
+                      </>
+                    )}
                   </select>
                 </div>
               </div>
@@ -393,9 +425,9 @@ function PatientAppointmentsPage({ onLogout, currentUser }) {
   const displayed = tabs[activeTab] || [];
 
   return (
-    <div className="min-h-screen bg-light-gray flex flex-col">
+    <div className="min-h-screen bg-transparent relative pb-20 flex flex-col">
       {/* Navbar */}
-      <nav className="bg-white shadow-sm sticky top-0 z-40">
+      <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo />
@@ -436,15 +468,15 @@ function PatientAppointmentsPage({ onLogout, currentUser }) {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6">
+        <div className="flex gap-1 bg-white/40 backdrop-blur rounded-xl p-1 mb-6 border border-white/60 shadow-sm">
           {tabConfig.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
               className={`flex-1 py-2 px-3 rounded-lg text-sm font-semibold transition-all ${
                 activeTab === tab.key
-                  ? "bg-white shadow text-primary"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "bg-white shadow-soft text-primary scale-[1.02]"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-white/50"
               }`}
             >
               {tab.label}

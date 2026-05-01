@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,17 +10,32 @@
   box-sizing: border-box;
 }
 
+/* Hide the browser's native password reveal eye button (Edge/Chrome)
+   so it doesn't overlap with the custom React eye toggle */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #FAFAFA;
+  background-image: 
+    radial-gradient(at 0% 0%, hsla(203,89%,53%,0.07) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, hsla(177,87%,51%,0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, hsla(28,98%,60%,0.04) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
 code {
@@ -77,28 +94,40 @@ code {
 
 /* Custom button styles */
 .btn-primary {
-  @apply bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200;
+  @apply bg-primary text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200;
 }
+.btn-primary:hover { filter: brightness(1.15); }
 
 .btn-secondary {
-  @apply bg-light-gray text-dark-gray px-6 py-2 rounded-lg font-semibold hover:bg-gray-300 transition-all duration-200;
+  @apply bg-light-gray text-dark-gray px-6 py-2 rounded-lg font-semibold transition-all duration-200;
 }
+.btn-secondary:hover { filter: brightness(0.93); }
 
 .btn-danger {
-  @apply bg-danger text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-600 transition-all duration-200;
+  @apply bg-danger text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200;
 }
+.btn-danger:hover { filter: brightness(1.15); }
 
 .btn-success {
-  @apply bg-success text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-600 transition-all duration-200;
+  @apply bg-success text-white px-6 py-2 rounded-lg font-semibold transition-all duration-200;
 }
+.btn-success:hover { filter: brightness(1.15); }
 
 /* Card styles */
 .card {
-  @apply bg-white rounded-lg shadow-sm border border-border-gray p-6;
+  @apply bg-white/80 backdrop-blur-md rounded-2xl shadow-soft border border-white/40 p-6;
 }
 
 .card-hover {
-  @apply card hover:shadow-md transition-shadow duration-200 cursor-pointer;
+  @apply card hover:shadow-glass hover:-translate-y-1 transition-all duration-300 cursor-pointer;
+}
+
+.glass-panel {
+  @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-glass rounded-2xl;
+}
+
+.hover-lift {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-glass;
 }
 
 /* Badge styles */
@@ -153,4 +182,35 @@ code {
 
 .section-gradient {
   background: linear-gradient(to right, rgba(0, 102, 255, 0.1), rgba(0, 179, 65, 0.1), rgba(0, 212, 255, 0.1));
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * GLOBAL BACKGROUND OVERRIDE (PHASE 6)
+ * Forces the Cashmere Blue background gracefully on all active layouts 
+ * EXCEPT SignIn & SignUp (which are excluded from .global-app-bg)
+ * ──────────────────────────────────────────────────────────────────────── */
+.global-app-bg > div:first-child {
+  background-color: #A5B8D0 !important;
+  background-image: none !important;
+  transition: background-color 0.5s ease-in-out;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+ * GLOBAL BUTTON HOVER — brightness only, never a new colour
+ * Applies to every <button> element sitewide.
+ * Excluded: buttons that already rely on translate/scale transforms only
+ *   (those use .hover-lift which is unaffected).
+ * ──────────────────────────────────────────────────────────────────────── */
+button {
+  transition: filter 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+button:hover {
+  filter: brightness(1.12);
+}
+
+/* Exceptions: icon-only / ghost buttons where brightness would look odd
+   add class .no-brightness-hover to opt out */
+button.no-brightness-hover:hover {
+  filter: none;
 }

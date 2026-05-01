@@ -65,14 +65,18 @@ function PasswordReset() {
     setStep(3)
   }
 
+  const STRONG_PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_#^])[A-Za-z\d@$!%*?&\-_#^]{8,}$/;
+
   // ── Step 3: Set new password ────────────────────────────────────────────
   const handleResetPassword = async (e) => {
     e.preventDefault()
     setError('')
 
     if (!newPassword) { setError('Password is required'); return }
-    if (newPassword.length < 8) { setError('Password must be at least 8 characters'); return }
-    if (!/\d/.test(newPassword)) { setError('Password must contain at least 1 number'); return }
+    if (!STRONG_PASSWORD_REGEX.test(newPassword)) {
+      setError('Password must be 8+ characters with uppercase, lowercase, number and special character (@$!%*?&-_#^).')
+      return
+    }
     if (newPassword !== confirmPassword) { setError('Passwords do not match'); return }
 
     setIsLoading(true)

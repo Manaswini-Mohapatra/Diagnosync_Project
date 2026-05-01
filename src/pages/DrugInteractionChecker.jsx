@@ -150,13 +150,13 @@ function DrugInteractionChecker({ onLogout, currentUser }) {
               {/* Search Box */}
               <div className="relative mb-4">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search by drug name..."
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
-                    className="input-field w-full pl-10"
+                    className="input-field w-full pr-11"
                   />
                   {isSearching && (
                     <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary animate-spin" />

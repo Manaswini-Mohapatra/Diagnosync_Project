@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 
 // Pages
@@ -28,7 +29,25 @@ import DoctorAppointmentsPage from "./pages/DoctorAppointmentsPage";
 import PatientAppointmentsPage from "./pages/PatientAppointmentsPage";
 import PatientReports from "./pages/PatientReports";
 import AnalyticsPage from "./pages/AnalyticsPage";
+import PaymentPage from "./pages/PaymentPage";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import UserManagement from "./pages/admin/UserManagement";
+import DoctorVerification from "./pages/admin/DoctorVerification";
+import AppointmentManagement from "./pages/admin/AppointmentManagement";
+import FloatingActionButton from "./components/FloatingActionButton";
 import api from "./utils/api";
+
+const GlobalWrapper = ({ children }) => {
+  const location = useLocation();
+  const isAuthPage =
+    location.pathname === "/signin" || location.pathname === "/signup";
+
+  return (
+    <div className={isAuthPage ? "" : "global-app-bg"}>
+      {children}
+    </div>
+  );
+};
 
 function App() {
   // ── Auth state — source of truth is the JWT token in localStorage ──
@@ -86,18 +105,30 @@ function App() {
   };
 
   const ProtectedRoute = ({ children, requiredRole }) => {
+    const location = useLocation();
     if (!isAuthenticated) {
       return <Navigate to="/signin" replace />;
     }
     if (requiredRole && userRole !== requiredRole) {
       return <Navigate to="/404" replace />;
     }
+    // Block rejected doctors from accessing anything except dashboard, profile, and registration
+    if (
+      userRole === "doctor" &&
+      currentUser?.verificationStatus === "rejected" &&
+      location.pathname !== "/doctor/dashboard" &&
+      location.pathname !== "/doctor/registration" &&
+      location.pathname !== "/doctor/profile"
+    ) {
+      return <Navigate to="/doctor/dashboard" replace />;
+    }
     return children;
   };
 
   return (
     <Router>
-      <Routes>
+      <GlobalWrapper>
+        <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/signup" element={<SignUp onLogin={handleLogin} />} />
@@ -205,6 +236,14 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/patient/payment/:appointmentId"
+          element={
+            <ProtectedRoute requiredRole="patient">
+              <PaymentPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Doctor Routes */}
         <Route
@@ -279,10 +318,59 @@ function App() {
           }
         />
 
+        {/* Admin Routes */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminDashboard
+                onLogout={handleLogout}
+                currentUser={currentUser}
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <UserManagement
+                onLogout={handleLogout}
+                currentUser={currentUser}
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/doctors/verify"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <DoctorVerification
+                onLogout={handleLogout}
+                currentUser={currentUser}
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/appointments"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AppointmentManagement
+                onLogout={handleLogout}
+                currentUser={currentUser}
+              />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Not Found */}
         <Route path="/404" element={<NotFound />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/404" replace />} />
+        </Routes>
+        <FloatingActionButton role={userRole} currentUser={currentUser} />
+      </GlobalWrapper>
     </Router>
   );
 }

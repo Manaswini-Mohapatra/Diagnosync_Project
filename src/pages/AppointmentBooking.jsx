@@ -95,12 +95,12 @@ function AppointmentBooking({ onLogout, currentUser }) {
         date: selectedDate,
         time: selectedTime,
         type: appointmentType,
-        reason: reason || "General Consultation"
+        reason: reason || "General Consultation",
+        status: "pending"
       };
 
       const res = await api.post("/appointments", payload);
-      setConfirmedAppointment(res.data.data);
-      setIsConfirmed(true);
+      navigate(`/patient/payment/${res.data.data._id || res.data.data.id}`);
     } catch (error) {
       console.error("Booking error:", error);
       alert("Failed to securely book your appointment. Please try again.");
@@ -149,8 +149,8 @@ function AppointmentBooking({ onLogout, currentUser }) {
   // Cancellation Sub-screan
   if (isCancelled) {
     return (
-       <div className="min-h-screen bg-light-gray">
-          <nav className="bg-white shadow-sm sticky top-0 z-40">
+       <div className="min-h-screen bg-transparent relative pb-20">
+          <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <Logo/>
@@ -162,7 +162,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
           </div>
         </nav>
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="card text-center border-t-4 border-t-red-500">
+          <div className="glass-panel p-8 text-center border border-t-[6px] border-t-red-500 shadow-soft">
              <div className="flex justify-center mb-4">
               <AlertTriangle className="w-16 h-16 text-danger" />
             </div>
@@ -180,9 +180,9 @@ function AppointmentBooking({ onLogout, currentUser }) {
   if (isConfirmed) {
     const activeDoc = getActiveDoctor();
     return (
-      <div className="min-h-screen bg-light-gray">
+      <div className="min-h-screen bg-transparent relative pb-20">
         {/* Navbar */}
-        <nav className="bg-white shadow-sm sticky top-0 z-40">
+        <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <Logo/>
@@ -200,7 +200,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
 
         {/* Confirmation */}
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 animate-fade-in">
-          <div className="card text-center">
+          <div className="glass-panel p-8 border-none shadow-soft text-center">
             <div className="flex justify-center mb-6">
               <CheckCircle className="w-16 h-16 text-success" />
             </div>
@@ -281,7 +281,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
                   confirmedAppointment?._id || confirmedAppointment?.id,
                   currentUser?.name
                 )}
-                className="mt-4 w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-md"
+                className="mt-4 w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#1F5F7A] text-white font-bold rounded-xl transition-colors shadow-md"
               >
                 <Video className="w-5 h-5" />
                 Join Video Call Now
@@ -296,9 +296,9 @@ function AppointmentBooking({ onLogout, currentUser }) {
   // ────────────────────────────────────────────────────────────────────────
   // Booking Form Screens
   return (
-    <div className="min-h-screen bg-light-gray">
+    <div className="min-h-screen bg-transparent relative pb-20">
       {/* Navbar */}
-      <nav className="bg-white shadow-sm sticky top-0 z-40">
+      <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo/>
@@ -343,14 +343,14 @@ function AppointmentBooking({ onLogout, currentUser }) {
 
         {/* Step 1: Select Doctor */}
         {step === 1 && (
-          <div className="card animate-slide-in">
+          <div className="glass-panel p-8 border-none shadow-soft hover-lift animate-slide-in">
             <h2 className="text-2xl font-bold text-dark-gray mb-6">
               Select a Doctor
             </h2>
 
             {/* Phase 4 Search UI */}
             <div className="relative mb-6">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
@@ -358,7 +358,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
                 placeholder="Search doctors by name or specialty..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-field pl-10 w-full"
+                className="input-field pr-11 w-full"
               />
             </div>
 
@@ -378,8 +378,8 @@ function AppointmentBooking({ onLogout, currentUser }) {
                     <div
                       key={docId}
                       onClick={() => setSelectedDoctor(docId)}
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                        selectedDoctor === docId ? "border-primary bg-blue-50/50 shadow-sm" : "border-border-gray hover:border-blue-200 hover:shadow-sm"
+                      className={`p-5 border border-white/50 rounded-xl cursor-pointer transition-all shadow-sm group hover-lift ${
+                        selectedDoctor === docId ? "bg-primary/5 ring-2 ring-primary scale-105 shadow-md" : "bg-white/60 backdrop-blur hover:bg-white/80"
                       }`}
                     >
                       <div className="flex justify-between items-start">
@@ -391,11 +391,8 @@ function AppointmentBooking({ onLogout, currentUser }) {
                             {doctor.specialization || "General Physician"}
                           </p>
                           <div className="flex gap-4 mt-2 text-sm">
-                            <span className="text-gray-600">
-                              ⭐ {doctor.rating || "4.9"} ({doctor.reviews || "100+"} verified reviews)
-                            </span>
                             <span className="font-semibold text-primary">
-                              ${doctor.consultationFee || "120"}/session
+                              ₹{doctor.consultationFee || "120"}/session
                             </span>
                           </div>
                         </div>
@@ -421,7 +418,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
 
         {/* Step 2: Select Date & Time */}
         {step === 2 && (
-          <div className="card animate-slide-in">
+          <div className="glass-panel p-8 border-none shadow-soft hover-lift animate-slide-in">
             <h2 className="text-2xl font-bold text-dark-gray mb-6 flex justify-between items-center">
               Choose Date & Time
               <span className="text-sm font-normal text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
@@ -493,7 +490,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
 
         {/* Step 3: Confirm Details */}
         {step === 3 && (
-          <div className="card animate-slide-in">
+          <div className="glass-panel p-8 border-none shadow-soft hover-lift animate-slide-in">
             <h2 className="text-2xl font-bold text-dark-gray mb-6">
               Final Details
             </h2>

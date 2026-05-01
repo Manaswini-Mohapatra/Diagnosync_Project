@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   LogOut,
   Users,
@@ -11,6 +11,7 @@ import {
   CheckCircle,
   Activity,
   Video,
+  Plus
 } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
@@ -21,6 +22,7 @@ import DoctorScheduleModal from "../components/DoctorScheduleModal";
 
 function DoctorDashboard({ onLogout, currentUser }) {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
 
   const [totalCount, setTotalCount] = useState(0);
@@ -29,6 +31,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
   const [urgentNotifs, setUrgentNotifs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [profileComplete, setProfileComplete] = useState(true);
+  const [verificationStatus, setVerificationStatus] = useState('pending');
   const [showScheduleModal, setShowScheduleModal] = useState(false);
 
   useEffect(() => {
@@ -69,7 +72,12 @@ function DoctorDashboard({ onLogout, currentUser }) {
         // Fetch doctor profile to check completeness
         try {
           const profileRes = await api.get("/doctors/me");
-          setProfileComplete(!!profileRes.data.data);
+          const data = profileRes.data.data;
+          // Check for a critical field (licenseNumber) to determine if profile is actually complete
+          // Ignore auto-generated 'PENDING-' placeholders created during signup
+          const hasRealLicense = data?.licenseNumber && !data.licenseNumber.startsWith("PENDING-");
+          setProfileComplete(!!data && hasRealLicense);
+          setVerificationStatus(data?.verificationStatus || 'pending');
         } catch (err) {
           if (err.response?.status === 404) setProfileComplete(false);
         }
@@ -81,6 +89,17 @@ function DoctorDashboard({ onLogout, currentUser }) {
     }
     fetchDashboard();
   }, []);
+
+  // Listen for FAB openSchedule trigger
+  useEffect(() => {
+    if (searchParams.get("openSchedule") === "true") {
+      setShowScheduleModal(true);
+      // Clear parameter to prevent modal reopening on refresh
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete("openSchedule");
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   const handleLogout = () => {
     onLogout();
@@ -122,9 +141,9 @@ function DoctorDashboard({ onLogout, currentUser }) {
   };
 
   return (
-    <div className="min-h-screen bg-light-gray">
+    <div className="min-h-screen bg-transparent relative pb-20">
       {/* Navbar */}
-      <nav className="bg-white shadow-sm sticky top-0 z-40">
+      <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo />
@@ -132,7 +151,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => navigate("/doctor/profile")}
-                  className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer hover:bg-blue-700 transition-colors"
+                  className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold cursor-pointer transition-colors"
                   title="View Profile"
                 >
                   {currentUser?.name?.charAt(0).toUpperCase() || "D"}
@@ -160,6 +179,25 @@ function DoctorDashboard({ onLogout, currentUser }) {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
+        {/* Rejection Warning Banner */}
+        {verificationStatus === 'rejected' && !loading && (
+          <div className="mb-6 animate-fade-in p-4 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between shadow-sm">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-6 h-6 text-red-600" />
+              <div>
+                <h3 className="font-bold text-red-800">Profile Verification Rejected</h3>
+                <p className="text-sm text-red-700">Your profile verification was rejected. Please re-upload the correct information and documents for approval.</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => navigate('/doctor/registration')}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap"
+            >
+              Update Profile
+            </button>
+          </div>
+        )}
+
         {/* Profile Completion Warning */}
         {!profileComplete && !loading && (
           <div className="mb-6 animate-fade-in p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center justify-between">
@@ -179,7 +217,10 @@ function DoctorDashboard({ onLogout, currentUser }) {
           </div>
         )}
 
-        {/* Welcome */}
+        {/* Features (Hidden if profile is rejected) */}
+        {verificationStatus !== 'rejected' && (
+          <>
+            {/* Welcome */}
         <div className="mb-8 animate-fade-in">
           <h1 className="text-4xl font-bold text-dark-gray mb-2">
             Welcome, {currentUser?.name?.split(" ")[0] || "Doctor"} 👋
@@ -195,13 +236,13 @@ function DoctorDashboard({ onLogout, currentUser }) {
               <div
                 key={i}
                 onClick={stat.onClick}
-                className="card cursor-pointer hover:shadow-md transition-shadow animate-slide-in"
+                className="glass-panel p-6 animate-slide-in cursor-pointer border-none shadow-soft hover-lift group"
               >
-                <div className={`flex items-center justify-center w-12 h-12 rounded-lg ${stat.color} mb-4`}>
+                <div className={`flex items-center justify-center w-12 h-12 rounded-xl border border-white/50 ${stat.color} mb-4 group-hover:scale-110 transition-transform duration-300`}>
                   <Icon className={`w-6 h-6 ${stat.textColor}`} />
                 </div>
-                <p className="text-gray-600 text-sm mb-2">{stat.label}</p>
-                <p className="text-3xl font-bold text-dark-gray">{stat.value}</p>
+                <p className="text-gray-500 font-medium text-sm mb-2">{stat.label}</p>
+                <p className="text-3xl font-extrabold text-dark-gray">{stat.value}</p>
               </div>
             );
           })}
@@ -215,14 +256,14 @@ function DoctorDashboard({ onLogout, currentUser }) {
               <button
                 key={i}
                 onClick={() => navigate(action.to)}
-                className={`card hover:shadow-md transition-shadow p-6 flex items-center gap-4 text-left ${action.color} border border-border-gray rounded-xl`}
+                className={`glass-panel p-6 flex items-center gap-4 text-left border-none shadow-soft hover-lift group ${action.color}`}
               >
-                <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-white shadow-sm">
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-white/60 backdrop-blur border border-white/40 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <Icon className="w-6 h-6 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-bold text-dark-gray text-lg">{action.title}</h3>
-                  <p className="text-sm text-gray-500">{action.desc}</p>
+                  <p className="text-sm font-medium text-gray-500">{action.desc}</p>
                 </div>
                 <ArrowRight className="w-5 h-5 text-gray-400 ml-auto" />
               </button>
@@ -232,7 +273,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
 
         {/* Urgent Notifications */}
         {urgentNotifs.length > 0 && (
-          <div className="mb-8 card border-l-4 border-danger">
+          <div className="mb-8 glass-panel p-6 border-none shadow-soft border-l-4 border-l-danger">
             <h2 className="text-xl font-bold text-dark-gray mb-4 flex items-center gap-2">
               <AlertCircle className="w-6 h-6 text-danger" />
               Urgent Alerts
@@ -269,82 +310,80 @@ function DoctorDashboard({ onLogout, currentUser }) {
           </div>
         )}
 
-        {/* Today's Appointments */}
-        <div className="card">
-          <div className="flex justify-between items-center mb-4">
+        {/* Today's Appointments Timeline */}
+        <div className="glass-panel p-6 border-none shadow-soft hover-lift">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-dark-gray flex items-center gap-2">
-              <Clock className="w-5 h-5 text-primary" />
-              Today's Appointments
+              <Clock className="w-6 h-6 text-primary" />
+              Today's Schedule
             </h2>
             <button
               onClick={() => navigate("/doctor/appointments")}
-              className="text-primary text-sm font-semibold hover:underline flex items-center gap-1"
+              className="text-primary text-sm font-semibold hover:text-primary-dark transition-colors flex items-center gap-1 bg-primary/5 px-4 py-1.5 rounded-full"
             >
-              View all <ArrowRight className="w-4 h-4" />
+              View all <ArrowRight className="w-4 h-4 border-none" />
             </button>
           </div>
 
           {loading ? (
             <p className="text-gray-500 text-center py-8">Loading appointments…</p>
           ) : todayAppointments.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-center py-12 bg-white/50 backdrop-blur rounded-xl border border-dashed border-gray-300">
               <CheckCircle className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">No appointments scheduled for today</p>
+              <p className="text-gray-500 font-medium">No appointments scheduled for today</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border-gray">
-                    <th className="text-left py-3 px-4 font-semibold text-dark-gray">Patient</th>
-                    <th className="text-left py-3 px-4 font-semibold text-dark-gray">Time</th>
-                    <th className="text-left py-3 px-4 font-semibold text-dark-gray">Type</th>
-                    <th className="text-left py-3 px-4 font-semibold text-dark-gray">Status</th>
-                    <th className="text-left py-3 px-4 font-semibold text-dark-gray">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {todayAppointments.map((apt) => (
-                    <tr
-                      key={apt.id}
-                      className="border-b border-border-gray hover:bg-light-gray transition-colors"
-                    >
-                      <td className="py-3 px-4 font-medium">{apt.patientName}</td>
-                      <td className="py-3 px-4 text-gray-600">{apt.time}</td>
-                      <td className="py-3 px-4 capitalize text-gray-600">{apt.type}</td>
-                      <td className="py-3 px-4">
-                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold capitalize ${statusBadge(apt.status)}`}>
+            <div className="relative border-l-2 border-primary/20 ml-2 md:ml-4 py-2 space-y-6 mt-4">
+              {todayAppointments.map((apt) => (
+                <div key={apt.id} className="relative pl-6 md:pl-8 group">
+                  {/* Timeline Dot */}
+                  <div className="absolute -left-[9px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-primary ring-4 ring-white border-2 border-primary group-hover:scale-125 transition-transform duration-300 shadow-sm z-10"></div>
+                  
+                  {/* Appointment Card */}
+                  <div className="bg-white/80 p-4 border border-white/40 rounded-xl cursor-pointer hover:bg-blue-50/80 hover:border-blue-200 shadow-sm hover:shadow-soft transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-dark-gray text-base truncate">
+                        {apt.patientName}
+                      </p>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="flex items-center gap-1 text-sm font-medium text-gray-500">
+                          <Clock className="w-4 h-4 text-primary/70" /> {apt.time}
+                        </span>
+                        <span className="text-xs px-2 py-0.5 rounded-full font-bold capitalize bg-gray-100 text-gray-600">
+                          {apt.type}
+                        </span>
+                        <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-bold capitalize ${statusBadge(apt.status)}`}>
                           {apt.status}
                         </span>
-                      </td>
-                      <td className="py-3 px-4">
-                        <div className="flex items-center gap-2">
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-center gap-2">
+                       <button
+                          onClick={() => navigate("/doctor/appointments")}
+                          className="w-full sm:w-auto px-4 py-2 text-primary font-semibold text-sm hover:bg-blue-50 rounded-lg transition-colors border border-primary/20"
+                        >
+                          {apt.status === "scheduled" ? "View Details" : "Clinical Log"}
+                       </button>
+
+                       {apt.type === "video" && apt.status === "scheduled" && (
                           <button
-                            onClick={() => navigate("/doctor/appointments")}
-                            className="text-primary hover:underline text-sm font-semibold"
+                            onClick={() => joinVideoCall(apt._id || apt.id, currentUser?.name)}
+                            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-[#1F5F7A] text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
+                            title="Start video call"
                           >
-                            {apt.status === "scheduled" ? "View" : "Details"}
+                            <Video className="w-4 h-4" /> Start Call
                           </button>
-                          {/* Show Start Call for video appointments */}
-                          {apt.type === "video" && apt.status === "scheduled" && (
-                            <button
-                              onClick={() => joinVideoCall(apt._id || apt.id, currentUser?.name)}
-                              className="flex items-center gap-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors"
-                              title="Start video call"
-                            >
-                              <Video className="w-3 h-3" />
-                              Start Call
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        )}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
+          </>
+        )}
 
         {/* Modals */}
         {showScheduleModal && (
