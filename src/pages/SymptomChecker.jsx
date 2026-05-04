@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, LogOut, Send, AlertCircle, Loader } from "lucide-react";
 import Logo from "../components/Logo";
+import api from "../utils/api";
 
 function SymptomChecker({ onLogout, currentUser }) {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ function SymptomChecker({ onLogout, currentUser }) {
   const [loading, setLoading] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [analysisResults, setAnalysisResults] = useState(null);
-  const [symptomHistory, setSymptomHistory] = useState([]);
+  const [sessionId, setSessionId] = useState(null);
   const [conversationPhase, setConversationPhase] = useState("initial"); // initial, gathering, analyzing, results
 
   // Auto-scroll to bottom of messages
@@ -25,119 +26,39 @@ function SymptomChecker({ onLogout, currentUser }) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Call Chatbot API for intelligent responses
-  const callChatbotAPI = async (userMessage, systemPrompt) => {
+  // Initialize ML Session on mount
+  useEffect(() => {
+    initSession();
+  }, []);
+
+  const initSession = async () => {
     try {
-      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
-      
-      console.log("API Key loaded:", !!apiKey);
-      
-      if (!apiKey) {
-        throw new Error("API Key not configured");
+      setLoading(true);
+      const res = await api.post("/ml/session");
+      if (res.data && res.data.sessionId) {
+        setSessionId(res.data.sessionId);
+        setMessages([
+          {
+            type: "bot",
+            text: res.data.greeting || "Hello! I'm your AI health assistant. What symptoms are you experiencing today?",
+          },
+        ]);
       }
-
-      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
-          messages: [
-            {
-              role: "system",
-              content: systemPrompt || "You are a helpful medical assistant",
-            },
-            {
-              role: "user",
-              content: userMessage,
-            },
-          ],
-          max_tokens: 500,
-          temperature: 0.7,
-        }),
-      });
-
-      console.log("Response status:", response.status);
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("API Error:", errorData);
-        throw new Error(`API Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data.choices?.[0]?.message?.content || "No response";
-    } catch (error) {
-      console.error("Fetch Error:", error);
-      return "I'm having trouble connecting. Please try again.";
-    }
-  };
-  // Get next follow-up question
-  const getFollowUpQuestion = async (symptoms) => {
-    const systemPrompt = `You are a medical assistant chatbot. Based on the symptoms provided, ask ONE specific follow-up question to better understand the patient's condition. 
-    Keep your response to 1-2 sentences. Ask about:
-    - Duration of symptoms
-    - Severity (mild/moderate/severe)
-    - Recent activities or exposures
-    - Medications taken
-    - Other relevant medical history
-    
-    Symptoms so far: ${symptoms.join(", ")}
-    
-    Previous questions asked: ${symptomHistory.join(", ")}
-    
-    Do NOT repeat previous questions. Make it conversational and medical.`;
-
-    const userMessage = `Patient has reported: ${symptoms.join(", ")}. What should I ask next?`;
-    return await callChatbotAPI(userMessage, systemPrompt);
-  };
-
-  // Analyze symptoms and generate results
-  const analyzeSymptoms = async (symptoms, additionalInfo) => {
-    const systemPrompt = `You are a medical diagnostic assistant. Based on the patient's symptoms and responses, provide a realistic medical analysis.
-    
-    Return your response in the following JSON format ONLY:
-    {
-      "primaryCondition": "Most likely condition",
-      "risk": "Probability percentage",
-      "conditions": [
+    } catch (err) {
+      console.error("Failed to start session:", err);
+      setMessages([
         {
-          "name": "Condition name",
-          "probability": "XX%",
-          "severity": "Low/Medium/High",
-          "description": "Brief description"
-        }
-      ],
-      "recommendations": [
-        "Recommendation 1",
-        "Recommendation 2",
-        "Recommendation 3"
-      ],
-      "urgency": "Low/Medium/High",
-      "disclaimer": "Important medical disclaimer"
-    }
-    
-    Be realistic and evidence-based. Include common conditions that match the symptoms.`;
-
-    const userMessage = `Patient symptoms: ${symptoms.join(", ")}. Additional information: ${additionalInfo}. Please analyze and provide possible diagnoses.`;
-
-    try {
-      const response = await callChatbotAPI(userMessage, systemPrompt);
-      const jsonMatch = response.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-      return null;
-    } catch (error) {
-      console.error("Analysis error:", error);
-      return null;
+          type: "bot",
+          text: "I'm having trouble connecting to the intelligence server. Please try again later.",
+        },
+      ]);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSendMessage = async (text) => {
-    if (!text.trim() || loading) return;
+    if (!text.trim() || loading || !sessionId) return;
 
     // Add user message
     setMessages((prev) => [...prev, { type: "user", text }]);
@@ -145,65 +66,31 @@ function SymptomChecker({ onLogout, currentUser }) {
     setLoading(true);
 
     try {
-      if (conversationPhase === "initial") {
-        // First message - user provides initial symptoms
-        const symptoms = text.split(",").map((s) => s.trim());
-        setSymptomHistory([]);
-        setAnalysisResults(null);
-
-        // Add to symptom history
-        setSymptomHistory(symptoms);
-
-        // Get follow-up question
-        const followUp = await getFollowUpQuestion(symptoms);
-        setMessages((prev) => [...prev, { type: "bot", text: followUp }]);
-        setConversationPhase("gathering");
-      } else if (conversationPhase === "gathering") {
-        // Gathering additional information
-        // Store the response
-        const updatedHistory = [...symptomHistory, text];
-        setSymptomHistory(updatedHistory);
-
-        // Check if we have enough information (after 2-3 exchanges)
-        if (updatedHistory.length >= 3) {
-          // Move to analysis
-          setMessages((prev) => [
-            ...prev,
-            { type: "bot", text: "Analyzing your symptoms..." },
-          ]);
-          setConversationPhase("analyzing");
-
-          // Analyze symptoms
-          const analysis = await analyzeSymptoms(symptomHistory, text);
-
-          if (analysis) {
-            setAnalysisResults(analysis);
-            setShowResults(true);
-            setConversationPhase("results");
-          } else {
-            // Get follow-up question first, then set message
-            const followUp = await getFollowUpQuestion(symptomHistory);
-            setMessages((prev) => [
-              ...prev,
-              {
-                type: "bot",
-                text: "I need to ask a few more questions. " + followUp,
-              },
-            ]);
-          }
-        } else {
-          // Ask another follow-up question
-          const followUp = await getFollowUpQuestion(updatedHistory);
-          setMessages((prev) => [...prev, { type: "bot", text: followUp }]);
-        }
+      const res = await api.post("/ml/chat", {
+        sessionId,
+        message: text
+      });
+      
+      const data = res.data;
+      
+      if (data.reply) {
+        setMessages((prev) => [...prev, { type: "bot", text: data.reply }]);
       }
+      
+      setConversationPhase(data.phase || "gathering");
+
+      if (data.phase === "results" && data.results) {
+        setAnalysisResults(data.results);
+        setShowResults(true);
+      }
+      
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Chat error:", error);
       setMessages((prev) => [
         ...prev,
         {
           type: "bot",
-          text: "I encountered an error. Please try again.",
+          text: "I encountered an error connecting to the intelligence server. Please try again.",
         },
       ]);
     } finally {
@@ -217,17 +104,11 @@ function SymptomChecker({ onLogout, currentUser }) {
   };
 
   const handleReset = () => {
-    setMessages([
-      {
-        type: "bot",
-        text: "Hello! I'm your AI health assistant. What symptoms are you experiencing today?",
-      },
-    ]);
     setShowResults(false);
     setAnalysisResults(null);
-    setSymptomHistory([]);
     setConversationPhase("initial");
     setInput("");
+    initSession(); // Start a fresh session with backend
   };
 
   return (
@@ -358,7 +239,7 @@ function SymptomChecker({ onLogout, currentUser }) {
 
               <div className="flex gap-3 flex-col sm:flex-row">
                 <button
-                  onClick={() => navigate("/patient/treatment-recommendations")}
+                  onClick={() => navigate("/patient/treatment-recommendations", { state: { results: analysisResults } })}
                   className="btn-primary flex-1"
                 >
                   View Treatment Options

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Activity, Users, FileCheck, LogOut, Loader, CheckCircle, XCircle, FileText, Calendar } from "lucide-react";
+import { Activity, Users, FileCheck, LogOut, Loader, CheckCircle, XCircle, FileText, Calendar, Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../utils/api";
 import Logo from "../../components/Logo";
@@ -9,6 +10,7 @@ function DoctorVerification({ onLogout }) {
   const [doctors, setDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     fetchPendingDoctors();
@@ -22,10 +24,8 @@ function DoctorVerification({ onLogout }) {
       // We will fetch all and filter for now as a simple implementation.
       const res = await api.get('/doctors?limit=100');
       
-      // The API formats doctor profiles, we need to ensure verificationStatus is passed from backend.
-      // In doctorController.js formatDoctorForListing, we need to add verificationStatus.
-      // We'll filter for !isVerified for now.
-      const pending = res.data.doctors.filter(d => d.isVerified === false);
+      // Filter for verificationStatus 'pending' to match the dashboard stats exactly
+      const pending = res.data.doctors.filter(d => d.verificationStatus === 'pending');
       setDoctors(pending);
     } catch (error) {
       console.error("Failed to fetch doctors:", error);
@@ -54,7 +54,7 @@ function DoctorVerification({ onLogout }) {
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
         <div className="p-6 border-b border-gray-200 overflow-hidden">
-          <Logo size="small" />
+          <Logo size="small" clickable={false} />
         </div>
         <nav className="flex-1 p-4 space-y-2">
           <Link to="/admin/dashboard" className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-primary font-medium rounded-xl transition-colors">
@@ -80,8 +80,64 @@ function DoctorVerification({ onLogout }) {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         <header className="md:hidden bg-white border-b border-gray-200 p-4 flex justify-between items-center sticky top-0 z-10 overflow-hidden">
-          <Logo size="small" />
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsMobileMenuOpen(true)} className="p-1 text-gray-600 hover:text-primary rounded-lg">
+              <Menu className="w-6 h-6" />
+            </button>
+            <Logo size="small" clickable={false} />
+          </div>
+          <button onClick={() => { onLogout(); navigate('/signin'); }} className="p-2 text-danger hover:bg-red-50 rounded-lg shrink-0">
+            <LogOut className="w-5 h-5" />
+          </button>
         </header>
+
+        {/* Mobile Drawer */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                onClick={() => setIsMobileMenuOpen(false)}
+              />
+              <motion.div
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+                className="fixed inset-y-0 left-0 w-64 bg-white shadow-xl z-50 md:hidden flex flex-col"
+              >
+                <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+                  <Logo size="small" clickable={false} />
+                  <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg">
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+                  <Link to="/admin/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-primary font-medium rounded-xl transition-colors">
+                    <Activity className="w-5 h-5" /> Dashboard
+                  </Link>
+                  <Link to="/admin/users" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-primary font-medium rounded-xl transition-colors">
+                    <Users className="w-5 h-5" /> User Management
+                  </Link>
+                  <Link to="/admin/appointments" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-primary font-medium rounded-xl transition-colors">
+                    <Calendar className="w-5 h-5" /> Appointments
+                  </Link>
+                  <Link to="/admin/doctors/verify" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 bg-blue-50 text-primary font-semibold rounded-xl transition-colors">
+                    <FileCheck className="w-5 h-5" /> Verifications
+                  </Link>
+                </nav>
+                <div className="p-4 border-t border-gray-200">
+                  <button onClick={() => { onLogout(); navigate('/signin'); }} className="w-full flex items-center gap-3 px-4 py-3 text-danger hover:bg-red-50 font-medium rounded-xl transition-colors">
+                    <LogOut className="w-5 h-5" /> Logout
+                  </button>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
 
         <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6">
           <div>

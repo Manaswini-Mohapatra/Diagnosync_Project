@@ -141,11 +141,11 @@ export default function DoctorScheduleModal({ onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fade-in backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col max-h-[95vh] border border-white/20">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-0 sm:p-4 bg-black/50 animate-fade-in backdrop-blur-sm">
+      <div className="bg-white rounded-none sm:rounded-2xl shadow-2xl w-full h-full sm:h-auto sm:max-h-[95vh] max-w-4xl overflow-hidden flex flex-col border border-white/20">
         
         {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/80 backdrop-blur-md sticky top-0 z-10">
+        <div className="p-4 sm:p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/80 backdrop-blur-md sticky top-0 z-10">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-primary/10 rounded-xl">
               <CalendarIcon className="w-6 h-6 text-primary" />
@@ -173,9 +173,9 @@ export default function DoctorScheduleModal({ onClose }) {
           </button>
         </div>
 
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-col md:flex-row flex-1 overflow-y-auto md:overflow-hidden">
           {/* Sidebar / Left View */}
-          <div className="w-1/2 border-r border-gray-100 bg-gray-50/30 p-6 flex flex-col overflow-y-auto">
+          <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-100 bg-gray-50/30 p-4 sm:p-6 flex flex-col md:overflow-y-auto shrink-0">
             {view === "weekly" ? (
               <>
                 <div className="mb-6">
@@ -233,11 +233,18 @@ export default function DoctorScheduleModal({ onClose }) {
           </div>
 
           {/* Main Context: Slot Picker */}
-          <div className="w-1/2 p-8 overflow-y-auto bg-white flex flex-col">
+          <div className="w-full md:w-1/2 p-4 sm:p-8 md:overflow-y-auto bg-white flex flex-col">
+            {(() => {
+              const localToday = new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0];
+              const isPastDate = view === "monthly" && selectedDate < localToday;
+              
+              return (
+                <>
             <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
                <div>
-                  <h3 className="font-bold text-xl text-dark-gray capitalize">
+                  <h3 className="font-bold text-xl text-dark-gray capitalize flex items-center gap-2">
                     {view === "weekly" ? `${activeDay} Availability` : `${new Date(selectedDate).toLocaleDateString("en-US", { month: 'short', day: 'numeric' })} Override`}
+                    {isPastDate && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-md font-medium">Past Date</span>}
                   </h3>
                   <p className="text-xs text-gray-500 mt-1">
                     {view === "weekly" 
@@ -245,9 +252,10 @@ export default function DoctorScheduleModal({ onClose }) {
                       : schedule[selectedDate] 
                         ? "Currently using date-specific override" 
                         : "Using weekly default (Click slots to override)"}
+                    {isPastDate && " • Editing is disabled for past dates."}
                   </p>
                </div>
-               {view === "monthly" && schedule[selectedDate] && (
+               {view === "monthly" && schedule[selectedDate] && !isPastDate && (
                  <button 
                   onClick={() => handleClearOverride(selectedDate)}
                   className="flex items-center gap-1.5 text-xs font-bold text-danger hover:underline"
@@ -260,21 +268,18 @@ export default function DoctorScheduleModal({ onClose }) {
             <div className="grid grid-cols-3 gap-3 flex-1">
               {ALL_SLOTS.map(slot => {
                 const key = view === "weekly" ? activeDay : selectedDate;
-                // If in monthly view and no override exists, show what the default would be as semi-selected?
-                // Actually, if no override, we want to start from either empty OR default.
-                // Re-reading requirements: "Date wise of the month"
-                // Let's make it so clicking in monthly view automatically starts an override.
                 const isSelected = schedule[key]?.includes(slot);
                 
                 return (
                   <button
                     key={slot}
                     onClick={() => toggleSlot(key, slot)}
+                    disabled={isPastDate}
                     className={`py-3 px-1 text-xs rounded-xl border font-bold transition-all shadow-sm ${
                       isSelected
                         ? "bg-primary border-primary text-white shadow-primary/20 scale-95"
                         : "bg-white border-gray-100 text-gray-500 hover:border-primary/40 hover:bg-gray-50"
-                    }`}
+                    } ${isPastDate ? "opacity-50 cursor-not-allowed bg-gray-100 border-gray-200 text-gray-400" : ""}`}
                   >
                     {slot}
                   </button>
@@ -294,6 +299,9 @@ export default function DoctorScheduleModal({ onClose }) {
                   />
                </div>
             </div>
+                </>
+              );
+            })()}
           </div>
         </div>
 

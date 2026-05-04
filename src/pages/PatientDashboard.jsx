@@ -290,7 +290,19 @@ function PatientDashboard({ onLogout, currentUser }) {
                 </div>
               ) : (
                 upcomingAppointments.map((apt) => {
-                  const diffHrs = Math.round((new Date(apt.date) - Date.now()) / 3600000);
+                  const aptDate = new Date(apt.date);
+                  if (apt.time) {
+                    const match = apt.time.match(/(\d+):(\d+)\s*(AM|PM|am|pm)?/);
+                    if (match) {
+                      let hours = parseInt(match[1], 10);
+                      const mins = parseInt(match[2], 10);
+                      const modifier = match[3]?.toUpperCase();
+                      if (modifier === 'PM' && hours < 12) hours += 12;
+                      if (modifier === 'AM' && hours === 12) hours = 0;
+                      aptDate.setHours(hours, mins, 0, 0);
+                    }
+                  }
+                  const diffHrs = Math.round((aptDate - Date.now()) / 3600000);
                   const timeLabel = diffHrs < 1 ? "Very soon" : diffHrs < 24 ? `in ${diffHrs}h` : `in ${Math.round(diffHrs/24)}d`;
                   
                   return (
@@ -371,11 +383,11 @@ function PatientDashboard({ onLogout, currentUser }) {
       {/* ── Appointment Detail Modal ── */}
       {selectedAppointment && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-0 sm:p-4"
           onClick={() => setSelectedAppointment(null)}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in"
+            className="bg-white rounded-none sm:rounded-2xl shadow-2xl w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md p-4 sm:p-6 animate-fade-in overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-5">
@@ -434,11 +446,11 @@ function PatientDashboard({ onLogout, currentUser }) {
       {/* ── Health Score Modal ── */}
       {showHealthModal && healthScoreData && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-0 sm:p-4"
           onClick={() => setShowHealthModal(false)}
         >
           <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fade-in"
+            className="bg-white rounded-none sm:rounded-2xl shadow-2xl w-full h-full sm:h-auto sm:max-h-[90vh] sm:max-w-md p-4 sm:p-6 animate-fade-in overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-5">
@@ -465,8 +477,8 @@ function PatientDashboard({ onLogout, currentUser }) {
               </div>
             </div>
 
-            <div className="space-y-3 mt-4">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase border-b pb-1">Score Breakdown</h3>
+            <div className="space-y-3 mt-6 mb-8">
+              <h3 className="text-sm font-bold text-primary uppercase border-b-2 border-primary/20 pb-1">Score Breakdown</h3>
               <div className="flex justify-between text-sm py-1 border-b border-gray-50">
                 <span className="text-gray-600">Base Score</span>
                 <span className="font-semibold text-green-600">100</span>

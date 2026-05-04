@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Bell, X, CheckCheck, Loader } from 'lucide-react';
+import { Bell, X, CheckCheck, Loader, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 
 /**
@@ -59,6 +60,20 @@ function NotificationBell() {
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch {
       // Silent fail
+    }
+  };
+
+  // ── Dismiss (Delete) notification ─────────────────────────────────────
+  const handleDismiss = async (id, isUnread) => {
+    // Optimistic UI update
+    setNotifications(prev => prev.filter(n => n._id !== id));
+    if (isUnread) {
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    }
+    try {
+      await api.delete(`/notifications/${id}`);
+    } catch {
+      // Silent fail for MVP
     }
   };
 
@@ -181,7 +196,7 @@ function NotificationBell() {
           </div>
 
           {/* Body */}
-          <div className="max-h-80 overflow-y-auto">
+          <div className="max-h-80 overflow-y-auto overflow-x-hidden">
 
             {loading && (
               <div className="flex items-center justify-center py-8">
@@ -200,31 +215,59 @@ function NotificationBell() {
               </div>
             )}
 
-            {!loading && !error && notifications.map((n) => (
-              <div
-                key={n._id}
-                onClick={() => handleNotificationClick(n)}
-                className={`px-4 py-3 border-b border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors ${
-                  !n.read ? 'bg-blue-50 border-l-4 border-l-blue-400' : ''
-                }`}
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeColor(n.type)}`}>
-                        {n.type}
-                      </span>
-                      {!n.read && (
-                        <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
-                      )}
+            {!loading && !error && (
+              <AnimatePresence>
+                {notifications.map((n) => (
+                  <motion.div
+                    key={n._id}
+                    layout
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
+                    transition={{ duration: 0.2 }}
+                    className="relative border-b border-gray-50"
+                  >
+                    {/* Background swipe indicator */}
+                    <div className="absolute inset-0 bg-red-50 flex items-center justify-between px-6 z-0">
+                      <Trash2 className="w-5 h-5 text-red-400" />
+                      <Trash2 className="w-5 h-5 text-red-400" />
                     </div>
-                    <p className="text-sm font-semibold text-gray-800 truncate">{n.title}</p>
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{n.message}</p>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-400 mt-1">{timeAgo(n.createdAt)}</p>
-              </div>
-            ))}
+
+                    {/* Draggable Surface */}
+                    <motion.div
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.8}
+                      onDragEnd={(e, { offset }) => {
+                        if (Math.abs(offset.x) > 100) {
+                          handleDismiss(n._id, !n.read);
+                        }
+                      }}
+                      onClick={() => handleNotificationClick(n)}
+                      className={`relative z-10 px-4 py-3 cursor-pointer bg-white transition-colors hover:bg-gray-50 ${
+                        !n.read ? 'border-l-4 border-l-blue-400' : ''
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeColor(n.type)}`}>
+                              {n.type}
+                            </span>
+                            {!n.read && (
+                              <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+                            )}
+                          </div>
+                          <p className="text-sm font-semibold text-gray-800 truncate">{n.title}</p>
+                          <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{n.message}</p>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">{timeAgo(n.createdAt)}</p>
+                    </motion.div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )}
           </div>
 
           {/* Footer */}

@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Heart, Brain, Activity, Shield, ChevronRight, ChevronLeft } from "lucide-react";
+import { Heart, Brain, Activity, Shield, ChevronRight, ChevronLeft, Menu, X } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
 
 function Landing() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleMobileNavClick = (e, targetId) => {
+    e.preventDefault();
+    setIsMobileMenuOpen(false);
+    
+    // Wait for the Framer Motion exit animation (300ms) to finish so the 
+    // page layout is stable before we calculate the scroll position.
+    setTimeout(() => {
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 350);
+  };
 
   const slides = [
     {
@@ -66,29 +81,49 @@ function Landing() {
               </span>
             </div> */}
             <div className="hidden md:flex gap-8">
-              <a href="#features" className="text-gray-600 hover:text-primary">
-                Features
-              </a>
-              <a
-                href="#how-it-works"
-                className="text-gray-600 hover:text-primary"
-              >
-                How It Works
-              </a>
-              <a href="#" className="text-gray-600 hover:text-primary">
-                About
-              </a>
+              <a href="#features" className="text-gray-600 hover:text-primary font-medium">Features</a>
+              <a href="#how-it-works" className="text-gray-600 hover:text-primary font-medium">How It Works</a>
+              <a href="#" className="text-gray-600 hover:text-primary font-medium">About</a>
             </div>
-            <div className="flex gap-4">
-              <Link to="/signin" className="btn-secondary">
-                Sign In
-              </Link>
-              <Link to="/signup" className="btn-primary">
-                Get Started
-              </Link>
+            <div className="hidden md:flex gap-4">
+              <Link to="/signin" className="btn-secondary">Sign In</Link>
+              <Link to="/signup" className="btn-primary">Get Started</Link>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden flex items-center">
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+                className="text-gray-600 hover:text-primary p-2 focus:outline-none"
+              >
+                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="md:hidden bg-white border-t border-gray-100 overflow-hidden shadow-soft absolute w-full left-0 z-40"
+            >
+              <div className="px-4 pt-4 pb-6 space-y-4">
+                <a href="#features" onClick={(e) => handleMobileNavClick(e, 'features')} className="block text-gray-600 hover:text-primary py-2 font-medium">Features</a>
+                <a href="#how-it-works" onClick={(e) => handleMobileNavClick(e, 'how-it-works')} className="block text-gray-600 hover:text-primary py-2 font-medium">How It Works</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); setIsMobileMenuOpen(false); }} className="block text-gray-600 hover:text-primary py-2 font-medium">About</a>
+                <div className="pt-4 border-t border-gray-100 flex flex-col gap-3">
+                  <Link to="/signin" className="btn-secondary text-center w-full">Sign In</Link>
+                  <Link to="/signup" className="btn-primary text-center w-full">Get Started</Link>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero Section (Carousel) */}

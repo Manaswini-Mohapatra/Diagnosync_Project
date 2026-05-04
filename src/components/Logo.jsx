@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function Logo({ size = "default" }) {
+export default function Logo({ size = "default", clickable = true }) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -59,6 +59,23 @@ export default function Logo({ size = "default" }) {
   };
 
   const selected = sizes[size];
+
+  if (!clickable) {
+    return (
+      <div className="flex items-center gap-2 bg-transparent border-none p-0" aria-label="DiagnoSync Logo">
+        <img
+          src="/diagnosync_icon_transparent.svg"
+          alt="DiagnoSync Logo"
+          className={`${selected.img} w-auto`}
+        />
+        <span
+          className={`${selected.text} font-bold leading-[1.3] pb-[2px] bg-gradient-to-r from-primary to-success bg-clip-text text-transparent`}
+        >
+          DiagnoSync
+        </span>
+      </div>
+    );
+  }
 
   return (
     <button

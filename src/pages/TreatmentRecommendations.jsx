@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Heart,
   LogOut,
@@ -12,61 +12,60 @@ import {
   ChevronRight,
   ArrowLeft,
   Share2,
+  Loader
 } from "lucide-react";
 import Footer from "../components/Footer";
 import Logo from "../components/Logo";
+import api from "../utils/api";
 
 function TreatmentRecommendations({ onLogout, currentUser }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedTreatment, setSelectedTreatment] = useState(null);
+  const [treatments, setTreatments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchTreatments = async () => {
+      const results = location.state?.results;
+      if (!results) {
+        setError("No recent symptom analysis found. Please use the Symptom Checker first.");
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const res = await api.post("/ml/treatment", { results });
+        
+        // ML API returns { primary: {...}, runner_ups: [{...}, ...] }
+        const { primary, runner_ups } = res.data;
+        
+        // Add unique IDs to map correctly
+        const combined = [
+          { ...primary, id: 1 },
+          ...(runner_ups || []).map((ru, idx) => ({ ...ru, id: idx + 2 }))
+        ];
+        
+        setTreatments(combined);
+      } catch (err) {
+        console.error("Failed to fetch treatments:", err);
+        const errMsg = err.response?.data?.details || err.response?.data?.error || err.message || "Unknown error occurred";
+        setError(`Could not generate treatment plans. Error: ${errMsg}. Please try again.`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTreatments();
+  }, [location.state]);
 
   const handleLogout = () => {
     onLogout();
     navigate("/");
   };
 
-  const treatments = [
-    {
-      id: 1,
-      condition: "Common Cold",
-      severity: "Low",
-      recommendations: [
-        { type: "Rest", description: "7-10 days of adequate rest" },
-        { type: "Fluids", description: "Drink plenty of water and fluids" },
-        { type: "Medication", description: "Over-the-counter pain relievers" },
-      ],
-      doctor: "Dr. Sarah Johnson",
-      date: "March 15, 2024",
-      duration: "7–10 days",
-      followUp: "Return if symptoms worsen after 5 days",
-      notes:
-        "Stay well-rested, avoid contact with others to prevent spreading. Vitamin C supplements may help reduce duration.",
-      warnings: [
-        "Seek emergency care if you have difficulty breathing",
-        "Watch for high fever above 103°F (39.4°C)",
-      ],
-    },
-    {
-      id: 2,
-      condition: "Seasonal Allergies",
-      severity: "Medium",
-      recommendations: [
-        { type: "Antihistamines", description: "Take daily antihistamines" },
-        { type: "Avoidance", description: "Avoid allergen exposure" },
-        { type: "Monitor", description: "Track symptoms and triggers" },
-      ],
-      doctor: "Dr. Michael Chen",
-      date: "March 10, 2024",
-      duration: "Ongoing (seasonal)",
-      followUp: "Check-in at end of season",
-      notes:
-        "Keep windows closed during high pollen days. Use air purifiers indoors. Consider nasal corticosteroid spray for moderate symptoms.",
-      warnings: [
-        "Consult doctor if antihistamines cause excessive drowsiness",
-        "Seek urgent care for severe allergic reaction (anaphylaxis)",
-      ],
-    },
-  ];
+  // Treatments are now dynamically fetched
 
   const severityConfig = {
     Low: { badge: "badge-success", print: "#22c55e" },
@@ -120,7 +119,7 @@ function TreatmentRecommendations({ onLogout, currentUser }) {
           <div class="note">${treatment.notes}</div>
 
           <h2>Warnings</h2>
-          ${treatment.warnings.map((w) => `<div class="warning">⚠️ ${w}</div>`).join("")}
+          ${(treatment.warnings || []).map((w) => `<div class="warning">⚠️ ${w}</div>`).join("")}
 
           <h2>Follow-Up</h2>
           <p>${treatment.followUp}</p>
@@ -180,7 +179,24 @@ function TreatmentRecommendations({ onLogout, currentUser }) {
         </div>
 
         {/* Treatments List */}
-        <div className="space-y-6">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-12">
+            <Loader className="w-8 h-8 text-primary animate-spin mb-4" />
+            <p className="text-gray-600">Generating personalized treatment plans...</p>
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 p-6 rounded-lg border border-red-200 text-center mb-8">
+            <AlertCircle className="w-8 h-8 text-danger mx-auto mb-2" />
+            <p className="text-red-700 font-semibold">{error}</p>
+            <button
+              onClick={() => navigate("/patient/symptom-checker")}
+              className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Go to Symptom Checker
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-6">
           {treatments.map((treatment) => (
             <div key={treatment.id} className="card">
               {/* Header */}
@@ -265,6 +281,7 @@ function TreatmentRecommendations({ onLogout, currentUser }) {
             </div>
           ))}
         </div>
+        )}
 
         {/* CTA */}
         <div className="mt-8 p-6 bg-primary text-white rounded-lg text-center">
@@ -350,17 +367,19 @@ function TreatmentRecommendations({ onLogout, currentUser }) {
               </div>
 
               {/* Warnings */}
-              <div>
-                <h3 className="font-bold text-dark-gray mb-3">⚠️ Warnings</h3>
-                <div className="space-y-2">
-                  {selectedTreatment.warnings.map((w, i) => (
-                    <div key={i} className="flex gap-2 p-3 bg-red-50 border border-red-100 rounded-lg">
-                      <AlertCircle className="w-4 h-4 text-danger flex-shrink-0 mt-0.5" />
-                      <p className="text-sm text-red-700">{w}</p>
-                    </div>
-                  ))}
+              {(selectedTreatment.warnings?.length > 0) && (
+                <div>
+                  <h3 className="font-bold text-dark-gray mb-3">⚠️ Warnings</h3>
+                  <div className="space-y-2">
+                    {selectedTreatment.warnings.map((w, i) => (
+                      <div key={i} className="flex gap-2 p-3 bg-red-50 border border-red-100 rounded-lg">
+                        <AlertCircle className="w-4 h-4 text-danger flex-shrink-0 mt-0.5" />
+                        <p className="text-sm text-red-700">{w}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Modal Footer */}

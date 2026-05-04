@@ -18,6 +18,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
 
   const [timeSlots, setTimeSlots] = useState([]);
 
+
   // Selection
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
@@ -31,6 +32,35 @@ function AppointmentBooking({ onLogout, currentUser }) {
   const [confirmedAppointment, setConfirmedAppointment] = useState(null);
   const [isCancelling, setIsCancelling] = useState(false);
   const [isCancelled, setIsCancelled] = useState(false);
+
+  // Filter past time slots if the selected date is today
+  const filteredSlots = React.useMemo(() => {
+    if (!selectedDate) return [];
+    
+    const now = new Date();
+    const localToday = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+    
+    if (selectedDate !== localToday) return timeSlots;
+    
+    const currentHours = now.getHours();
+    const currentMinutes = now.getMinutes();
+    
+    return timeSlots.filter(time => {
+      const match = time.match(/(\d+):(\d+)\s*(AM|PM|am|pm)?/);
+      if (!match) return true;
+      
+      let hours = parseInt(match[1], 10);
+      const mins = parseInt(match[2], 10);
+      const modifier = match[3]?.toUpperCase();
+      
+      if (modifier === 'PM' && hours < 12) hours += 12;
+      if (modifier === 'AM' && hours === 12) hours = 0;
+      
+      if (hours > currentHours) return true;
+      if (hours === currentHours && mins > currentMinutes) return true;
+      return false;
+    });
+  }, [timeSlots, selectedDate]);
 
   // Date bounds
   const today = new Date().toISOString().split('T')[0];
@@ -453,10 +483,10 @@ function AppointmentBooking({ onLogout, currentUser }) {
                  </div>
               ) : (
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                  {timeSlots.length === 0 ? (
-                    <div className="col-span-full text-center text-sm text-red-500 py-4">No slots available on this date.</div>
+                  {filteredSlots.length === 0 ? (
+                    <div className="col-span-full text-center text-sm text-red-500 py-4">No slots available for the selected time/date.</div>
                   ) : (
-                    timeSlots.map((time) => (
+                    filteredSlots.map((time) => (
                       <button
                         key={time}
                         onClick={() => setSelectedTime(time)}
