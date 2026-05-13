@@ -166,10 +166,10 @@ function DoctorDashboard({ onLogout, currentUser }) {
               <NotificationBell />
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
+                className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>
@@ -284,11 +284,13 @@ function DoctorDashboard({ onLogout, currentUser }) {
                 <div
                   key={notif._id || i}
                   onClick={async () => {
+                    const notifId = notif._id || notif.id;
+                    if (!notifId) return;
                     try {
                       // Call backend to mark read in MongoDB
-                      await api.patch(`/notifications/${notif._id}/read`);
+                      await api.patch(`/notifications/${notifId}/read`);
                       // Remove from UI
-                      setUrgentNotifs(prev => prev.filter(n => n._id !== notif._id));
+                      setUrgentNotifs(prev => prev.filter(n => (n._id || n.id) !== notifId));
                     } catch (err) {
                       console.error("Failed to mark alert as read:", err);
                     }
@@ -359,12 +361,14 @@ function DoctorDashboard({ onLogout, currentUser }) {
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center gap-2">
-                       <button
-                          onClick={() => navigate("/doctor/appointments")}
-                          className="w-full sm:w-auto px-4 py-2 text-primary font-semibold text-sm hover:bg-blue-50 rounded-lg transition-colors border border-primary/20"
-                        >
-                          {apt.status === "scheduled" ? "View Details" : "Clinical Log"}
-                       </button>
+                       {apt.status === "scheduled" && (
+                         <button
+                            onClick={() => navigate("/doctor/appointments")}
+                            className="w-full sm:w-auto px-4 py-2 text-primary font-semibold text-sm hover:bg-blue-50 rounded-lg transition-colors border border-primary/20"
+                          >
+                            View Details
+                         </button>
+                       )}
 
                        {apt.type === "video" && apt.status === "scheduled" && (
                           <button

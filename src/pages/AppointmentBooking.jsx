@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, LogOut, Calendar, Clock, CheckCircle, Download, Search, XCircle, AlertTriangle, Video } from "lucide-react";
+import { Heart, LogOut, Calendar, Clock, CheckCircle, Download, Search, XCircle, AlertTriangle, Video, ArrowLeft } from "lucide-react";
 import Logo from "../components/Logo";
 import { downloadAppointmentConfirmation } from "../utils/appointmentPdfGenerator";
 import { joinVideoCall } from "../utils/videoCall";
@@ -184,9 +184,12 @@ function AppointmentBooking({ onLogout, currentUser }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <Logo/>
-              <button onClick={handleLogout} className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors">
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
+              >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>
@@ -219,10 +222,10 @@ function AppointmentBooking({ onLogout, currentUser }) {
               <NotificationBell />
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
+                className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>
@@ -335,11 +338,13 @@ function AppointmentBooking({ onLogout, currentUser }) {
             <div className="flex items-center gap-4">
                <NotificationBell />
                <button
-                 onClick={() => navigate("/patient/dashboard")}
-                 className="text-gray-600 hover:text-primary transition-colors text-sm font-semibold"
-               >
-                 ← Back to Dashboard
-               </button>
+                onClick={() => navigate("/patient/dashboard")}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4 hidden sm:inline" />
+                <span className="hidden sm:inline">Back to Dashboard</span>
+                <span className="sm:hidden">Back</span>
+              </button>
             </div>
           </div>
         </div>

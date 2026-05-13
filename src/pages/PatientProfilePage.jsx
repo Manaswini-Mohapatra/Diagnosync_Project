@@ -126,10 +126,10 @@ function PatientProfilePage({ onLogout, currentUser }) {
               <NotificationBell />
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
+                className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>
@@ -162,18 +162,19 @@ function PatientProfilePage({ onLogout, currentUser }) {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate("/patient/dashboard")}
-                className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
               >
-                <ArrowLeft className="w-4 h-4" />
-                Back
+                <ArrowLeft className="w-4 h-4 hidden sm:inline" />
+                <span className="hidden sm:inline">Back to Dashboard</span>
+                <span className="sm:hidden">Back</span>
               </button>
               <NotificationBell />
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
+                className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>

@@ -223,10 +223,10 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
               <NotificationBell />
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
+                className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>

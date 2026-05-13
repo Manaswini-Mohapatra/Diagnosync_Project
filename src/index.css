@@ -115,45 +115,70 @@ code {
 
 /* Card styles */
 .card {
-  @apply bg-white/80 backdrop-blur-md rounded-2xl shadow-soft border border-white/40 p-6;
+  @apply rounded-2xl p-6 transition-all duration-300;
+  background-color: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .card-hover {
-  @apply card hover:shadow-glass hover:-translate-y-1 transition-all duration-300 cursor-pointer;
+  @apply card cursor-pointer;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  background-color: rgba(255, 255, 255, 0.75);
 }
 
 .glass-panel {
-  @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-glass rounded-2xl;
+  @apply rounded-2xl transition-all duration-300;
+  background-color: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07);
 }
 
 .hover-lift {
-  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-glass;
+  @apply transition-all duration-300;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+.text-glow-light {
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.9), 0 0 30px rgba(255, 255, 255, 0.6);
 }
 
 /* Badge styles */
 .badge-primary {
-  @apply inline-block bg-blue-100 text-primary px-3 py-1 rounded-full text-sm font-semibold;
+  @apply inline-block bg-blue-100 text-primary px-3 py-1 rounded-full text-sm font-semibold shadow-sm;
 }
 
 .badge-success {
-  @apply inline-block bg-green-100 text-success px-3 py-1 rounded-full text-sm font-semibold;
+  @apply inline-block bg-green-100 text-success px-3 py-1 rounded-full text-sm font-semibold shadow-sm;
 }
 
 .badge-warning {
-  @apply inline-block bg-yellow-100 text-warning px-3 py-1 rounded-full text-sm font-semibold;
+  @apply inline-block bg-yellow-100 text-warning px-3 py-1 rounded-full text-sm font-semibold shadow-sm;
 }
 
 .badge-danger {
-  @apply inline-block bg-red-100 text-danger px-3 py-1 rounded-full text-sm font-semibold;
+  @apply inline-block bg-red-100 text-danger px-3 py-1 rounded-full text-sm font-semibold shadow-sm;
 }
 
 /* Input styles */
 .input-field {
   @apply w-full px-4 py-2 border border-border-gray rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .input-field:disabled {
-  @apply bg-light-gray cursor-not-allowed;
+  @apply bg-light-gray cursor-not-allowed opacity-70;
 }
 
 /* Loading spinner */
@@ -193,6 +218,46 @@ code {
   background-color: #A5B8D0 !important;
   background-image: none !important;
   transition: background-color 0.5s ease-in-out;
+}
+
+/* ── Global Cinematic Background ───────────────────────── */
+/* Scoped only to .cinematic-bg-page */
+.global-app-bg.cinematic-bg-page > div:first-child {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+.cinematic-bg-page {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+}
+
+/* Cinematic blurred background image */
+.cinematic-bg-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image: url('/images/hero/image9.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(8px) brightness(0.85) contrast(1.1) saturate(1.1);
+  transform: scale(1.05);
+  pointer-events: none;
+}
+
+/* Cinematic soft gradient overlay & vignette */
+.cinematic-bg-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: 
+    linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(59, 130, 246, 0.05) 100%),
+    radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.25) 100%);
+  pointer-events: none;
 }
 
 /* ────────────────────────────────────────────────────────────────────────

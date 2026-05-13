@@ -39,11 +39,27 @@ import api from "./utils/api";
 
 const GlobalWrapper = ({ children }) => {
   const location = useLocation();
-  const isAuthPage =
-    location.pathname === "/signin" || location.pathname === "/signup";
+  const path = location.pathname;
+
+  const excludedPaths = [
+    "/",
+    "/signin",
+    "/signup",
+    "/patient/symptom-checker",
+    "/patient/treatment-recommendations",
+    "/doctor/drug-checker",
+    "/doctor/analytics"
+  ];
+
+  const hasCinematicBg = !excludedPaths.includes(path);
+
+  let wrapperClass = "global-app-bg";
+  if (path === "/" || path === "/signin" || path === "/signup") {
+    wrapperClass = ""; // Landing and auth pages handle their own backgrounds
+  }
 
   return (
-    <div className={isAuthPage ? "" : "global-app-bg"}>
+    <div className={`${wrapperClass} ${hasCinematicBg ? "cinematic-bg-page" : ""}`}>
       {children}
     </div>
   );

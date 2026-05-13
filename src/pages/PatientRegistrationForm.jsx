@@ -113,7 +113,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
         <nav className="bg-white shadow-sm sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
             <Logo />
-            <button onClick={handleLogout} className="flex items-center gap-2 text-gray-600 text-sm">
+            <button onClick={handleLogout} className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
               <LogOut className="w-4 h-4" /> Logout
             </button>
           </div>
@@ -140,10 +140,10 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
           <Logo />
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate("/patient/dashboard")} className="flex items-center gap-2 text-gray-600 text-sm">
-              <ArrowLeft className="w-4 h-4" /> Back
+            <button onClick={() => navigate("/patient/dashboard")} className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+              <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Back to Dashboard</span>
             </button>
-            <button onClick={handleLogout} className="flex items-center gap-2 text-gray-600 text-sm">
+            <button onClick={handleLogout} className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
               <LogOut className="w-4 h-4" /><span className="hidden sm:inline">Logout</span>
             </button>
           </div>

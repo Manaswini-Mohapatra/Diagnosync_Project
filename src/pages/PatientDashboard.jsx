@@ -121,7 +121,7 @@ function PatientDashboard({ onLogout, currentUser }) {
   ];
 
   return (
-    <div className="min-h-screen bg-transparent relative pb-20">
+    <div className="min-h-screen pb-20">
       {/* Navbar */}
       <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -146,10 +146,10 @@ function PatientDashboard({ onLogout, currentUser }) {
               <NotificationBell />
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors"
+                className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>
@@ -179,11 +179,11 @@ function PatientDashboard({ onLogout, currentUser }) {
         )}
 
         {/* Welcome Section */}
-        <div className="mb-8 animate-fade-in">
+        <div className="mb-8 animate-fade-in text-glow-light">
           <h1 className="text-4xl font-bold text-dark-gray mb-2">
             Welcome back, {currentUser?.name?.split(" ")[0] || "Patient"}! 👋
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-800 font-medium">
             Here's what's happening with your health
           </p>
         </div>

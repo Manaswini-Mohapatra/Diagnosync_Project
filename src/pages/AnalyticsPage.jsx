@@ -80,11 +80,13 @@ function AnalyticsPage({ onLogout, currentUser }) {
           <div className="flex justify-between items-center h-16">
             <Logo />
             <div className="flex items-center gap-4">
-              <button 
-                onClick={() => navigate("/doctor/dashboard")} 
-                className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors font-semibold"
+              <button
+                onClick={() => navigate("/doctor/dashboard")}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
               >
-                <ArrowLeft className="w-4 h-4" />Back to Dashboard
+                <ArrowLeft className="w-4 h-4 hidden sm:inline" />
+                <span className="hidden sm:inline">Back to Dashboard</span>
+                <span className="sm:hidden">Back</span>
               </button>
               <NotificationBell />
               <button onClick={handleLogout} className="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors">
