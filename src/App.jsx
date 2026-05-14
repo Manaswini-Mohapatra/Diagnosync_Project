@@ -34,6 +34,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import DoctorVerification from "./pages/admin/DoctorVerification";
 import AppointmentManagement from "./pages/admin/AppointmentManagement";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import FloatingActionButton from "./components/FloatingActionButton";
 import api from "./utils/api";
 
@@ -368,11 +369,23 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/admin/appointments"
           element={
             <ProtectedRoute requiredRole="admin">
               <AppointmentManagement
+                onLogout={handleLogout}
+                currentUser={currentUser}
+              />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/analytics"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminAnalytics
                 onLogout={handleLogout}
                 currentUser={currentUser}
               />

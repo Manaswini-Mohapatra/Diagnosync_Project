@@ -52,7 +52,7 @@ function DoctorVerification({ onLogout }) {
   return (
     <div className="flex h-screen bg-light-gray overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
+      <aside className="w-64 glass-panel border-r border-gray-200/50 hidden md:flex flex-col z-10">
         <div className="p-6 border-b border-gray-200 overflow-hidden">
           <Logo size="small" clickable={false} />
         </div>
@@ -68,6 +68,9 @@ function DoctorVerification({ onLogout }) {
           </Link>
           <Link to="/admin/doctors/verify" className="flex items-center gap-3 px-4 py-3 bg-blue-50 text-primary font-semibold rounded-xl transition-colors">
             <FileCheck className="w-5 h-5" /> Verifications
+          </Link>
+          <Link to="/admin/analytics" className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-primary font-medium rounded-xl transition-colors">
+            <Activity className="w-5 h-5" /> Analytics
           </Link>
         </nav>
         <div className="p-4 border-t border-gray-200">
@@ -107,7 +110,7 @@ function DoctorVerification({ onLogout }) {
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-                className="fixed inset-y-0 left-0 w-64 bg-white shadow-xl z-50 md:hidden flex flex-col"
+                className="fixed inset-y-0 left-0 w-64 glass-panel shadow-xl z-50 md:hidden flex flex-col"
               >
                 <div className="p-4 border-b border-gray-200 flex justify-between items-center">
                   <Logo size="small" clickable={false} />
@@ -150,7 +153,7 @@ function DoctorVerification({ onLogout }) {
               <Loader className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : doctors.length === 0 ? (
-            <div className="bg-white p-12 rounded-2xl border border-gray-100 text-center shadow-soft">
+            <div className="glass-panel p-12 rounded-2xl border-none text-center shadow-soft">
               <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
@@ -160,7 +163,7 @@ function DoctorVerification({ onLogout }) {
           ) : (
             <div className="grid gap-6">
               {doctors.map(doctor => (
-                <div key={doctor.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-soft">
+                <div key={doctor.id} className="glass-panel p-6 rounded-2xl border-none shadow-soft">
                   <div className="flex flex-col md:flex-row justify-between gap-6">
                     
                     {/* Doctor Info */}

@@ -38,7 +38,7 @@ function AdminDashboard({ onLogout, currentUser }) {
   return (
     <div className="flex h-screen bg-light-gray overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
+      <aside className="w-64 glass-panel border-r border-gray-200/50 hidden md:flex flex-col z-10">
         <div className="p-6 border-b border-gray-200 overflow-hidden">
           <Logo size="small" clickable={false} />
         </div>
@@ -77,6 +77,13 @@ function AdminDashboard({ onLogout, currentUser }) {
                 {stats.pendingDoctors}
               </span>
             )}
+          </Link>
+          <Link
+            to="/admin/analytics"
+            className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-primary font-medium rounded-xl transition-colors"
+          >
+            <Activity className="w-5 h-5" />
+            Analytics
           </Link>
         </nav>
         <div className="p-4 border-t border-gray-200">
@@ -130,7 +137,7 @@ function AdminDashboard({ onLogout, currentUser }) {
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-                className="fixed inset-y-0 left-0 w-64 bg-white shadow-xl z-50 md:hidden flex flex-col"
+                className="fixed inset-y-0 left-0 w-64 glass-panel shadow-xl z-50 md:hidden flex flex-col"
               >
                 <div className="p-4 border-b border-gray-200 flex justify-between items-center">
                   <Logo size="small" clickable={false} />
@@ -174,7 +181,7 @@ function AdminDashboard({ onLogout, currentUser }) {
           {/* Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {/* Total Users */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-soft hover:shadow-md transition-shadow">
+            <div className="glass-panel p-6 rounded-2xl border-none shadow-soft hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-blue-50 text-primary rounded-xl">
                   <Users className="w-6 h-6" />
@@ -187,7 +194,7 @@ function AdminDashboard({ onLogout, currentUser }) {
             </div>
 
             {/* Total Patients */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-soft hover:shadow-md transition-shadow">
+            <div className="glass-panel p-6 rounded-2xl border-none shadow-soft hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-green-50 text-green-600 rounded-xl">
                   <Activity className="w-6 h-6" />
@@ -200,7 +207,7 @@ function AdminDashboard({ onLogout, currentUser }) {
             </div>
 
             {/* Total Doctors */}
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-soft hover:shadow-md transition-shadow">
+            <div className="glass-panel p-6 rounded-2xl border-none shadow-soft hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-purple-50 text-purple-600 rounded-xl">
                   <Users className="w-6 h-6" />
@@ -213,7 +220,7 @@ function AdminDashboard({ onLogout, currentUser }) {
             </div>
 
             {/* Pending Verifications */}
-            <div className="bg-white p-6 rounded-2xl border border-amber-100 shadow-soft hover:shadow-md transition-shadow cursor-pointer"
+            <div className="glass-panel p-6 rounded-2xl border-none shadow-soft hover:shadow-md transition-shadow cursor-pointer"
                  onClick={() => navigate('/admin/doctors/verify')}>
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
@@ -230,7 +237,7 @@ function AdminDashboard({ onLogout, currentUser }) {
           {/* Quick Actions & Recent Activity */}
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-soft">
+              <div className="glass-panel p-6 rounded-2xl border-none shadow-soft">
                 <h3 className="text-lg font-bold text-dark-gray mb-4">Quick Actions</h3>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <button onClick={() => navigate('/admin/doctors/verify')} className="flex items-center gap-3 p-4 border border-gray-200 rounded-xl hover:border-primary hover:bg-blue-50 transition-all text-left group">
@@ -255,7 +262,7 @@ function AdminDashboard({ onLogout, currentUser }) {
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-soft">
+            <div className="glass-panel p-6 rounded-2xl border-none shadow-soft">
                <h3 className="text-lg font-bold text-dark-gray mb-4">System Status</h3>
                <div className="space-y-4">
                   <div className="flex items-center justify-between">

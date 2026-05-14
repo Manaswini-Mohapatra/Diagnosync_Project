@@ -68,7 +68,7 @@ function AppointmentManagement({ onLogout }) {
   return (
     <div className="flex h-screen bg-light-gray overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
+      <aside className="w-64 glass-panel border-r border-gray-200/50 hidden md:flex flex-col z-10">
         <div className="p-6 border-b border-gray-200 overflow-hidden">
           <Logo size="small" clickable={false} />
         </div>
@@ -84,6 +84,9 @@ function AppointmentManagement({ onLogout }) {
           </Link>
           <Link to="/admin/appointments" className="flex items-center gap-3 px-4 py-3 bg-blue-50 text-primary font-semibold rounded-xl transition-colors">
             <CalendarIcon className="w-5 h-5" /> Appointments
+          </Link>
+          <Link to="/admin/analytics" className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 hover:text-primary font-medium rounded-xl transition-colors">
+            <Activity className="w-5 h-5" /> Analytics
           </Link>
         </nav>
         <div className="p-4 border-t border-gray-200">
@@ -123,7 +126,7 @@ function AppointmentManagement({ onLogout }) {
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-                className="fixed inset-y-0 left-0 w-64 bg-white shadow-xl z-50 md:hidden flex flex-col"
+                className="fixed inset-y-0 left-0 w-64 glass-panel shadow-xl z-50 md:hidden flex flex-col"
               >
                 <div className="p-4 border-b border-gray-200 flex justify-between items-center">
                   <Logo size="small" clickable={false} />
@@ -161,7 +164,7 @@ function AppointmentManagement({ onLogout }) {
             <p className="text-gray-500 mt-1">Monitor and manage platform appointments.</p>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-soft">
+          <div className="glass-panel p-6 rounded-2xl border-none shadow-soft">
             {/* Filters */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="relative flex-1">
@@ -188,7 +191,7 @@ function AppointmentManagement({ onLogout }) {
             </div>
 
             {/* Table */}
-            <div className="overflow-x-auto md:overflow-visible">
+            <div className="overflow-x-auto md:overflow-visible bg-white/30 rounded-xl overflow-hidden p-4">
               <table className="w-full text-left border-collapse block md:table">
                 <thead className="hidden md:table-header-group">
                   <tr className="border-b border-gray-100 text-sm text-gray-500">
@@ -207,7 +210,7 @@ function AppointmentManagement({ onLogout }) {
                     <tr className="block md:table-row"><td colSpan="6" className="py-8 text-center text-gray-500 block md:table-cell">No appointments found.</td></tr>
                   ) : (
                     filteredAppointments.map((apt) => (
-                      <tr key={apt._id} className="block md:table-row border border-gray-100 md:border-b md:border-gray-50 md:border-x-0 md:border-t-0 rounded-xl md:rounded-none mb-4 md:mb-0 p-4 md:p-0 hover:bg-gray-50/50 transition-colors bg-white">
+                      <tr key={apt._id} className="block md:table-row border border-gray-100 md:border-b md:border-gray-50 md:border-x-0 md:border-t-0 rounded-xl md:rounded-none mb-4 md:mb-0 p-4 md:p-0 hover:bg-gray-50/50 transition-colors">
                         <td className="flex md:table-cell justify-between items-center py-2 md:py-4 font-medium text-dark-gray border-b border-gray-50 md:border-none">
                           <span className="md:hidden text-gray-500 font-normal">Patient</span>
                           <div className="flex items-center gap-2">
