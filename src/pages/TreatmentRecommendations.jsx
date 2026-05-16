@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Heart,
+  Activity,
   LogOut,
   Pill,
   Clock,
@@ -76,7 +76,7 @@ function TreatmentRecommendations({ onLogout, currentUser }) {
       id: record._id,
       condition: record.condition || primary.condition || "Unknown",
       severity: primary.severity || "Low",
-      date: formatDate(record.createdAt),
+      date: formatDate(record.updatedAt || record.createdAt),
       doctor: "AI Health Assistant",
       duration: primary.duration || "As directed",
       followUp: primary.followUp || "Consult your doctor if symptoms persist.",
@@ -182,11 +182,11 @@ function TreatmentRecommendations({ onLogout, currentUser }) {
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-dark-gray mb-2 flex items-center gap-3">
-            <Heart className="w-8 h-8 text-primary" />
-            Treatment History
+          <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2 flex items-center gap-3">
+            <Activity className="w-8 h-8 text-primary" />
+            Treatment Recommendations
           </h1>
-          <p className="text-gray-600">
+          <p className="text-white">
             Your personalized AI-generated treatment plans based on past symptom analyses.
           </p>
         </div>

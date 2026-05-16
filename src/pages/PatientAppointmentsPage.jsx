@@ -456,8 +456,8 @@ function PatientAppointmentsPage({ onLogout, currentUser }) {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-dark-gray">My Appointments</h1>
-            <p className="text-gray-500 mt-1">All your appointments with DiagnoSync doctors</p>
+            <h1 className="text-3xl font-bold text-[#E5E7EB]">My Appointments</h1>
+            <p className="text-white mt-1">All your appointments with DiagnoSync doctors</p>
           </div>
           <button
             onClick={() => navigate("/patient/appointments")}

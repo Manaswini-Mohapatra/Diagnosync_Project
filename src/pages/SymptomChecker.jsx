@@ -179,38 +179,50 @@ function SymptomChecker({ onLogout, currentUser }) {
         </div>
       </nav>
 
-      <div className="flex flex-1 max-w-7xl mx-auto w-full">
+      <div className="flex flex-1 w-full">
         {/* ── History Sidebar ─────────────────────────────────────────── */}
         {showHistory && (
-          <aside className="w-80 bg-white border-r border-border-gray flex flex-col shrink-0 overflow-hidden">
-            <div className="p-4 border-b border-border-gray flex items-center justify-between">
-              <h2 className="font-bold text-dark-gray flex items-center gap-2">
+          <aside
+            className="w-80 flex flex-col shrink-0 overflow-hidden"
+            style={{
+              background: "rgba(255,255,255,0.72)",
+              backdropFilter: "blur(18px)",
+              WebkitBackdropFilter: "blur(18px)",
+              borderRight: "1px solid rgba(255,255,255,0.40)",
+              boxShadow: "4px 0 24px rgba(15,77,118,0.12)"
+            }}
+          >
+            <div
+              className="p-4 flex items-center justify-between"
+              style={{ borderBottom: "1px solid rgba(255,255,255,0.15)" }}
+            >
+              <h2 className="font-bold text-gray-800 flex items-center gap-2">
                 <MessageSquare className="w-4 h-4 text-primary" />
                 Previous Chats
               </h2>
-              <button onClick={() => setShowHistory(false)} className="text-gray-400 hover:text-gray-600">
+              <button onClick={() => setShowHistory(false)} className="text-gray-500 hover:text-gray-800 transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {historyLoading ? (
               <div className="flex-1 flex items-center justify-center">
-                <Loader className="w-5 h-5 text-primary animate-spin" />
+                <Loader className="w-5 h-5 text-[#6fb6d9] animate-spin" />
               </div>
             ) : chatHistory.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-gray-500">
+              <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
                 <MessageSquare className="w-8 h-8 mb-2 text-gray-300" />
-                <p className="text-sm">No previous conversations yet.</p>
+                <p className="text-sm text-gray-500">No previous conversations yet.</p>
               </div>
             ) : (
-              <div className="flex-1 overflow-y-auto divide-y divide-border-gray">
+              <div className="flex-1 overflow-y-auto divide-y" style={{ borderColor: "rgba(255,255,255,0.10)" }}>
                 {chatHistory.map((session) => (
                   <button
                     key={session._id}
                     onClick={() => setSelectedSession(session)}
-                    className="w-full text-left p-4 hover:bg-blue-50 transition-colors"
+                    className="w-full text-left p-4 transition-colors hover:bg-white/10"
                   >
-                    <p className="text-sm font-semibold text-dark-gray truncate">
+                    <p className="text-sm font-semibold text-gray-800 truncate">
                       {getSessionPreview(session)}
                     </p>
                     <div className="flex items-center justify-between mt-1">
@@ -218,7 +230,7 @@ function SymptomChecker({ onLogout, currentUser }) {
                       <span className="text-xs text-gray-400">{formatDate(session.createdAt)}</span>
                     </div>
                     {session.phase === "results" && (
-                      <span className="inline-block mt-1 text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-semibold">
+                      <span className="inline-block mt-1 text-xs px-2 py-0.5 bg-green-500/20 text-green-300 rounded-full font-semibold">
                         Completed
                       </span>
                     )}
@@ -227,7 +239,7 @@ function SymptomChecker({ onLogout, currentUser }) {
               </div>
             )}
 
-            <div className="p-4 border-t border-border-gray">
+            <div className="p-4" style={{ borderTop: "1px solid rgba(255,255,255,0.15)" }}>
               <button
                 onClick={handleReset}
                 className="btn-primary w-full text-sm"
@@ -239,7 +251,8 @@ function SymptomChecker({ onLogout, currentUser }) {
         )}
 
         {/* ── Main Chat Area ──────────────────────────────────────────── */}
-        <div className="flex-1 flex flex-col p-4 min-w-0">
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full px-4 py-4 min-w-0">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto mb-4 space-y-4 pb-4">
             {messages.map((message, i) => (
@@ -356,7 +369,7 @@ function SymptomChecker({ onLogout, currentUser }) {
 
           {/* Input */}
           {!showResults && (
-            <div className="bg-white rounded-2xl p-4 border border-border-gray shadow-sm">
+            <div className="bg-white rounded-2xl p-4 border border-border-gray shadow-sm mb-4 w-full">
               {conversationPhase === "initial" && (
                 <p className="text-xs text-gray-500 mb-2">
                   Tip: List multiple symptoms separated by commas (e.g., "fever, cough, headache")
@@ -392,6 +405,7 @@ function SymptomChecker({ onLogout, currentUser }) {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
 

@@ -238,7 +238,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
   return (
     <div className="min-h-screen bg-light-gray flex flex-col">
       {/* Navbar */}
-      <nav className="bg-white shadow-sm sticky top-0 z-40">
+      <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo />
@@ -247,9 +247,8 @@ function DoctorProfilePage({ onLogout, currentUser }) {
                 onClick={() => navigate("/doctor/dashboard")}
                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
               >
-                <ArrowLeft className="w-4 h-4 hidden sm:inline" />
+                <ArrowLeft className="w-4 h-4" />
                 <span className="hidden sm:inline">Back to Dashboard</span>
-                <span className="sm:hidden">Back</span>
               </button>
               <NotificationBell />
               <button
@@ -268,8 +267,8 @@ function DoctorProfilePage({ onLogout, currentUser }) {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-dark-gray mb-2">My Professional Profile</h1>
-            <p className="text-gray-600">View and manage your professional information</p>
+            <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">My Professional Profile</h1>
+            <p className="text-white">View and manage your professional information</p>
           </div>
           {!isEditing && (
             <button onClick={handleEditClick} className="btn-primary flex items-center gap-2">

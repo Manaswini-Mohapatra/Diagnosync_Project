@@ -160,8 +160,8 @@ function AppointmentManagement({ onLogout }) {
 
         <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-dark-gray">Appointment Management</h1>
-            <p className="text-gray-500 mt-1">Monitor and manage platform appointments.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#E5E7EB]">Appointment Management</h1>
+            <p className="text-white mt-1">Monitor and manage platform appointments.</p>
           </div>
 
           <div className="glass-panel p-6 rounded-2xl border-none shadow-soft">

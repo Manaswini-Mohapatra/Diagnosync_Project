@@ -212,8 +212,8 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
 
       <div className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Edit Professional Profile</h1>
-          <p className="text-gray-500 text-sm mt-1">Update and manage your professional information.</p>
+          <h1 className="text-3xl font-bold text-[#E5E7EB]">Edit Professional Profile</h1>
+          <p className="text-white text-sm mt-1">Update and manage your professional information.</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">

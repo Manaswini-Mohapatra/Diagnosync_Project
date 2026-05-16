@@ -173,8 +173,8 @@ function AdminDashboard({ onLogout, currentUser }) {
         <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8">
           <div className="flex justify-between items-end">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-dark-gray">Admin Dashboard</h1>
-              <p className="text-gray-500 mt-1">System overview and key metrics</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-[#E5E7EB]">Admin Dashboard</h1>
+              <p className="text-white mt-1">System overview and key metrics</p>
             </div>
           </div>
 

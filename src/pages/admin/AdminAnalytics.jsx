@@ -132,11 +132,11 @@ const AdminAnalytics = ({ onLogout, currentUser }) => {
       {/* Header & Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-3xl font-bold text-[#E5E7EB] flex items-center gap-2">
             <Activity className="w-8 h-8 text-primary" />
             Platform Analytics
           </h1>
-          <p className="text-gray-500 mt-1">Real-time healthcare insights and system performance.</p>
+          <p className="text-white mt-1">Real-time healthcare insights and system performance.</p>
         </div>
         
         <div className="flex items-center gap-3">

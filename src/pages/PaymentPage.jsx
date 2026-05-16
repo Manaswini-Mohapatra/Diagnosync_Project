@@ -92,15 +92,21 @@ function PaymentPage() {
 
   return (
     <div className="min-h-screen bg-light-gray flex flex-col">
-      {/* Navbar Minimal */}
-      <nav className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Logo />
-          {step < 3 && (
-            <button onClick={() => navigate("/patient/dashboard")} className="text-sm text-gray-500 hover:text-gray-800 flex items-center gap-1 transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Cancel Payment
-            </button>
-          )}
+      {/* Navbar */}
+      <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Logo />
+            {step < 3 && (
+              <button
+                onClick={() => navigate("/patient/dashboard")}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="hidden sm:inline">Cancel Payment</span>
+              </button>
+            )}
+          </div>
         </div>
       </nav>
 
@@ -112,15 +118,15 @@ function PaymentPage() {
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 -z-10 rounded-full"></div>
             <div className={`absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#1F5F7A] -z-10 rounded-full transition-all duration-300`} style={{ width: step === 1 ? '0%' : step === 2 ? '50%' : '100%' }}></div>
             
-            <div className={`flex flex-col items-center gap-2 ${step >= 1 ? "text-[#1F5F7A]" : "text-gray-400"}`}>
+            <div className={`flex flex-col items-center gap-2 ${step >= 1 ? "text-white" : "text-gray-400"}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${step >= 1 ? "bg-[#1F5F7A] text-white ring-4 ring-white" : "bg-gray-200 text-gray-500"}`}>1</div>
               <span className="text-xs font-semibold">Review</span>
             </div>
-            <div className={`flex flex-col items-center gap-2 ${step >= 2 ? "text-[#1F5F7A]" : "text-gray-400"}`}>
+            <div className={`flex flex-col items-center gap-2 ${step >= 2 ? "text-white" : "text-gray-400"}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${step >= 2 ? "bg-[#1F5F7A] text-white ring-4 ring-white" : "bg-gray-200 text-gray-500"}`}>2</div>
               <span className="text-xs font-semibold">Payment</span>
             </div>
-            <div className={`flex flex-col items-center gap-2 ${step >= 3 ? "text-[#1F5F7A]" : "text-gray-400"}`}>
+            <div className={`flex flex-col items-center gap-2 ${step >= 3 ? "text-white" : "text-gray-400"}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${step >= 3 ? "bg-[#1F5F7A] text-white ring-4 ring-white" : "bg-gray-200 text-gray-500"}`}>3</div>
               <span className="text-xs font-semibold">Confirm</span>
             </div>

@@ -144,8 +144,8 @@ function DoctorVerification({ onLogout }) {
 
         <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-dark-gray">Doctor Verifications</h1>
-            <p className="text-gray-500 mt-1">Review and approve new doctor registrations.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#E5E7EB]">Doctor Verifications</h1>
+            <p className="text-white mt-1">Review and approve new doctor registrations.</p>
           </div>
 
           {isLoading ? (

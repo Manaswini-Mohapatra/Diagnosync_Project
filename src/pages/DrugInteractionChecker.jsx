@@ -146,8 +146,8 @@ function DrugInteractionChecker({ onLogout, currentUser }) {
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-dark-gray mb-2">Drug Interaction Checker</h1>
-          <p className="text-gray-600">Ensure patient safety by checking for potential interactions between medications.</p>
+          <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">Drug Interaction Checker</h1>
+          <p className="text-white">Ensure patient safety by checking for potential interactions between medications.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -271,7 +271,7 @@ function DrugInteractionChecker({ onLogout, currentUser }) {
         {interactionsReport && (
           <div className="mt-8">
             <div className="flex items-center justify-between mb-6 border-b border-gray-200 pb-4">
-              <h2 className="text-2xl font-bold text-dark-gray">Analysis Report</h2>
+              <h2 className="text-2xl font-bold text-[#E5E7EB]">Analysis Report</h2>
               <span className="text-sm text-gray-500 font-semibold bg-white px-3 py-1 border border-gray-200 rounded-full shadow-sm">
                 Overall Profile: <span className={`ml-1 font-bold ${
                   interactionsReport.severity === 'major' ? 'text-danger' : 

@@ -222,10 +222,10 @@ function DoctorDashboard({ onLogout, currentUser }) {
           <>
             {/* Welcome */}
         <div className="mb-8 animate-fade-in">
-          <h1 className="text-4xl font-bold text-dark-gray mb-2">
-            Welcome, {currentUser?.name?.split(" ")[0] || "Doctor"} 👋
+          <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">
+            Welcome, {currentUser?.name?.split(" ")[0] || "Doctor"}
           </h1>
-          <p className="text-gray-600">Here's your practice overview for today</p>
+          <p className="text-white">Here's your practice overview for today</p>
         </div>
 
         {/* Stats */}

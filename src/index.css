@@ -215,7 +215,7 @@ code {
  * EXCEPT SignIn & SignUp (which are excluded from .global-app-bg)
  * ──────────────────────────────────────────────────────────────────────── */
 .global-app-bg > div:first-child {
-  background-color: #A5B8D0 !important;
+  background-color: #748b97 !important;
   background-image: none !important;
   transition: background-color 0.5s ease-in-out;
 }
@@ -239,12 +239,12 @@ code {
   position: fixed;
   inset: 0;
   z-index: -2;
-  background-image: url('/images/hero/image9.svg');
+  background-image: url('/images/hero/image26.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: blur(8px) brightness(0.85) contrast(1.1) saturate(1.1);
-  transform: scale(1.05);
+  filter: blur(1px) brightness(0.52) contrast(1.0) saturate(1.02);
+  transform: scale(1);
   pointer-events: none;
 }
 

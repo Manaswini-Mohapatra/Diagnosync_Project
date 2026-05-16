@@ -37,6 +37,7 @@ function SignIn({ onLogin }) {
       const res = await api.post('/auth/login', {
         email:    formData.email,
         password: formData.password,
+        role:     formData.role,
       });
 
       const { token, user, weakPassword: isWeak } = res.data;

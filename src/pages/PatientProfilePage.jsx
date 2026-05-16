@@ -119,18 +119,20 @@ function PatientProfilePage({ onLogout, currentUser }) {
   if (!profileData) {
     return (
       <div className="min-h-screen bg-light-gray">
-        <nav className="bg-white shadow-sm sticky top-0 z-40">
+        <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <Logo />
-              <NotificationBell />
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">Logout</span>
-              </button>
+              <div className="flex items-center gap-4">
+                <NotificationBell />
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline">Logout</span>
+                </button>
+              </div>
             </div>
           </div>
         </nav>
@@ -155,7 +157,7 @@ function PatientProfilePage({ onLogout, currentUser }) {
   return (
     <div className="min-h-screen bg-light-gray flex flex-col">
       {/* Navbar */}
-      <nav className="bg-white shadow-sm sticky top-0 z-40">
+      <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Logo />
@@ -164,9 +166,8 @@ function PatientProfilePage({ onLogout, currentUser }) {
                 onClick={() => navigate("/patient/dashboard")}
                 className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
               >
-                <ArrowLeft className="w-4 h-4 hidden sm:inline" />
+                <ArrowLeft className="w-4 h-4" />
                 <span className="hidden sm:inline">Back to Dashboard</span>
-                <span className="sm:hidden">Back</span>
               </button>
               <NotificationBell />
               <button
@@ -185,10 +186,10 @@ function PatientProfilePage({ onLogout, currentUser }) {
       <div className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-dark-gray mb-2">
+            <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">
               My Health Profile
             </h1>
-            <p className="text-gray-600">View and manage your health information</p>
+            <p className="text-white">View and manage your health information</p>
           </div>
           {!isEditing ? (
             <button

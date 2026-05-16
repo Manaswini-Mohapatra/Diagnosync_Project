@@ -179,11 +179,11 @@ function PatientDashboard({ onLogout, currentUser }) {
         )}
 
         {/* Welcome Section */}
-        <div className="mb-8 animate-fade-in text-glow-light">
-          <h1 className="text-4xl font-bold text-dark-gray mb-2">
-            Welcome back, {currentUser?.name?.split(" ")[0] || "Patient"}! 👋
+        <div className="mb-8 animate-fade-in">
+          <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">
+            Welcome back, {currentUser?.name?.split(" ")[0] || "Patient"}
           </h1>
-          <p className="text-gray-800 font-medium">
+          <p className="text-[#E5E7EB] font-medium">
             Here's what's happening with your health
           </p>
         </div>
@@ -239,7 +239,7 @@ function PatientDashboard({ onLogout, currentUser }) {
 
         {/* Action Cards */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-dark-gray mb-6">
+          <h2 className="text-2xl font-bold text-[#E5E7EB] mb-6">
             Quick Actions
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -92,8 +92,8 @@ function PatientList({ onLogout, currentUser }) {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8 border-b border-gray-200 pb-6">
-          <h1 className="text-4xl font-bold text-dark-gray mb-2">My Patients</h1>
-          <p className="text-gray-600">Browse and manage registered patients.</p>
+          <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">My Patients</h1>
+          <p className="text-white">Browse and manage registered patients.</p>
         </div>
 
         {/* Search and Filter */}

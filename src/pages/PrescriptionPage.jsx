@@ -216,8 +216,8 @@ function PrescriptionPage({ onLogout, currentUser }) {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-dark-gray mb-2">My Prescriptions</h1>
-            <p className="text-gray-600">Manage and view your medications</p>
+            <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">My Prescriptions</h1>
+            <p className="text-[#E5E7EB]">Manage and view your medications</p>
           </div>
           {isDoctor && (
             <button
@@ -236,8 +236,8 @@ function PrescriptionPage({ onLogout, currentUser }) {
             onClick={() => setActiveTab('active')}
             className={`px-4 py-2 font-semibold transition-colors ${
               activeTab === 'active'
-                ? 'text-primary border-b-2 border-primary'
-                : 'text-gray-600 hover:text-primary'
+                ? 'text-white border-b-2 border-primary'
+                : 'text-white hover:text-primary'
             }`}
           >
             Active Prescriptions ({activePrescriptions.length})
@@ -246,8 +246,8 @@ function PrescriptionPage({ onLogout, currentUser }) {
             onClick={() => setActiveTab('discontinued')}
             className={`px-4 py-2 font-semibold transition-colors ${
               activeTab === 'discontinued'
-                ? 'text-primary border-b-2 border-primary'
-                : 'text-gray-600 hover:text-primary'
+                ? 'text-white border-b-2 border-primary'
+                : 'text-white hover:text-primary'
             }`}
           >
             History ({historyPrescriptions.length})

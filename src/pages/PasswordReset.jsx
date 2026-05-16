@@ -104,8 +104,8 @@ function PasswordReset() {
           <div className="flex justify-center mb-6">
             <Logo />
           </div>
-          <h1 className="text-3xl font-bold text-dark-gray">Reset Password</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-[#E5E7EB]">Reset Password</h1>
+          <p className="text-white mt-2">
             {step === 1 && 'Enter your email to receive a reset link'}
             {step === 2 && 'Enter the token from your email'}
             {step === 3 && 'Set your new password'}
@@ -137,7 +137,7 @@ function PasswordReset() {
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <input
                     type="email"
                     value={email}

@@ -144,8 +144,8 @@ function PatientReports({ onLogout, currentUser }) {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8 border-b border-gray-200 pb-6">
-          <h1 className="text-4xl font-bold text-dark-gray mb-2">My Reports</h1>
-          <p className="text-gray-600">Upload and manage your medical test reports securely.</p>
+          <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">My Reports</h1>
+          <p className="text-white">Upload and manage your medical test reports securely.</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -218,7 +218,7 @@ function PatientReports({ onLogout, currentUser }) {
 
           {/* Reports Grid Section */}
           <div className="lg:col-span-2">
-            <h2 className="text-xl font-bold text-dark-gray mb-4">Your Uploaded Reports</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Your Uploaded Reports</h2>
             
              {isLoading ? (
                 <div className="text-center py-12 text-gray-500">

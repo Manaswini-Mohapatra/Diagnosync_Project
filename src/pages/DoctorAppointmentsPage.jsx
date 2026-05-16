@@ -238,8 +238,8 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-dark-gray mb-2">Appointments</h1>
-            <p className="text-gray-600">Manage your patient appointments</p>
+            <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">Appointments</h1>
+            <p className="text-white">Manage your patient appointments</p>
           </div>
           <button
             onClick={fetchAppointments}
@@ -276,8 +276,8 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
               onClick={() => setActiveTab(tab.key)}
               className={`px-4 py-2 font-semibold transition-colors whitespace-nowrap flex items-center gap-2 ${
                 activeTab === tab.key
-                  ? "text-primary border-b-2 border-primary"
-                  : "text-gray-600 hover:text-primary"
+                  ? "text-white border-b-2 border-primary"
+                  : "text-white hover:text-primary"
               }`}
             >
               {tab.label}
