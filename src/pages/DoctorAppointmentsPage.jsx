@@ -206,7 +206,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
     d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—";
 
   return (
-    <div className="min-h-screen bg-transparent relative pb-20 flex flex-col">
+    <div className="min-h-screen bg-transparent relative flex flex-col">
       {/* Navbar */}
       <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

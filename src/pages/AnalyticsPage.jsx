@@ -103,8 +103,8 @@ function AnalyticsPage({ onLogout, currentUser }) {
         {/* Header & Filters */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-4xl font-bold text-dark-gray mb-2">Clinical Analytics</h1>
-            <p className="text-gray-600">Deep insights into your practice performance and patient trends.</p>
+            <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">Clinical Analytics</h1>
+            <p className="text-white">Deep insights into your practice performance and patient trends.</p>
           </div>
           
           <div className="flex bg-white p-1 rounded-xl shadow-sm border border-gray-100">

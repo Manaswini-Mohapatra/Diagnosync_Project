@@ -187,7 +187,7 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
-      <nav className="bg-white shadow-sm sticky top-0 z-40">
+      <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
           <Logo />
           <div className="flex items-center gap-4">
@@ -212,7 +212,7 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
 
       <div className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-[#E5E7EB]">Edit Professional Profile</h1>
+          <h1 className="text-3xl font-bold text-[#E5E7EB]">Doctor's Profile</h1>
           <p className="text-white text-sm mt-1">Update and manage your professional information.</p>
         </div>
 
@@ -220,7 +220,7 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
           <div className="grid md:grid-cols-[280px_1fr]">
             <aside className="bg-white border-b md:border-b-0 md:border-r border-gray-100 p-6 md:p-8">
               <div className="mb-6 hidden md:block">
-                <h1 className="text-xl font-bold text-gray-900">Professional Profile</h1>
+                <h1 className="text-xl font-bold text-gray-900">Doctor's Profile</h1>
                 <p className="text-xs text-gray-400 mt-1">Complete your information step by step.</p>
               </div>
               <RegistrationStepper steps={STEPS} currentStep={step} onStepClick={(id) => id < step && goTo(id)} />

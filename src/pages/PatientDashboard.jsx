@@ -121,7 +121,7 @@ function PatientDashboard({ onLogout, currentUser }) {
   ];
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen flex flex-col">
       {/* Navbar */}
       <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -157,7 +157,7 @@ function PatientDashboard({ onLogout, currentUser }) {
       </nav>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* Profile Completion Warning */}
         {!profileComplete && (

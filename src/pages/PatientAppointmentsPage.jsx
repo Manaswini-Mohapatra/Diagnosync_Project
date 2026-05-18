@@ -425,7 +425,7 @@ function PatientAppointmentsPage({ onLogout, currentUser }) {
   const displayed = tabs[activeTab] || [];
 
   return (
-    <div className="min-h-screen bg-transparent relative pb-20 flex flex-col">
+    <div className="min-h-screen bg-transparent relative flex flex-col">
       {/* Navbar */}
       <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -504,7 +504,7 @@ function PatientAppointmentsPage({ onLogout, currentUser }) {
         ) : displayed.length === 0 ? (
           <div className="text-center py-20">
             <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 font-medium">
+            <p className="text-white font-medium">
               {activeTab === "upcoming"
                 ? "No upcoming appointments. Book one now!"
                 : activeTab === "past"

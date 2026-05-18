@@ -161,7 +161,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
     const doctorObj = doctors.find(d => d.userId === selectedDoctor || d._id === selectedDoctor || d.id === selectedDoctor);
     const appointmentData = {
       doctorName: doctorObj?.name || 'Assigned Doctor',
-      specialty: doctorObj?.specialization || doctorObj?.specialty || 'General',
+      specialty: doctorObj?.specialty || doctorObj?.specialization || 'General',
       date: selectedDate,
       time: selectedTime,
       appointmentType: appointmentType,
@@ -179,7 +179,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
   // Cancellation Sub-screan
   if (isCancelled) {
     return (
-       <div className="min-h-screen bg-transparent relative pb-20">
+       <div className="min-h-screen bg-transparent relative flex flex-col">
           <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -213,7 +213,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
   if (isConfirmed) {
     const activeDoc = getActiveDoctor();
     return (
-      <div className="min-h-screen bg-transparent relative pb-20">
+      <div className="min-h-screen bg-transparent relative flex flex-col">
         {/* Navbar */}
         <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -260,7 +260,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
                   <p className="text-gray-600">Doctor</p>
                   <p className="font-semibold text-dark-gray text-right">
                     {activeDoc?.name || 'Unknown'} <br/>
-                    <span className="text-xs text-gray-500 font-normal">{activeDoc?.specialization}</span>
+                    <span className="text-xs text-gray-500 font-normal">{activeDoc?.specialty || activeDoc?.specialization}</span>
                   </p>
                 </div>
                 <div className="flex justify-between border-t border-gray-200 pt-2 text-sm">
@@ -329,7 +329,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
   // ────────────────────────────────────────────────────────────────────────
   // Booking Form Screens
   return (
-    <div className="min-h-screen bg-transparent relative pb-20">
+    <div className="min-h-screen bg-transparent relative flex flex-col">
       {/* Navbar */}
       <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -350,7 +350,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">
             Book Appointment
@@ -423,7 +423,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
                             Dr. {doctor.name}
                           </h3>
                           <p className="text-gray-600 text-sm">
-                            {doctor.specialization || "General Physician"}
+                            {doctor.specialty || doctor.specialization || "General Physician"}
                           </p>
                           <div className="flex gap-4 mt-2 text-sm">
                             <span className="font-semibold text-primary">

@@ -98,6 +98,21 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
         emergencyPhone: formData.emergencyPhone,
       };
       await api.put("/patients/me", payload);
+
+      // Upload any attached documents
+      if (localFiles && localFiles.length > 0) {
+        for (const file of localFiles) {
+          const reportData = new FormData();
+          // Use the file name as the report title for auto-uploaded files
+          reportData.append("title", file.name);
+          reportData.append("report", file.raw);
+          
+          await api.post("/patients/me/reports", reportData, {
+            headers: { "Content-Type": "multipart/form-data" }
+          });
+        }
+      }
+
       setIsSubmitted(true);
     } catch (error) {
       alert("Failed to save profile: " + (error.response?.data?.error || error.message));

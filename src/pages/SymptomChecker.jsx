@@ -138,7 +138,7 @@ function SymptomChecker({ onLogout, currentUser }) {
   };
 
   return (
-    <div className="min-h-screen bg-light-gray flex flex-col">
+    <div className="h-screen overflow-hidden bg-light-gray flex flex-col">
       {/* Navbar */}
       <nav className="glass-panel sticky top-4 z-40 mx-4 sm:mx-6 lg:mx-8 mb-8 border-none shadow-soft backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -179,11 +179,11 @@ function SymptomChecker({ onLogout, currentUser }) {
         </div>
       </nav>
 
-      <div className="flex flex-1 w-full">
+      <div className="flex flex-1 w-full pl-4 sm:pl-6 lg:pl-8 min-h-0 pb-4">
         {/* ── History Sidebar ─────────────────────────────────────────── */}
         {showHistory && (
           <aside
-            className="w-80 flex flex-col shrink-0 overflow-hidden"
+            className="w-80 flex flex-col shrink-0 overflow-hidden rounded-2xl shadow-lg border h-full"
             style={{
               background: "rgba(255,255,255,0.72)",
               backdropFilter: "blur(18px)",
@@ -230,7 +230,7 @@ function SymptomChecker({ onLogout, currentUser }) {
                       <span className="text-xs text-gray-400">{formatDate(session.createdAt)}</span>
                     </div>
                     {session.phase === "results" && (
-                      <span className="inline-block mt-1 text-xs px-2 py-0.5 bg-green-500/20 text-green-300 rounded-full font-semibold">
+                      <span className="inline-block mt-1 text-xs px-2 py-0.5 bg-green-500/20 text-black-300 rounded-full font-semibold">
                         Completed
                       </span>
                     )}
@@ -251,10 +251,10 @@ function SymptomChecker({ onLogout, currentUser }) {
         )}
 
         {/* ── Main Chat Area ──────────────────────────────────────────── */}
-        <div className="flex-1 flex flex-col min-w-0">
-          <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full px-4 py-4 min-w-0">
+        <div className="flex-1 flex flex-col w-full min-w-0 min-h-0">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto mb-4 space-y-4 pb-4">
+          <div className="flex-1 overflow-y-auto mb-4 px-4 lg:px-8 py-4">
+            <div className="max-w-4xl mx-auto space-y-4 pb-4">
             {messages.map((message, i) => (
               <div
                 key={i}
@@ -365,11 +365,13 @@ function SymptomChecker({ onLogout, currentUser }) {
             )}
 
             <div ref={messagesEndRef} />
+            </div>
           </div>
 
           {/* Input */}
           {!showResults && (
-            <div className="bg-white rounded-2xl p-4 border border-border-gray shadow-sm mb-4 w-full">
+            <div className="px-4 lg:px-8 pb-4 w-full">
+              <div className="max-w-4xl mx-auto bg-white rounded-2xl p-4 border border-border-gray shadow-sm w-full">
               {conversationPhase === "initial" && (
                 <p className="text-xs text-gray-500 mb-2">
                   Tip: List multiple symptoms separated by commas (e.g., "fever, cough, headache")
@@ -403,9 +405,9 @@ function SymptomChecker({ onLogout, currentUser }) {
                   )}
                 </button>
               </div>
+              </div>
             </div>
           )}
-          </div>
         </div>
       </div>
 
