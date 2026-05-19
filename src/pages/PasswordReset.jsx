@@ -48,7 +48,10 @@ function PasswordReset() {
 
     setIsLoading(true)
     try {
-      await api.post('/auth/forgot-password', { email })
+      const res = await api.post('/auth/forgot-password', { email })
+      if (res.data && res.data.token) {
+        setToken(res.data.token)
+      }
       setStep(2)
     } catch (err) {
       setError(err.response?.data?.error || 'Something went wrong. Please try again.')
