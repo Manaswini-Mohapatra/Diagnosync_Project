@@ -9,7 +9,7 @@ export default function FloatingActionButton({ role, currentUser }) {
   const location = useLocation();
   const menuRef = useRef(null);
 
-  // Auto-close when clicking outside
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -20,17 +20,17 @@ export default function FloatingActionButton({ role, currentUser }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close on route change
+  
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
 
-  // Do not render on auth pages, landing, or for admin users
+  
   if (["/signin", "/signup", "/"].includes(location.pathname) || role === "admin" || location.pathname.startsWith("/admin")) {
     return null;
   }
 
-  // Hide FAB for rejected doctors
+  
   if (role === "doctor" && currentUser?.verificationStatus === "rejected") {
     return null;
   }
@@ -50,7 +50,7 @@ export default function FloatingActionButton({ role, currentUser }) {
     { label: "Analytics", route: "/doctor/analytics", icon: BarChart2, color: "text-orange-600", bg: "bg-orange-100" },
   ];
 
-  // Default to patient logic if role is absent
+  
   const config = role === "doctor" ? doctorConfig : patientConfig;
 
   return (

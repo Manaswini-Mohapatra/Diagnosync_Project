@@ -14,8 +14,7 @@ function Landing() {
     e.preventDefault();
     setIsMobileMenuOpen(false);
     
-    // Wait for the Framer Motion exit animation (300ms) to finish so the 
-    // page layout is stable before we calculate the scroll position.
+    
     setTimeout(() => {
       const element = document.getElementById(targetId);
       if (element) {
@@ -70,16 +69,7 @@ function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <Logo/>
-            {/* <div className="flex items-center gap-2">
-              <img
-                src="/diagnosync_icon_transparent.svg"
-                alt="DiagnoSync Logo"
-                className="h-12 w-auto"
-              />
-              <span className="text-4xl font-bold leading-[1.3] pb-[2px] bg-gradient-to-r from-primary to-success bg-clip-text text-transparent">
-                DiagnoSync
-              </span>
-            </div> */}
+            
             <div className="hidden md:flex gap-8">
               <a href="#features" className="text-gray-600 hover:text-primary font-medium">Features</a>
               <a href="#how-it-works" className="text-gray-600 hover:text-primary font-medium">How It Works</a>
@@ -90,7 +80,7 @@ function Landing() {
               <Link to="/signup" className="btn-primary">Get Started</Link>
             </div>
 
-            {/* Mobile Menu Button */}
+            
             <div className="md:hidden flex items-center">
               <button 
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
@@ -126,7 +116,7 @@ function Landing() {
         </AnimatePresence>
       </nav>
 
-      {/* Hero Section (Carousel) */}
+      {/* Hero Section*/}
       <section 
         className="relative w-full h-[60vh] md:h-[80vh] overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
@@ -146,7 +136,7 @@ function Landing() {
               className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
               style={{ backgroundImage: `url(${slides[currentSlide].image})` }}
             />
-            {/* Dark Overlay Gradient for readability */}
+            {/* Dark Overlay Gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
             
             {/* Slide Content */}
@@ -213,7 +203,7 @@ function Landing() {
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
+            
             <div className="card-hover">
               <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-blue-100 mb-4">
                 <Brain className="w-6 h-6 text-primary" />
@@ -227,7 +217,7 @@ function Landing() {
               </p>
             </div>
 
-            {/* Feature 2 */}
+            
             <div className="card-hover">
               <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-green-100 mb-4">
                 <Activity className="w-6 h-6 text-success" />
@@ -241,7 +231,7 @@ function Landing() {
               </p>
             </div>
 
-            {/* Feature 3 */}
+            
             <div className="card-hover">
               <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-red-100 mb-4">
                 <Shield className="w-6 h-6 text-danger" />
@@ -314,43 +304,7 @@ function Landing() {
         </div>
       </section>
 
-      {/* Footer */}
-      {/* <footer className="bg-dark-gray text-white py-12 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Heart className="w-6 h-6 text-primary" />
-                <span className="font-bold">DiagnoSync</span>
-              </div>
-              <p className="text-gray-400">AI-powered healthcare platform</p>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="/" className="hover:text-white">Home</a></li>
-                <li><a href="/" className="hover:text-white">Features</a></li>
-                <li><a href="/" className="hover:text-white">About</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Legal</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="/" className="hover:text-white">Terms</a></li>
-                <li><a href="/" className="hover:text-white">Privacy</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Contact</h4>
-              <p className="text-gray-400">support@diagnosync.com</p>
-              <p className="text-gray-400">+1-800-DIAGNOSYNC</p>
-            </div>
-          </div>
-          <div className="border-t border-gray-700 pt-8 text-center text-gray-400">
-            <p>&copy; 2026 DiagnoSync. All rights reserved.</p>
-          </div>
-        </div>
-      </footer> */}
+      
       <Footer />
     </div>
   );

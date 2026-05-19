@@ -1,13 +1,7 @@
-// src/utils/appointmentPdfGenerator.js
-/**
- * Utility function to generate appointment confirmation PDF
- * Creates a professional appointment confirmation document
- */
-
 export const downloadAppointmentConfirmation = (appointmentData) => {
   const { doctorName, specialty, date, time, appointmentType, reason, fee } = appointmentData;
 
-  // Create HTML content for PDF
+  
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -371,11 +365,11 @@ export const downloadAppointmentConfirmation = (appointmentData) => {
     </html>
   `;
 
-  // Create blob from HTML
+ 
   const element = document.createElement('div');
   element.innerHTML = htmlContent;
 
-  // Use html2pdf library if available, otherwise use print fallback
+  
   if (window.html2pdf) {
     const options = {
       margin: 10,
@@ -387,7 +381,7 @@ export const downloadAppointmentConfirmation = (appointmentData) => {
 
     window.html2pdf().set(options).from(element).save();
   } else {
-    // Fallback: Open in new window for printing
+    
     const printWindow = window.open('', '', 'height=600,width=800');
     printWindow.document.write(htmlContent);
     printWindow.document.close();
@@ -395,12 +389,11 @@ export const downloadAppointmentConfirmation = (appointmentData) => {
   }
 };
 
-// Helper function to generate confirmation ID
+
 const generateConfirmationId = () => {
   return 'APT' + Math.random().toString(36).substr(2, 9).toUpperCase();
 };
 
-// Helper function to format dates
 const formatDateForDisplay = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);

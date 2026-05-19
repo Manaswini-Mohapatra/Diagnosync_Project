@@ -18,9 +18,9 @@ export default function DoctorScheduleModal({ onClose }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   
-  const [view, setView] = useState("monthly"); // 'monthly' | 'weekly'
-  const [activeDay, setActiveDay] = useState("monday"); // for weekly view
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]); // for monthly view
+  const [view, setView] = useState("monthly"); 
+  const [activeDay, setActiveDay] = useState("monday"); 
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]); 
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   useEffect(() => {
@@ -77,13 +77,13 @@ export default function DoctorScheduleModal({ onClose }) {
 
   
   const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
-  const getFirstDayOfMonth = (year, month) => new Date(year, month, 1).getDay(); // 0-6
+  const getFirstDayOfMonth = (year, month) => new Date(year, month, 1).getDay(); 
 
   const renderCalendar = () => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
     const daysInMonth = getDaysInMonth(year, month);
-    const firstDay = (getFirstDayOfMonth(year, month) + 6) % 7; // Align to Monday start
+    const firstDay = (getFirstDayOfMonth(year, month) + 6) % 7; 
 
     const weeks = [];
     let day = 1;
@@ -174,7 +174,7 @@ export default function DoctorScheduleModal({ onClose }) {
         </div>
 
         <div className="flex flex-col md:flex-row flex-1 overflow-y-auto md:overflow-hidden">
-          {/* Sidebar / Left View */}
+          {/* Sidebar */}
           <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-gray-100 bg-gray-50/30 p-4 sm:p-6 flex flex-col md:overflow-y-auto shrink-0">
             {view === "weekly" ? (
               <>

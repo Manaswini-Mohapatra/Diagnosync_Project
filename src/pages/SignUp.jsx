@@ -49,7 +49,7 @@ function SignUp({ onLogin }) {
       return;
     }
 
-    // ── Real API call ────────────────────────────────────────────────
+    
     setIsLoading(true);
     try {
       const res = await api.post('/auth/register', {
@@ -62,7 +62,7 @@ function SignUp({ onLogin }) {
 
       const { token, user } = res.data;
 
-      // Store token — same pattern as SignIn
+      
       localStorage.setItem('token',           token);
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userRole',         user.role);

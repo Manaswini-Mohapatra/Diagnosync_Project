@@ -37,11 +37,11 @@ function DoctorDashboard({ onLogout, currentUser }) {
   useEffect(() => {
     async function fetchDashboard() {
       try {
-        // Fetch all doctor appointments
+       
         const aptRes = await api.get("/appointments");
         const all = aptRes.data.appointments || [];
 
-        // Filter to today's appointments
+        
         const todayStr = new Date().toISOString().split("T")[0];
         const todayApts = all.filter((a) => {
           const aptDate = new Date(a.date).toISOString().split("T")[0];
@@ -55,7 +55,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
         );
         setTodayAppointments(todayApts.slice(0, 5));
 
-        // Fetch high-priority notifications
+        
         const notifRes = await api.get("/notifications?limit=50");
         const notifs = notifRes.data.data || notifRes.data.notifications || [];
         const urgent = notifs
@@ -69,12 +69,11 @@ function DoctorDashboard({ onLogout, currentUser }) {
           .slice(0, 3);
         setUrgentNotifs(urgent);
 
-        // Fetch doctor profile to check completeness
+        
         try {
           const profileRes = await api.get("/doctors/me");
           const data = profileRes.data.data;
-          // Check for a critical field (licenseNumber) to determine if profile is actually complete
-          // Ignore auto-generated 'PENDING-' placeholders created during signup
+          
           const hasRealLicense = data?.licenseNumber && !data.licenseNumber.startsWith("PENDING-");
           setProfileComplete(!!data && hasRealLicense);
           setVerificationStatus(data?.verificationStatus || 'pending');
@@ -90,11 +89,11 @@ function DoctorDashboard({ onLogout, currentUser }) {
     fetchDashboard();
   }, []);
 
-  // Listen for FAB openSchedule trigger
+  
   useEffect(() => {
     if (searchParams.get("openSchedule") === "true") {
       setShowScheduleModal(true);
-      // Clear parameter to prevent modal reopening on refresh
+      
       const newParams = new URLSearchParams(searchParams);
       newParams.delete("openSchedule");
       setSearchParams(newParams, { replace: true });
@@ -179,7 +178,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
       {/* Main Content */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        {/* Rejection Warning Banner */}
+        
         {verificationStatus === 'rejected' && !loading && (
           <div className="mb-6 animate-fade-in p-4 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-3">
@@ -217,10 +216,10 @@ function DoctorDashboard({ onLogout, currentUser }) {
           </div>
         )}
 
-        {/* Features (Hidden if profile is rejected) */}
+        {/* Features */}
         {verificationStatus !== 'rejected' && (
           <>
-            {/* Welcome */}
+            
         <div className="mb-8 animate-fade-in">
           <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">
             Welcome, {currentUser?.name?.split(" ")[0] || "Doctor"}
@@ -287,9 +286,9 @@ function DoctorDashboard({ onLogout, currentUser }) {
                     const notifId = notif._id || notif.id;
                     if (!notifId) return;
                     try {
-                      // Call backend to mark read in MongoDB
+                      
                       await api.patch(`/notifications/${notifId}/read`);
-                      // Remove from UI
+                      
                       setUrgentNotifs(prev => prev.filter(n => (n._id || n.id) !== notifId));
                     } catch (err) {
                       console.error("Failed to mark alert as read:", err);
@@ -312,7 +311,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
           </div>
         )}
 
-        {/* Today's Appointments Timeline */}
+        
         <div className="glass-panel p-6 border-none shadow-soft hover-lift">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-dark-gray flex items-center gap-2">
@@ -389,7 +388,7 @@ function DoctorDashboard({ onLogout, currentUser }) {
           </>
         )}
 
-        {/* Modals */}
+        
         {showScheduleModal && (
           <DoctorScheduleModal onClose={() => setShowScheduleModal(false)} />
         )}

@@ -38,10 +38,12 @@ function PatientProfilePage({ onLogout, currentUser }) {
         const res = await api.get('/patients/me');
         const { profile } = res.data.data;
         if (profile) {
-          // Normalize backend field 'medicalConditions' → 'conditions' for the UI
+         
           const normalized = {
             ...profile,
-            conditions: profile.medicalConditions || profile.conditions || []
+            conditions: profile.medicalConditions || profile.conditions || [],
+            allergies: profile.allergies || [],
+            medications: profile.medications || []
           };
           setProfileData(normalized);
           setEditData(normalized);
@@ -69,16 +71,20 @@ function PatientProfilePage({ onLogout, currentUser }) {
   const handleSave = async () => {
     try {
       setIsSubmitting(true);
-      // Map 'conditions' back to the field name the backend accepts
+      
       const payload = {
         ...editData,
-        conditions: editData.conditions
+        medicalConditions: editData.conditions,
+  allergies: editData.allergies,
+  medications: editData.medications
       };
       const res = await api.put('/patients/me', payload);
       const { profile } = res.data.data;
       const normalized = {
         ...profile,
-        conditions: profile.medicalConditions || profile.conditions || []
+        conditions: profile.medicalConditions || profile.conditions || [],
+        allergies: profile.allergies || [],
+        medications: profile.medications || []
       };
       setProfileData(normalized);
       setEditData(normalized);
@@ -211,7 +217,7 @@ function PatientProfilePage({ onLogout, currentUser }) {
         </div>
 
         {isEditing ? (
-          // ── Edit Mode (Step-based UI) ──────────────────────────────────────
+          
           <div className="bg-white/95 rounded-2xl shadow-sm border border-gray-100 overflow-hidden mt-4">
             <div className="grid md:grid-cols-[280px_1fr]">
               {/* Sidebar */}
@@ -226,7 +232,7 @@ function PatientProfilePage({ onLogout, currentUser }) {
               {/* Content */}
               <main className="p-6 md:p-10 lg:p-12">
                 <AnimatePresence mode="wait">
-                  {/* Step 1: Physical Information */}
+                 
                   {step === 1 && (
                     <FormSection key="s1">
                       <h2 className="text-2xl font-semibold text-gray-900 mb-6">Physical Information</h2>
@@ -255,7 +261,7 @@ function PatientProfilePage({ onLogout, currentUser }) {
                     </FormSection>
                   )}
 
-                  {/* Step 2: Medical History */}
+                 
                   {step === 2 && (
                     <FormSection key="s2">
                       <h2 className="text-2xl font-semibold text-gray-900 mb-6">Medical History</h2>
@@ -276,6 +282,14 @@ function PatientProfilePage({ onLogout, currentUser }) {
                             suggestions={["Penicillin", "Peanuts", "Shellfish", "Dust"]}
                           />
                         </FormTile>
+                        <FormTile label="Current Medications" hint="List medications you are currently taking.">
+                          <TagInput
+                            tags={editData.medications || []}
+                            onTagsChange={(tags) => updateEditData("medications", tags)}
+                            placeholder="e.g. Lisinopril, Aspirin"
+                            suggestions={["Lisinopril", "Aspirin", "Metformin", "Atorvastatin", "Ibuprofen"]}
+                          />
+                        </FormTile>
                         <FormTile label="Family Medical History" hint="Any significant conditions in your family.">
                           <textarea
                             name="familyHistory"
@@ -291,7 +305,7 @@ function PatientProfilePage({ onLogout, currentUser }) {
                     </FormSection>
                   )}
 
-                  {/* Step 3: Lifestyle */}
+                 
                   {step === 3 && (
                     <FormSection key="s3">
                       <h2 className="text-2xl font-semibold text-gray-900 mb-6">Lifestyle</h2>
@@ -329,7 +343,7 @@ function PatientProfilePage({ onLogout, currentUser }) {
                     </FormSection>
                   )}
 
-                  {/* Step 4: Emergency Contact */}
+                 
                   {step === 4 && (
                     <FormSection key="s4">
                       <h2 className="text-2xl font-semibold text-gray-900 mb-6">Emergency Contact</h2>
@@ -355,7 +369,7 @@ function PatientProfilePage({ onLogout, currentUser }) {
             </div>
           </div>
         ) : (
-          // ── View Mode (Static Cards) ───────────────────────────────────────
+          
           <div className="space-y-6">
             {/* Physical Information */}
             <div className="card">
@@ -425,6 +439,22 @@ function PatientProfilePage({ onLogout, currentUser }) {
                     </div>
                   ) : (
                     <p className="text-gray-500">No allergies listed</p>
+                  )}
+                </div>
+
+                {/* Medications */}
+                <div>
+                  <p className="text-sm text-gray-600 font-semibold mb-2">Medications</p>
+                  {profileData.medications?.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {profileData.medications.map((m, i) => (
+                        <span key={i} className="badge-primary">
+                          {m}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">No medications listed</p>
                   )}
                 </div>
 

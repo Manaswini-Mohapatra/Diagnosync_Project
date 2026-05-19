@@ -23,8 +23,7 @@ function UserManagement({ onLogout, currentUser }) {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      // Only fetch basic users list for now. Search is client-side in this simple MVP.
-      // If backend adds ?search= query, we could use that.
+      
       const query = new URLSearchParams({ page, limit: 10 });
       if (roleFilter) query.append('role', roleFilter);
       

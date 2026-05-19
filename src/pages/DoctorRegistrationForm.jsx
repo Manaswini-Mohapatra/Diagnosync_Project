@@ -43,18 +43,18 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState("forward");
   const [formData, setFormData] = useState({
-    // Personal
+    
     fullName: "",
     phone: "",
     about: "",
-    // Education & License
+    
     yearsOfExperience: "",
     medicalDegree: "",
     university: "",
     licenseNumber: "",
     licenseState: "",
     hospitalAffiliation: "",
-    // Specialties
+    
     specialties: [],
     consultationFee: "",
     qualifications: [],
@@ -81,7 +81,7 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
   const next = () => goTo(step + 1);
   const back = () => goTo(step - 1);
 
-  // ── Document upload (unchanged API logic) ─────────────────────────────────
+  
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     setUploadError(""); setUploadSuccess("");
@@ -127,7 +127,7 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
     if (doc.fileUrl) window.open(doc.fileUrl, "_blank");
   };
 
-  // ── Submit ────────────────────────────────────────────────────────────────
+  
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
@@ -150,7 +150,7 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
     }
   };
 
-  // ── Success ───────────────────────────────────────────────────────────────
+  
   if (isSubmitted) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -183,7 +183,7 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
     );
   }
 
-  // ── Layout ────────────────────────────────────────────────────────────────
+  
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
@@ -308,7 +308,7 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
                           </div>
                         )}
 
-                        {/* Upload Form */}
+                       
                         {!showUploadForm ? (
                           <button type="button" onClick={() => setShowUploadForm(true)} className="w-full py-6 border-dashed border-2 border-gray-300 rounded-xl bg-gray-50 flex flex-col items-center justify-center gap-2 mb-4 hover:border-[#1F5F7A] hover:bg-[#1F5F7A]/5 transition-all text-gray-500 hover:text-[#1F5F7A]">
                             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -353,7 +353,7 @@ function DoctorRegistrationForm({ onLogout, currentUser }) {
                           </div>
                         )}
 
-                        {/* Uploaded list */}
+                        
                         {uploadedDocuments.length > 0 && (
                           <div className="mt-4 space-y-2">
                             <p className="text-xs font-bold text-gray-500">

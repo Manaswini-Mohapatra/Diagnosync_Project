@@ -16,7 +16,7 @@ function PasswordReset() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
 
-  // Verify token from URL on mount
+  
   useEffect(() => {
     const checkUrlToken = async () => {
       const params = new URLSearchParams(window.location.search)
@@ -38,7 +38,7 @@ function PasswordReset() {
     checkUrlToken()
   }, [])
 
-  // Step 1: Request reset link
+  
   const handleRequestReset = async (e) => {
     e.preventDefault()
     setError('')
@@ -57,7 +57,7 @@ function PasswordReset() {
     }
   }
 
-  // Step 2: Verify token
+  
   const handleVerifyToken = async (e) => {
     e.preventDefault()
     setError('')
@@ -76,7 +76,7 @@ function PasswordReset() {
 
   const STRONG_PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_#^])[A-Za-z\d@$!%*?&\-_#^]{8,}$/;
 
-  // Step 3: Set new password
+  
   const handleResetPassword = async (e) => {
     e.preventDefault()
     setError('')
@@ -136,7 +136,7 @@ function PasswordReset() {
           ))}
         </div>
 
-        {/* ── Step 1: Email Form ── */}
+        
         {step === 1 && (
           <div className="card">
             <form onSubmit={handleRequestReset} className="space-y-4">
@@ -179,7 +179,7 @@ function PasswordReset() {
           </div>
         )}
 
-        {/* ── Step 2: Token Entry ── */}
+        
         {step === 2 && (
           <div className="card">
             <div className="flex justify-center mb-4">
@@ -233,7 +233,7 @@ function PasswordReset() {
           </div>
         )}
 
-        {/* ── Step 3: New Password ── */}
+        
         {step === 3 && !success && (
           <div className="card">
             <form onSubmit={handleResetPassword} className="space-y-4">
@@ -242,7 +242,7 @@ function PasswordReset() {
                   New Password
                 </label>
                 <div className="relative">
-                  {/* <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /> */}
+                 
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={newPassword}
@@ -266,13 +266,13 @@ function PasswordReset() {
                   Confirm Password
                 </label>
                 <div className="relative">
-                  {/* <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /> */}
+                  
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => { setConfirmPassword(e.target.value); setError('') }}
                     className={`input-field pl-10 ${error ? 'border-danger' : ''}`}
-                    // placeholder="Repeat your new password"
+                    
                   />
                 </div>
               </div>
@@ -298,7 +298,7 @@ function PasswordReset() {
           </div>
         )}
 
-        {/* ── Success State ── */}
+        
         {success && (
           <div className="card text-center">
             <div className="flex justify-center mb-4">

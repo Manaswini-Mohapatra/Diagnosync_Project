@@ -16,19 +16,19 @@ function PatientList({ onLogout, currentUser }) {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   
-  // Modal state for View Details
+  
   const [selectedPatient, setSelectedPatient] = useState(null);
   
-  // Modal state for prescriptions
+  
   const [prescriptionPatient, setPrescriptionPatient] = useState(null);
 
   const handleLogout = () => { onLogout(); navigate("/"); };
 
-  // Debounce search input
+  
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setSearchTerm(searchInput);
-      setPage(1); // reset to page 1 on new search
+      setPage(1); 
     }, 500);
     return () => clearTimeout(timeoutId);
   }, [searchInput]);

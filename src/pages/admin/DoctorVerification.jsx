@@ -19,12 +19,10 @@ function DoctorVerification({ onLogout }) {
   const fetchPendingDoctors = async () => {
     setIsLoading(true);
     try {
-      // For now we get all doctors and filter pending, or backend could add ?verificationStatus=pending
-      // Assuming backend returns isVerified field, but we need verificationStatus. 
-      // We will fetch all and filter for now as a simple implementation.
+      
       const res = await api.get('/doctors?limit=100');
       
-      // Filter for verificationStatus 'pending' to match the dashboard stats exactly
+      
       const pending = res.data.doctors.filter(d => d.verificationStatus === 'pending');
       setDoctors(pending);
     } catch (error) {

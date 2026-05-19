@@ -56,7 +56,7 @@ const GlobalWrapper = ({ children }) => {
 
   let wrapperClass = "global-app-bg";
   if (path === "/" || path === "/signin" || path === "/signup") {
-    wrapperClass = ""; // Landing and auth pages handle their own backgrounds
+    wrapperClass = ""; 
   }
 
   return (
@@ -67,9 +67,9 @@ const GlobalWrapper = ({ children }) => {
 };
 
 function App() {
-  // ── Auth state — source of truth is the JWT token in localStorage ──
+  
   const [isAuthenticated, setIsAuthenticated] = useState(
-    () => !!localStorage.getItem("token")  // true if token exists
+    () => !!localStorage.getItem("token")  
   );
   const [userRole, setUserRole] = useState(
     localStorage.getItem("userRole") || "patient",
@@ -82,21 +82,20 @@ function App() {
     }
   );
 
-  // ── Validate stored token on every app load/refresh ─────────────────────
-  // If the token is expired or invalid, silently clears auth and redirects
+ 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return;  // not logged in, nothing to check
+    if (!token) return;  
 
     api.get("/auth/me")
       .then((res) => {
-        // Token is valid — refresh currentUser from DB in case profile changed
+        
         setCurrentUser(res.data.user);
         setUserRole(res.data.user.role);
         localStorage.setItem("currentUser", JSON.stringify(res.data.user));
       })
       .catch(() => {
-        // Token invalid or expired — api.js interceptor already clears localStorage
+        
         setIsAuthenticated(false);
         setUserRole("patient");
         setCurrentUser(null);
@@ -107,14 +106,14 @@ function App() {
     setIsAuthenticated(true);
     setUserRole(role);
     setCurrentUser(userData);
-    // Note: token + user already stored in localStorage by SignIn.jsx / SignUp.jsx
+    
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     setUserRole("patient");
     setCurrentUser(null);
-    // Clear all auth keys including the JWT token
+    
     localStorage.removeItem("token");
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userRole");
@@ -129,7 +128,7 @@ function App() {
     if (requiredRole && userRole !== requiredRole) {
       return <Navigate to="/404" replace />;
     }
-    // Block rejected doctors from accessing anything except dashboard, profile, and registration
+    
     if (
       userRole === "doctor" &&
       currentUser?.verificationStatus === "rejected" &&

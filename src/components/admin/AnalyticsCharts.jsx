@@ -27,7 +27,7 @@ const AnalyticsCharts = ({ charts }) => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-      {/* 1. User Growth Analytics */}
+      {/* User Growth Analytics */}
       <div className="glass-panel p-5 rounded-2xl shadow-soft border-none">
         <h3 className="text-lg font-bold text-gray-800 mb-4">User Growth Trends</h3>
         <div className="h-72">
@@ -45,7 +45,7 @@ const AnalyticsCharts = ({ charts }) => {
         </div>
       </div>
 
-      {/* 2. Symptom Analysis Analytics */}
+      {/* Symptom Analysis Analytics */}
       <div className="glass-panel p-5 rounded-2xl shadow-soft border-none">
         <h3 className="text-lg font-bold text-gray-800 mb-4">Symptom Analyses Over Time</h3>
         <div className="h-72">
@@ -67,7 +67,7 @@ const AnalyticsCharts = ({ charts }) => {
         </div>
       </div>
 
-      {/* 3. Appointment Analytics */}
+      {/* Appointment Analytics */}
       <div className="glass-panel p-5 rounded-2xl shadow-soft border-none">
         <h3 className="text-lg font-bold text-gray-800 mb-4">Appointment Status</h3>
         <div className="h-72">
@@ -87,7 +87,7 @@ const AnalyticsCharts = ({ charts }) => {
         </div>
       </div>
 
-      {/* 4. Doctor to Patient Ratio & Specializations */}
+      {/* Doctor to Patient Ratio & Specializations */}
       <div className="glass-panel p-5 rounded-2xl shadow-soft border-none flex flex-col md:flex-row gap-4">
         <div className="flex-1">
           <h3 className="text-lg font-bold text-gray-800 mb-2">User Distribution</h3>
@@ -122,7 +122,7 @@ const AnalyticsCharts = ({ charts }) => {
         </div>
       </div>
 
-      {/* 5. Most Consulted Doctors */}
+      {/* Most Consulted Doctors */}
       <div className="glass-panel p-5 rounded-2xl shadow-soft border-none lg:col-span-2">
         <h3 className="text-lg font-bold text-gray-800 mb-4">Most Consulted Doctors</h3>
         <div className="h-80">
@@ -138,7 +138,7 @@ const AnalyticsCharts = ({ charts }) => {
         </div>
       </div>
 
-      {/* 6. System Performance */}
+      {/* System Performance */}
       <div className="glass-panel p-5 rounded-2xl shadow-soft border-none lg:col-span-2">
         <h3 className="text-lg font-bold text-gray-800 mb-4">API Performance (Response Time & Errors)</h3>
         <div className="h-72">

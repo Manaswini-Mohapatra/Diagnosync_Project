@@ -1,13 +1,5 @@
-// src/utils/documentUploadHandler.js
-/**
- * Utility functions for handling doctor document uploads
- * Handles file validation, storage, and retrieval
- */
-
-// Maximum file size: 5MB
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-// Allowed file types
 const ALLOWED_FILE_TYPES = [
   'application/pdf',
   'image/jpeg',
@@ -19,17 +11,13 @@ const ALLOWED_FILE_TYPES = [
 
 const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx'];
 
-/**
- * Validate file before upload
- * @param {File} file - The file to validate
- * @returns {Object} - {isValid: boolean, error: string}
- */
+
 export const validateFile = (file) => {
   if (!file) {
     return { isValid: false, error: 'No file selected' };
   }
 
-  // Check file size
+  
   if (file.size > MAX_FILE_SIZE) {
     return {
       isValid: false,
@@ -37,7 +25,7 @@ export const validateFile = (file) => {
     };
   }
 
-  // Check file type
+  
   if (!ALLOWED_FILE_TYPES.includes(file.type)) {
     return {
       isValid: false,
@@ -48,11 +36,7 @@ export const validateFile = (file) => {
   return { isValid: true, error: null };
 };
 
-/**
- * Convert file to base64 for storage
- * @param {File} file - The file to convert
- * @returns {Promise<string>} - Base64 encoded file
- */
+
 export const fileToBase64 = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -62,11 +46,7 @@ export const fileToBase64 = (file) => {
   });
 };
 
-/**
- * Save doctor document to localStorage
- * @param {string} doctorId - Doctor's user ID
- * @param {Object} documentData - Document information
- */
+
 export const saveDoctorDocument = (doctorId, documentData) => {
   try {
     const documents = getDoctorDocuments(doctorId) || [];
@@ -76,11 +56,11 @@ export const saveDoctorDocument = (doctorId, documentData) => {
       fileName: documentData.fileName,
       fileType: documentData.fileType,
       fileSize: documentData.fileSize,
-      fileData: documentData.fileData, // Base64
+      fileData: documentData.fileData, 
       uploadDate: new Date().toISOString(),
-      documentType: documentData.documentType, // 'certificate', 'license', 'degree', etc.
+      documentType: documentData.documentType, 
       description: documentData.description || '',
-      verified: false, // Admin will set this
+      verified: false, 
     };
 
     documents.push(newDocument);
@@ -95,11 +75,7 @@ export const saveDoctorDocument = (doctorId, documentData) => {
   }
 };
 
-/**
- * Get all documents for a doctor
- * @param {string} doctorId - Doctor's user ID
- * @returns {Array} - Array of documents
- */
+
 export const getDoctorDocuments = (doctorId) => {
   try {
     const documents = localStorage.getItem(`doctorDocuments_${doctorId}`);
@@ -110,12 +86,7 @@ export const getDoctorDocuments = (doctorId) => {
   }
 };
 
-/**
- * Get a specific document
- * @param {string} doctorId - Doctor's user ID
- * @param {number} documentId - Document ID
- * @returns {Object} - Document object
- */
+
 export const getDoctorDocument = (doctorId, documentId) => {
   try {
     const documents = getDoctorDocuments(doctorId);
@@ -126,11 +97,7 @@ export const getDoctorDocument = (doctorId, documentId) => {
   }
 };
 
-/**
- * Delete a doctor document
- * @param {string} doctorId - Doctor's user ID
- * @param {number} documentId - Document ID to delete
- */
+
 export const deleteDoctorDocument = (doctorId, documentId) => {
   try {
     let documents = getDoctorDocuments(doctorId);
@@ -145,12 +112,6 @@ export const deleteDoctorDocument = (doctorId, documentId) => {
   }
 };
 
-/**
- * Update document verification status (admin function)
- * @param {string} doctorId - Doctor's user ID
- * @param {number} documentId - Document ID
- * @param {boolean} verified - Verification status
- */
 export const verifyDoctorDocument = (doctorId, documentId, verified) => {
   try {
     let documents = getDoctorDocuments(doctorId);
@@ -172,11 +133,7 @@ export const verifyDoctorDocument = (doctorId, documentId, verified) => {
   }
 };
 
-/**
- * Format file size for display
- * @param {number} bytes - File size in bytes
- * @returns {string} - Formatted size
- */
+
 export const formatFileSize = (bytes) => {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
@@ -185,11 +142,7 @@ export const formatFileSize = (bytes) => {
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 };
 
-/**
- * Get file icon based on type
- * @param {string} fileType - MIME type of file
- * @returns {string} - Icon representation
- */
+
 export const getFileIcon = (fileType) => {
   if (fileType.includes('pdf')) return '📄';
   if (fileType.includes('image')) return '🖼️';
@@ -197,14 +150,11 @@ export const getFileIcon = (fileType) => {
   return '📎';
 };
 
-/**
- * Download document from localStorage
- * @param {Object} document - Document object
- */
+
 export const downloadDocument = (document) => {
   try {
     const link = document.createElement('a');
-    link.href = document.fileData; // This is base64
+    link.href = document.fileData; 
     link.download = document.fileName;
     document.body.appendChild(link);
     link.click();

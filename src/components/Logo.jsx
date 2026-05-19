@@ -19,8 +19,7 @@ export default function Logo({ size = "default", clickable = true }) {
       return;
     }
 
-    // Doctor routes - Check BEFORE patient routes
-    // because /doctor/patients contains /doctor
+    
     if (currentPath.includes("/doctor")) {
       navigate("/doctor/dashboard");
       return;

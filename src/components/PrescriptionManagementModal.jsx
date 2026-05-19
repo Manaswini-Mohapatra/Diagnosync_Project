@@ -5,7 +5,7 @@ import api from '../utils/api';
 const PrescriptionManagementModal = ({ isOpen, onClose, patientId, patientName, doctorId }) => {
   const [prescriptions, setPrescriptions] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [mode, setMode] = useState('list'); // 'list', 'add', 'edit'
+  const [mode, setMode] = useState('list'); 
   const [selectedPrescription, setSelectedPrescription] = useState(null);
   const [formData, setFormData] = useState({
     medicationName: '',

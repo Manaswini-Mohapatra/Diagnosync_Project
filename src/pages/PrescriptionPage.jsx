@@ -88,7 +88,7 @@ function PrescriptionPage({ onLogout, currentUser }) {
     try {
       await api.post(`/prescriptions/${id}/refill`);
       alert("Refill request sent to your doctor successfully.");
-      fetchPrescriptions(); // Refresh the list from the server
+      fetchPrescriptions(); 
     } catch (error) {
       console.error("Failed to request refill", error);
       alert("Failed to submit refill request. " + (error.response?.data?.error || ""));
@@ -336,7 +336,7 @@ function PrescriptionPage({ onLogout, currentUser }) {
                   </div>
                 </div>
 
-                {/* Notes */}
+                
                 {prescription.notes && (
                   <div className="mb-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
                     <p className="text-sm">
@@ -457,7 +457,7 @@ function PrescriptionPage({ onLogout, currentUser }) {
         </div>
       </div>
 
-      {/* Add Prescription Modal */}
+      
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="card max-w-2xl w-full max-h-[90vh] overflow-y-auto">

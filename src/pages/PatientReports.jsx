@@ -47,7 +47,7 @@ function PatientReports({ onLogout, currentUser }) {
       if (selectedFile.size > 5 * 1024 * 1024) {
         setUploadError("File size exceeds 5MB limit.");
         setFile(null);
-        e.target.value = null; // reset
+        e.target.value = null; 
         return;
       }
       setUploadError("");
@@ -78,9 +78,9 @@ function PatientReports({ onLogout, currentUser }) {
         setUploadSuccess("Report uploaded successfully!");
         setTitle("");
         setFile(null);
-        // Reset file input visually if needed
+        
         document.getElementById("report-upload").value = "";
-        // Refresh list immediately
+        
         fetchReports();
         
         setTimeout(() => setUploadSuccess(""), 5000);
@@ -102,7 +102,7 @@ function PatientReports({ onLogout, currentUser }) {
       const res = await api.delete(`/patients/me/reports/${reportId}`);
       if (res.data.success) {
         setUploadSuccess("Report deleted successfully.");
-        // Refresh the list
+        
         fetchReports();
         setTimeout(() => setUploadSuccess(""), 5000);
       }

@@ -58,7 +58,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState("forward");
   const [formData, setFormData] = useState(initialFormData);
-  const [localFiles, setLocalFiles] = useState([]); // UI-only file list
+  const [localFiles, setLocalFiles] = useState([]); 
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -79,7 +79,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      // Build payload from formData — map new fields back to existing API shape
+      
       const payload = {
         age: formData.age,
         height: formData.height,
@@ -99,11 +99,11 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
       };
       await api.put("/patients/me", payload);
 
-      // Upload any attached documents
+      
       if (localFiles && localFiles.length > 0) {
         for (const file of localFiles) {
           const reportData = new FormData();
-          // Use the file name as the report title for auto-uploaded files
+          
           reportData.append("title", file.name);
           reportData.append("report", file.raw);
           
@@ -121,7 +121,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
     }
   };
 
-  // ── Success ──────────────────────────────────────────────────────────────
+  
   if (isSubmitted) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -147,7 +147,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
     );
   }
 
-  // ── Layout ───────────────────────────────────────────────────────────────
+  // Layout 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
@@ -167,11 +167,11 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
 
       {/* Main */}
       <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
-        {/* Card with sidebar + content */}
+        
         <div className="bg-white/95 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="grid md:grid-cols-[280px_1fr]">
 
-            {/* Sidebar — RegistrationStepper (vertical on desktop, horizontal on mobile) */}
+            
             <aside className="bg-white border-b md:border-b-0 md:border-r border-gray-100 p-6 md:p-8">
               <div className="mb-6 hidden md:block">
                 <h1 className="text-xl font-bold text-gray-900">Health Profile</h1>
@@ -185,7 +185,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
 
             <main className="p-6 md:p-10 lg:p-12">
               <AnimatePresence mode="wait">
-                {/* ── Step 1: Basic Information ── */}
+               
                 {step === 1 && (
                   <FormSection key="s1" direction={direction}>
                     <h2 className="text-2xl font-semibold text-gray-900 mb-1">Basic Information</h2>
@@ -236,7 +236,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
                   </FormSection>
                 )}
 
-                {/* ── Step 2: Medical History ── */}
+               
                 {step === 2 && (
                   <FormSection key="s2" direction={direction}>
                     <h2 className="text-2xl font-semibold text-gray-900 mb-1">Medical History</h2>
@@ -321,7 +321,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
                   </FormSection>
                 )}
 
-                {/* ── Step 3: Lifestyle ── */}
+                
                 {step === 3 && (
                   <FormSection key="s3" direction={direction}>
                     <h2 className="text-2xl font-semibold text-gray-900 mb-1">Lifestyle</h2>
@@ -377,7 +377,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
                   </FormSection>
                 )}
 
-                {/* ── Step 4: Emergency Contact ── */}
+               
                 {step === 4 && (
                   <FormSection key="s4" direction={direction}>
                     <h2 className="text-2xl font-semibold text-gray-900 mb-1">Emergency Contact</h2>
@@ -402,7 +402,7 @@ function PatientRegistrationForm({ onLogout, currentUser }) {
                   </FormSection>
                 )}
 
-                {/* ── Step 5: Documents Upload ── */}
+               
                 {step === 5 && (
                   <FormSection key="s5" direction={direction}>
                     <h2 className="text-2xl font-semibold text-gray-900 mb-1">Documents Upload</h2>

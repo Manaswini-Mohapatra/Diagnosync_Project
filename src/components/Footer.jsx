@@ -1,4 +1,3 @@
-// src/components/Footer.jsx
 import React, { useState } from 'react';
 import Logo from './Logo';
 import TermsPopup from './TermsPopup';

@@ -11,12 +11,9 @@ import Footer from "../components/Footer";
 import api from "../utils/api";
 import { joinVideoCall } from "../utils/videoCall";
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-// An appointment is "upcoming" only if its date is still in the future
 const isUpcoming = (apt) => new Date(apt.date) > new Date();
 
-// An appointment is "overdue" when its date has passed but the doctor
-// hasn't marked it completed yet — we treat it as past for display purposes
+
 const isOverdue  = (apt) =>
   ["scheduled", "in-progress"].includes(apt.status) && new Date(apt.date) < new Date();
 
@@ -42,7 +39,7 @@ const statusBadge = (status) => {
 const formatDate = (d) =>
   new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 
-// ── Star Rating Component ──────────────────────────────────────────────────
+
 function StarRating({ value, onChange, readOnly = false }) {
   const [hovered, setHovered] = useState(0);
   return (
@@ -64,7 +61,7 @@ function StarRating({ value, onChange, readOnly = false }) {
   );
 }
 
-// ── Appointment Card ───────────────────────────────────────────────────────
+
 function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
   const [expanded, setExpanded]       = useState(false);
   const [showReschedule, setShowReschedule] = useState(false);
@@ -78,7 +75,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
   const [loading, setLoading]         = useState(false);
   const [error, setError]             = useState("");
 
-  // Fetch available slots when a new date is selected
+  
   useEffect(() => {
     if (!showReschedule || !newDate) return;
     const fetchSlots = async () => {
@@ -89,7 +86,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
         const res = await api.get(`/doctors/${docId}/slots?date=${newDate}`);
         const slots = res.data.slots || [];
         setAvailableSlots(slots);
-        // Clear selected time if it's no longer available
+        
         if (newTime && !slots.includes(newTime)) {
           setNewTime("");
         }
@@ -105,8 +102,8 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
 
   const isScheduled = apt.status === "scheduled";
   const isFuture    = isUpcoming(apt);
-  const overdue     = isOverdue(apt);               // scheduled but date passed
-  const isCompleted = apt.status === "completed" || overdue; // treat overdue as completed
+  const overdue     = isOverdue(apt);               
+  const isCompleted = apt.status === "completed" || overdue; 
   const hasRating   = apt.rating?.score;
   const type        = typeBadge(apt.type);
   const TypeIcon    = type.icon;
@@ -138,7 +135,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
 
   return (
     <div className="glass-panel border-none shadow-soft overflow-hidden hover-lift group">
-      {/* Card Header — always visible */}
+     
       <div
         className="p-5 cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={() => setExpanded((p) => !p)}
@@ -179,7 +176,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
           </div>
         </div>
 
-        {/* Rating preview (if rated) */}
+        
         {hasRating && (
           <div className="mt-2 flex items-center gap-2">
             <StarRating value={apt.rating.score} readOnly />
@@ -191,21 +188,21 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
       {/* Expanded section */}
       {expanded && (
         <div className="border-t border-white/40 bg-white/40 backdrop-blur p-5 space-y-4">
-          {/* Reason */}
+         
           {apt.reason && (
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Reason</p>
               <p className="text-sm text-gray-700">{apt.reason}</p>
             </div>
           )}
-          {/* Notes */}
+          
           {apt.notes && (
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Doctor's Notes</p>
               <p className="text-sm text-gray-700">{apt.notes}</p>
             </div>
           )}
-          {/* Duration */}
+          
           {apt.duration && (
             <p className="text-xs text-gray-500">Duration: {apt.duration} minutes</p>
           )}
@@ -226,7 +223,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
               </button>
             )}
 
-            {/* Reschedule */}
+           
             {isScheduled && isFuture && (
               <button
                 onClick={() => { setShowReschedule((p) => !p); setShowRate(false); setError(""); }}
@@ -237,7 +234,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
               </button>
             )}
 
-            {/* Cancel */}
+           
             {isScheduled && isFuture && (
               <button
                 onClick={() => onCancel(apt._id || apt.id)}
@@ -248,7 +245,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
               </button>
             )}
 
-            {/* Rate */}
+            
             {isCompleted && !hasRating && (
               <button
                 onClick={() => { setShowRate((p) => !p); setShowReschedule(false); setError(""); }}
@@ -259,7 +256,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
               </button>
             )}
 
-            {/* Completed label */}
+            
             {isCompleted && hasRating && (
               <span className="flex items-center gap-1 text-sm text-green-600 font-medium">
                 <CheckCircle className="w-4 h-4" /> Rated ★{apt.rating.score}
@@ -267,7 +264,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
             )}
           </div>
 
-          {/* ── Reschedule form ── */}
+          {/* Reschedule form*/}
           {showReschedule && (
             <div className="mt-2 p-4 bg-amber-50 border border-amber-200 rounded-lg space-y-3">
               <p className="text-sm font-semibold text-amber-800">Select new date & time:</p>
@@ -322,7 +319,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
             </div>
           )}
 
-          {/* ── Rating form ── */}
+         
           {showRate && (
             <div className="mt-2 p-4 bg-yellow-50 border border-yellow-200 rounded-lg space-y-3">
               <p className="text-sm font-semibold text-yellow-800">Rate your experience:</p>
@@ -354,7 +351,7 @@ function AppointmentCard({ apt, onCancel, onReschedule, onRate, refreshing }) {
   );
 }
 
-// ── Main Page ──────────────────────────────────────────────────────────────
+//Main Page
 function PatientAppointmentsPage({ onLogout, currentUser }) {
   const navigate  = useNavigate();
   const [appointments, setAppointments] = useState([]);
@@ -401,9 +398,7 @@ function PatientAppointmentsPage({ onLogout, currentUser }) {
     await fetchAppointments();
   };
 
-  // ── Tab filtering ──────────────────────────────────────────────────────
-  // Rule: a scheduled/in-progress appointment whose date has already passed
-  // automatically appears in "Past" regardless of its DB status.
+  
   const now = new Date();
   const tabs = {
     upcoming:  appointments.filter((a) =>

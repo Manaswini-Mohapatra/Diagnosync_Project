@@ -4,19 +4,7 @@ import { Bell, X, CheckCheck, Loader, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 
-/**
- * NotificationBell — Global notification icon for all dashboard navbars
- *
- * Features:
- *  - Shows unread count badge (polls every 30 seconds)
- *  - Click to open dropdown with recent notifications
- *  - Mark individual notification as read
- *  - Mark all as read button
- *  - Auto-closes when clicking outside
- *
- * Usage:
- *  <NotificationBell />
- */
+
 function NotificationBell() {
   const [unreadCount, setUnreadCount]       = useState(0);
   const [notifications, setNotifications]   = useState([]);
@@ -26,17 +14,17 @@ function NotificationBell() {
   const [selectedNotification, setSelectedNotification] = useState(null);
   const dropdownRef                         = useRef(null);
 
-  // ── Fetch unread count (lightweight, runs every 30s) ──────────────────
+ 
   const fetchUnreadCount = async () => {
     try {
       const res = await api.get('/notifications/unread-count');
       setUnreadCount(res.data.data.unreadCount || 0);
     } catch {
-      // Silent fail — don't disrupt the page if notifications fail
+      
     }
   };
 
-  // ── Fetch full notification list (only when dropdown opens) ───────────
+  
   const fetchNotifications = async () => {
     setLoading(true);
     setError(null);
@@ -50,7 +38,7 @@ function NotificationBell() {
     }
   };
 
-  // ── Mark single notification as read ──────────────────────────────────
+  
   const markAsRead = async (id) => {
     try {
       await api.patch(`/notifications/${id}/read`);
@@ -59,13 +47,13 @@ function NotificationBell() {
       );
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch {
-      // Silent fail
+      
     }
   };
 
-  // ── Dismiss (Delete) notification ─────────────────────────────────────
+ 
   const handleDismiss = async (id, isUnread) => {
-    // Optimistic UI update
+    
     setNotifications(prev => prev.filter(n => n._id !== id));
     if (isUnread) {
       setUnreadCount(prev => Math.max(0, prev - 1));
@@ -73,37 +61,37 @@ function NotificationBell() {
     try {
       await api.delete(`/notifications/${id}`);
     } catch {
-      // Silent fail for MVP
+      
     }
   };
 
-  // ── Mark all as read ──────────────────────────────────────────────────
+  
   const markAllAsRead = async () => {
     try {
       await api.patch('/notifications/all/read');
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
       setUnreadCount(0);
     } catch {
-      // Silent fail
+      
     }
   };
 
-  // ── Handle Notification Click ─────────────────────────────────────────
+  
   const handleNotificationClick = async (n) => {
     setSelectedNotification(n);
-    setIsOpen(false); // Auto-close the dropdown
+    setIsOpen(false); 
     if (!n.read) {
       await markAsRead(n._id);
     }
   };
 
-  // ── Toggle dropdown + load notifications ─────────────────────────────
+ 
   const handleBellClick = () => {
     if (!isOpen) fetchNotifications();
     setIsOpen(prev => !prev);
   };
 
-  // ── Close dropdown when clicking outside ──────────────────────────────
+  
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -114,14 +102,14 @@ function NotificationBell() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // ── Poll unread count every 30 seconds ───────────────────────────────
+  
   useEffect(() => {
     fetchUnreadCount();
     const interval = setInterval(fetchUnreadCount, 30000);
     return () => clearInterval(interval);
   }, []);
 
-  // ── Helpers ────────────────────────────────────────────────────────────
+  
   const timeAgo = (dateStr) => {
     const diff = Date.now() - new Date(dateStr).getTime();
     const mins  = Math.floor(diff / 60000);
@@ -147,7 +135,7 @@ function NotificationBell() {
   return (
     <div className="relative" ref={dropdownRef}>
 
-      {/* ── Bell Button ── */}
+      {/*Bell Button */}
       <button
         onClick={handleBellClick}
         className="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 transition-colors"
@@ -164,11 +152,11 @@ function NotificationBell() {
         )}
       </button>
 
-      {/* ── Dropdown ── */}
+      {/*Dropdown*/}
       {isOpen && (
         <div className="absolute right-0 top-12 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 overflow-hidden">
 
-          {/* Header */}
+          {/*Header*/}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
             <h3 className="font-semibold text-gray-800 text-sm">
               Notifications
@@ -233,7 +221,7 @@ function NotificationBell() {
                       <Trash2 className="w-5 h-5 text-red-400" />
                     </div>
 
-                    {/* Draggable Surface */}
+                    
                     <motion.div
                       drag="x"
                       dragConstraints={{ left: 0, right: 0 }}
@@ -279,7 +267,7 @@ function NotificationBell() {
         </div>
       )}
 
-      {/* ── Notification Modal ── */}
+      {/*Notification Modal*/}
       {selectedNotification && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 animate-fade-in" style={{ position: 'fixed', left: 0, top: 0, width: '100%', height: '100%' }}>
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden relative">

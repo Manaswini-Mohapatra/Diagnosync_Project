@@ -1,20 +1,5 @@
 import React from "react";
 
-/**
- * RegistrationStepper
- *
- * Props:
- *   currentStep  {number}  – 1-indexed active step (1–5)
- *   onStepClick  {(id: number) => void}  – optional, called when a completed step is clicked
- *
- * Steps (fixed for Patient Registration):
- *   1 – Basic Information
- *   2 – Medical History
- *   3 – Lifestyle
- *   4 – Emergency Contact
- *   5 – Documents Upload
- */
-
 const DEFAULT_STEPS = [
   { id: 1, label: "Basic Information" },
   { id: 2, label: "Medical History" },
@@ -23,7 +8,6 @@ const DEFAULT_STEPS = [
   { id: 5, label: "Documents Upload" },
 ];
 
-// Checkmark SVG (inline so no extra dep needed)
 function CheckIcon() {
   return (
     <svg
@@ -40,7 +24,6 @@ function CheckIcon() {
   );
 }
 
-// ─── Vertical stepper (md and above) ─────────────────────────────────────────
 function VerticalStepper({ currentStep, onStepClick, steps }) {
   return (
     <ol className="hidden md:flex flex-col select-none">
@@ -52,9 +35,9 @@ function VerticalStepper({ currentStep, onStepClick, steps }) {
 
         return (
           <li key={step.id} className="flex gap-4">
-            {/* Left column: circle + connector line */}
+           
             <div className="flex flex-col items-center">
-              {/* Circle */}
+           
               <button
                 type="button"
                 disabled={isPending}
@@ -62,9 +45,9 @@ function VerticalStepper({ currentStep, onStepClick, steps }) {
                 aria-label={`Step ${step.id}: ${step.label}`}
                 className={[
                   "flex items-center justify-center rounded-full shrink-0 transition-all duration-300 focus:outline-none",
-                  /* size */
+                  
                   isCurrent ? "w-11 h-11" : "w-10 h-10",
-                  /* colours */
+                  
                   isCompleted
                     ? "bg-[#1F5F7A] text-white cursor-pointer hover:brightness-110"
                     : isCurrent
@@ -86,7 +69,7 @@ function VerticalStepper({ currentStep, onStepClick, steps }) {
                 )}
               </button>
 
-              {/* Connector line */}
+             
               {!isLast && (
                 <div
                   className={[
@@ -97,7 +80,7 @@ function VerticalStepper({ currentStep, onStepClick, steps }) {
               )}
             </div>
 
-            {/* Right column: label */}
+          
             <div
               className={[
                 "flex items-start pb-8 last:pb-0",
@@ -124,14 +107,14 @@ function VerticalStepper({ currentStep, onStepClick, steps }) {
   );
 }
 
-// ─── Horizontal progress bar (mobile) ────────────────────────────────────────
+
 function HorizontalProgress({ currentStep, steps }) {
   const progress = Math.round(((currentStep - 1) / (steps.length - 1)) * 100);
   const currentLabel = steps.find((s) => s.id === currentStep)?.label ?? "";
 
   return (
     <div className="md:hidden w-full">
-      {/* Step indicators row */}
+      
       <div className="flex items-center justify-between mb-2 gap-1">
         {steps.map((step) => {
           const isCompleted = step.id < currentStep;
@@ -152,7 +135,7 @@ function HorizontalProgress({ currentStep, steps }) {
         })}
       </div>
 
-      {/* Label row */}
+      
       <div className="flex justify-between text-xs text-gray-500 mt-1">
         <span className="font-medium">
           Step {currentStep} of {steps.length}
@@ -165,14 +148,14 @@ function HorizontalProgress({ currentStep, steps }) {
   );
 }
 
-// ─── Main export ──────────────────────────────────────────────────────────────
+
 export default function RegistrationStepper({ currentStep = 1, onStepClick, steps = DEFAULT_STEPS }) {
   return (
     <>
-      {/* Mobile */}
+      
       <HorizontalProgress currentStep={currentStep} steps={steps} />
 
-      {/* Desktop */}
+      
       <VerticalStepper currentStep={currentStep} onStepClick={onStepClick} steps={steps} />
     </>
   );

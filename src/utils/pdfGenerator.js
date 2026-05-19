@@ -1,12 +1,5 @@
-// src/utils/pdfGenerator.js
-/**
- * Utility function to generate PDF from prescription data
- * Uses html2pdf library (lightweight, no backend needed)
- * Includes DiagnoSync logo with gradient text
- */
-
 export const downloadPrescriptionPDF = (prescription) => {
-  // Create HTML content for PDF with Logo
+  
   const htmlContent = `
     <!DOCTYPE html>
     <html>
@@ -328,11 +321,11 @@ export const downloadPrescriptionPDF = (prescription) => {
     </html>
   `;
 
-  // Create blob from HTML
+  
   const element = document.createElement('div');
   element.innerHTML = htmlContent;
 
-  // Use html2pdf library if available, otherwise use print fallback
+  
   if (window.html2pdf) {
     const options = {
       margin: 10,
@@ -344,7 +337,7 @@ export const downloadPrescriptionPDF = (prescription) => {
 
     window.html2pdf().set(options).from(element).save();
   } else {
-    // Fallback: Open in new window for printing
+    
     const printWindow = window.open('', '', 'height=600,width=800');
     printWindow.document.write(htmlContent);
     printWindow.document.close();
@@ -352,7 +345,6 @@ export const downloadPrescriptionPDF = (prescription) => {
   }
 };
 
-// Helper function to format dates
 const formatDateForDisplay = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);

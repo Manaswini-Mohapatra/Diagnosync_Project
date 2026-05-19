@@ -75,7 +75,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
   const [documentDescription, setDocumentDescription] = useState("");
   const [documentType, setDocumentType] = useState("certificate");
 
-  // ── Fetch profile from backend ─────────────────────────────────────────────
+  
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -84,7 +84,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
         setEditData(res.data.data);
       } catch (error) {
         if (error.response?.status === 404) {
-          // No Doctor document yet — open blank edit form so they can create one
+         
           setProfileData(null);
           setEditData({ ...EMPTY_PROFILE, fullName: currentUser?.name || "", phone: currentUser?.phone || "" });
           setIsEditing(true);
@@ -125,7 +125,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
         bio: editData.bio || undefined,
         availableSlots: editData.availableSlots || undefined,
       };
-      // Remove undefined keys so backend only updates provided fields
+      
       Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
 
       const res = await api.put("/doctors/me", payload);
@@ -143,7 +143,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
 
   const handleCancel = () => {
     if (!profileData) {
-      // First-time creation — navigating away is the only sensible cancel
+      
       navigate("/doctor/dashboard");
     } else {
       setIsEditing(false);
@@ -168,7 +168,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
     });
   };
 
-  // ── Document handlers (Cloudinary) ───────────────────────────────────────
+  
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     setUploadError(""); setUploadSuccess("");
@@ -224,7 +224,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
     window.open(doc.fileUrl, "_blank");
   };
 
-  // ── Loading / empty states ─────────────────────────────────────────────────
+  
   if (loading) {
     return (
       <div className="min-h-screen bg-light-gray flex items-center justify-center">
@@ -233,8 +233,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
     );
   }
 
-  // If no profile exists yet, we stay in edit mode (set in useEffect on 404)
-  // so profileData === null is not a blocking render state anymore
+  
   return (
     <div className="min-h-screen bg-light-gray flex flex-col">
       {/* Navbar */}
@@ -282,7 +281,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
         {uploadSuccess && <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">{uploadSuccess}</div>}
 
         {isEditing ? (
-          // ── EDIT MODE ──────────────────────────────────────────────────────
+          
           <div className="bg-white/95 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="grid md:grid-cols-[280px_1fr]">
               {/* Sidebar */}
@@ -298,7 +297,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
               <main className="p-6 md:p-10 lg:p-12">
                 <AnimatePresence mode="wait">
 
-                  {/* ── Step 1: Personal Information ── */}
+                 
                   {step === 1 && (
                     <FormSection key="s1" direction={direction}>
                       <div className="space-y-2">
@@ -324,7 +323,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
                     </FormSection>
                   )}
 
-                  {/* ── Step 2: Education & License ── */}
+                  
                   {step === 2 && (
                     <FormSection key="s2" direction={direction}>
                       <div className="space-y-2">
@@ -347,7 +346,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
                     </FormSection>
                   )}
 
-                  {/* ── Step 3: Specialties & Fees ── */}
+                  
                   {step === 3 && (
                     <FormSection key="s3" direction={direction}>
                       <div className="space-y-2">
@@ -372,13 +371,13 @@ function DoctorProfilePage({ onLogout, currentUser }) {
                     </FormSection>
                   )}
 
-                  {/* ── Step 4: Documents ── */}
+                 
                   {step === 4 && (
                     <FormSection key="s4" direction={direction}>
                       <div className="space-y-2">
                         <FormTile label="Verification Documents" hint="Upload your medical license, certificates, and other verification documents.">
                           
-                          {/* Upload Form */}
+                         
                           {!showUploadForm ? (
                             <button onClick={() => setShowUploadForm(true)} className="w-full py-6 border-dashed border-2 border-gray-300 rounded-xl bg-gray-50 flex flex-col items-center justify-center gap-2 mb-4 hover:border-[#1F5F7A] hover:bg-[#1F5F7A]/5 transition-all text-gray-500 hover:text-[#1F5F7A]">
                               <Upload className="w-6 h-6" />
@@ -419,7 +418,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
                             </div>
                           )}
 
-                          {/* Document List */}
+                         
                           {profileData?.documents?.length > 0 && (
                             <div className="mt-4 space-y-2">
                               <p className="text-xs font-bold text-gray-500">Uploaded Documents</p>
@@ -451,7 +450,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
               </main>
             </div>
           </div>) : (
-          // ── VIEW MODE ──────────────────────────────────────────────────────
+          
           <div className="space-y-6">
             {/* Identity card */}
             <div className="card flex items-center gap-6">
@@ -470,7 +469,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
               </div>
             </div>
 
-            {/* Education & License */}
+            
             <div className="card">
               <h2 className="text-2xl font-bold text-dark-gray mb-6">Education & License</h2>
               <div className="grid md:grid-cols-2 gap-6">
@@ -499,7 +498,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
               )}
             </div>
 
-            {/* Specialties */}
+            
             <div className="card">
               <h2 className="text-2xl font-bold text-dark-gray mb-6">Specialties</h2>
               {profileData.specialties?.length > 0 ? (
@@ -519,7 +518,7 @@ function DoctorProfilePage({ onLogout, currentUser }) {
               </div>
             </div>
 
-            {/* Verification Documents */}
+            
             <div className="card">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-dark-gray">Verification Documents</h2>

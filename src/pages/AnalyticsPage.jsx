@@ -39,7 +39,7 @@ const COLORS = ["#1F5F7A", "#4C1D95", "#EC4899", "#F59E0B"];
 function AnalyticsPage({ onLogout, currentUser }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [range, setRange] = useState("week"); // today, week, month
+  const [range, setRange] = useState("week"); 
   const [data, setData] = useState(null);
 
   useEffect(() => {

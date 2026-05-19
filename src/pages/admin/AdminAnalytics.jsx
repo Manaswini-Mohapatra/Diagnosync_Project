@@ -50,7 +50,7 @@ const AdminAnalytics = ({ onLogout, currentUser }) => {
   const handleExportCSV = () => {
     if (!data) return;
     
-    // Combine summary data into a flat structure
+    
     const csvData = [
       { Metric: 'Total Patients', Value: data.summary.totalPatients },
       { Metric: 'Total Doctors', Value: data.summary.totalDoctors },
@@ -170,7 +170,7 @@ const AdminAnalytics = ({ onLogout, currentUser }) => {
         </div>
       </div>
 
-      {/* Main Content Area */}
+      {/*Content */}
       <div ref={reportRef} className="glass-panel border-none p-2 rounded-xl">
         {loading ? (
           <div className="animate-pulse space-y-6">

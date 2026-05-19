@@ -11,29 +11,24 @@ function AppointmentBooking({ onLogout, currentUser }) {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   
-  // Dynamic API state
   const [doctors, setDoctors] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoadingDoctors, setIsLoadingDoctors] = useState(false);
-
   const [timeSlots, setTimeSlots] = useState([]);
-
-
-  // Selection
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [appointmentType, setAppointmentType] = useState("video");
   const [reason, setReason] = useState("");
   
-  // Phase 4.2 Confirmation flow
+  
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [confirmedAppointment, setConfirmedAppointment] = useState(null);
   const [isCancelling, setIsCancelling] = useState(false);
   const [isCancelled, setIsCancelled] = useState(false);
 
-  // Filter past time slots if the selected date is today
+  
   const filteredSlots = React.useMemo(() => {
     if (!selectedDate) return [];
     
@@ -62,20 +57,20 @@ function AppointmentBooking({ onLogout, currentUser }) {
     });
   }, [timeSlots, selectedDate]);
 
-  // Date bounds
+  
   const today = new Date().toISOString().split('T')[0];
   const maxDateRaw = new Date();
   maxDateRaw.setMonth(maxDateRaw.getMonth() + 3);
   const maxDate = maxDateRaw.toISOString().split('T')[0];
 
-  // Fetch doctors dynamically
+  
   useEffect(() => {
     const fetchDoctors = async () => {
       setIsLoadingDoctors(true);
       try {
         const queryParams = searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : '';
         const res = await api.get(`/doctors${queryParams}`);
-        // Support array structures or unwrapped structures
+        
         let docs = res.data.doctors || res.data.data;
         if (!Array.isArray(docs)) docs = [];
         setDoctors(docs);
@@ -86,7 +81,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
       }
     };
     
-    // Apply debounce to avoid spamming the endpoint when typing
+    
     const delayDebounceFn = setTimeout(() => {
       fetchDoctors();
     }, 400);
@@ -94,20 +89,19 @@ function AppointmentBooking({ onLogout, currentUser }) {
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery]);
 
-  // Fetch slot availability actively
+  
   useEffect(() => {
     if (!selectedDoctor || !selectedDate) return;
 
     const fetchSlots = async () => {
       try {
         const res = await api.get(`/doctors/${selectedDoctor}/slots?date=${selectedDate}`);
-        // The API returns { success: true, date, slots } 
-        // So we strictly read from res.data.slots
+        
         setTimeSlots(res.data.slots || []);
       } catch {
         setTimeSlots([]);
       }
-      setSelectedTime(""); // Ensure the patient re-selects time for different days
+      setSelectedTime(""); 
     };
     fetchSlots();
   }, [selectedDoctor, selectedDate]);
@@ -175,8 +169,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
 
   const getActiveDoctor = () => doctors.find(d => d.userId === selectedDoctor || d._id === selectedDoctor || d.id === selectedDoctor);
 
-  // ────────────────────────────────────────────────────────────────────────
-  // Cancellation Sub-screan
+  
   if (isCancelled) {
     return (
        <div className="min-h-screen bg-transparent relative flex flex-col">
@@ -208,8 +201,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
     );
   }
 
-  // ────────────────────────────────────────────────────────────────────────
-  // Confirmation Screen
+ 
   if (isConfirmed) {
     const activeDoc = getActiveDoctor();
     return (
@@ -307,7 +299,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
               </button>
             </div>
 
-            {/* Join Video Call — only shown for video appointments */}
+            
             {appointmentType === "video" && (
               <button
                 onClick={() => joinVideoCall(
@@ -326,8 +318,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
     );
   }
 
-  // ────────────────────────────────────────────────────────────────────────
-  // Booking Form Screens
+  
   return (
     <div className="min-h-screen bg-transparent relative flex flex-col">
       {/* Navbar */}
@@ -376,14 +367,14 @@ function AppointmentBooking({ onLogout, currentUser }) {
           ))}
         </div>
 
-        {/* Step 1: Select Doctor */}
+        
         {step === 1 && (
           <div className="glass-panel p-8 border-none shadow-soft hover-lift animate-slide-in">
             <h2 className="text-2xl font-bold text-dark-gray mb-6">
               Select a Doctor
             </h2>
 
-            {/* Phase 4 Search UI */}
+           
             <div className="relative mb-6">
               <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
@@ -451,7 +442,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
           </div>
         )}
 
-        {/* Step 2: Select Date & Time */}
+        
         {step === 2 && (
           <div className="glass-panel p-8 border-none shadow-soft hover-lift animate-slide-in">
             <h2 className="text-2xl font-bold text-dark-gray mb-6 flex justify-between items-center">
@@ -523,7 +514,7 @@ function AppointmentBooking({ onLogout, currentUser }) {
           </div>
         )}
 
-        {/* Step 3: Confirm Details */}
+        
         {step === 3 && (
           <div className="glass-panel p-8 border-none shadow-soft hover-lift animate-slide-in">
             <h2 className="text-2xl font-bold text-dark-gray mb-6">
@@ -570,7 +561,6 @@ function AppointmentBooking({ onLogout, currentUser }) {
               />
             </div>
 
-            {/* Summary */}
             <div className="bg-blue-50 border border-blue-100 rounded-lg p-6 mb-8 mt-4">
               <h3 className="font-bold text-blue-900 mb-4 flex items-center gap-2">
                 <Calendar className="w-5 h-5" /> 

@@ -10,8 +10,7 @@
   box-sizing: border-box;
 }
 
-/* Hide the browser's native password reveal eye button (Edge/Chrome)
-   so it doesn't overlap with the custom React eye toggle */
+
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
@@ -209,19 +208,14 @@ code {
   background: linear-gradient(to right, rgba(0, 102, 255, 0.1), rgba(0, 179, 65, 0.1), rgba(0, 212, 255, 0.1));
 }
 
-/* ────────────────────────────────────────────────────────────────────────
- * GLOBAL BACKGROUND OVERRIDE (PHASE 6)
- * Forces the Cashmere Blue background gracefully on all active layouts 
- * EXCEPT SignIn & SignUp (which are excluded from .global-app-bg)
- * ──────────────────────────────────────────────────────────────────────── */
+
 .global-app-bg > div:first-child {
   background-color: #748b97 !important;
   background-image: none !important;
   transition: background-color 0.5s ease-in-out;
 }
 
-/* ── Global Cinematic Background ───────────────────────── */
-/* Scoped only to .cinematic-bg-page */
+
 .global-app-bg.cinematic-bg-page > div:first-child {
   background-color: transparent !important;
   background-image: none !important;
@@ -233,7 +227,7 @@ code {
   min-height: 100vh;
 }
 
-/* Cinematic blurred background image */
+
 .cinematic-bg-page::before {
   content: "";
   position: fixed;
@@ -248,7 +242,7 @@ code {
   pointer-events: none;
 }
 
-/* Cinematic soft gradient overlay & vignette */
+
 .cinematic-bg-page::after {
   content: "";
   position: fixed;
@@ -260,12 +254,7 @@ code {
   pointer-events: none;
 }
 
-/* ────────────────────────────────────────────────────────────────────────
- * GLOBAL BUTTON HOVER — brightness only, never a new colour
- * Applies to every <button> element sitewide.
- * Excluded: buttons that already rely on translate/scale transforms only
- *   (those use .hover-lift which is unaffected).
- * ──────────────────────────────────────────────────────────────────────── */
+
 button {
   transition: filter 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
@@ -274,8 +263,7 @@ button:hover {
   filter: brightness(1.12);
 }
 
-/* Exceptions: icon-only / ghost buttons where brightness would look odd
-   add class .no-brightness-hover to opt out */
+
 button.no-brightness-hover:hover {
   filter: none;
 }

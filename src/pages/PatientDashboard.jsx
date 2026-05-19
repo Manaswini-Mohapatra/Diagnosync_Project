@@ -16,11 +16,11 @@ function PatientDashboard({ onLogout, currentUser }) {
   const navigate = useNavigate();
 
   const [totalAppointments, setTotalAppointments]     = useState(0);
-  const [upcomingAppointments, setUpcomingAppointments] = useState([]);  // 24-72hr window
+  const [upcomingAppointments, setUpcomingAppointments] = useState([]);  
   const [reportsCount, setReportsCount]               = useState(0);
   const [unreadAlerts, setUnreadAlerts]               = useState(0);
   const [profileComplete, setProfileComplete]         = useState(true);
-  const [selectedAppointment, setSelectedAppointment] = useState(null); // detail modal
+  const [selectedAppointment, setSelectedAppointment] = useState(null); 
   const [healthScoreData, setHealthScoreData]         = useState(null);
   const [showHealthModal, setShowHealthModal]         = useState(false);
 
@@ -29,16 +29,16 @@ function PatientDashboard({ onLogout, currentUser }) {
       try {
         const meRes = await api.get("/patients/me");
         const profile = meRes.data?.data?.profile;
-        // Profile is complete if it exists AND has some basic info filled (like age)
+        
         setProfileComplete(!!profile && profile.age != null);
         if (profile?.healthScore) setHealthScoreData(profile.healthScore);
         if (profile?.reports) setReportsCount(profile.reports.length);
 
-        // Total count (all scheduled) for stat card
+       
         const totalRes = await api.get("/appointments?status=scheduled");
         setTotalAppointments(totalRes.data.total || 0);
 
-        // 24-72hr window for dashboard widget
+        
         const windowRes = await api.get("/appointments?upcoming=true&hours=72");
         setUpcomingAppointments(windowRes.data.appointments || []);
 
@@ -56,7 +56,7 @@ function PatientDashboard({ onLogout, currentUser }) {
     navigate("/");
   };
 
-  // Determine Color for Health Status
+  
   let healthScoreColor = "bg-purple-100 text-purple-600";
   if (healthScoreData?.status === "Good") healthScoreColor = "bg-green-100 text-green-700";
   else if (healthScoreData?.status === "Moderate") healthScoreColor = "bg-yellow-100 text-yellow-700";
@@ -159,7 +159,7 @@ function PatientDashboard({ onLogout, currentUser }) {
       {/* Main Content */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        {/* Profile Completion Warning */}
+        
         {!profileComplete && (
           <div className="mb-6 animate-fade-in p-4 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -266,7 +266,7 @@ function PatientDashboard({ onLogout, currentUser }) {
 
         {/* Recent Activity */}
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Upcoming Appointments Timeline */}
+         
           <div className="lg:col-span-2 glass-panel p-6 border-none shadow-soft hover-lift">
             <div
               className="flex justify-between items-center mb-4 cursor-pointer"
@@ -380,7 +380,7 @@ function PatientDashboard({ onLogout, currentUser }) {
       </div>
       <Footer />
 
-      {/* ── Appointment Detail Modal ── */}
+      {/* Appointment Detail Modal*/}
       {selectedAppointment && (
         <div
           className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-0 sm:p-4"
@@ -443,7 +443,7 @@ function PatientDashboard({ onLogout, currentUser }) {
       )}
 
 
-      {/* ── Health Score Modal ── */}
+      {/*Health Score Modal*/}
       {showHealthModal && healthScoreData && (
         <div
           className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-0 sm:p-4"

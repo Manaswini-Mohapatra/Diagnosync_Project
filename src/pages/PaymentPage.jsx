@@ -21,7 +21,7 @@ function PaymentPage() {
 
   const [paymentMethod, setPaymentMethod] = useState("upi");
   
-  // Dummy fields for card
+  
   const [cardName, setCardName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
@@ -52,7 +52,7 @@ function PaymentPage() {
   }, [appointmentId]);
 
   const handlePayNow = async () => {
-    // Basic validation
+    
     if (paymentMethod === "card" && (!cardName || !cardNumber || !cardExpiry || !cardCvv)) {
       setError("Please fill in all card details.");
       return;
@@ -74,7 +74,7 @@ function PaymentPage() {
         amount: res.data.payment.amount,
         method: paymentMethod
       });
-      setStep(3); // Success Step
+      setStep(3); 
     } catch (err) {
       setError(err.response?.data?.error || "Payment failed. Please try again.");
     } finally {
@@ -142,7 +142,7 @@ function PaymentPage() {
             </div>
           )}
 
-          {/* ── STEP 1: REVIEW DETAILS ── */}
+          
           {step === 1 && appointment && doctor && (
             <div className="space-y-6">
               <div>
@@ -197,7 +197,7 @@ function PaymentPage() {
             </div>
           )}
 
-          {/* ── STEP 2: PAYMENT DETAILS ── */}
+          
           {step === 2 && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
@@ -282,7 +282,7 @@ function PaymentPage() {
             </div>
           )}
 
-          {/* ── STEP 3: SUCCESS ── */}
+          
           {step === 3 && successData && (
             <div className="text-center py-8 space-y-6">
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">

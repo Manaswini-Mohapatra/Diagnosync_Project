@@ -27,13 +27,13 @@ function TreatmentRecommendations({ onLogout, currentUser }) {
 
   const [selectedTreatment, setSelectedTreatment] = useState(null);
 
-  // ── History state ──────────────────────────────────────────────────────
+  // History state 
   const [treatmentHistory, setTreatmentHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [expandedId, setExpandedId] = useState(null); // which history card is open
+  const [expandedId, setExpandedId] = useState(null); 
 
-  // ── Fetch treatment history on mount ──────────────────────────────────
+
   useEffect(() => {
     const fetchHistory = async () => {
       try {
@@ -62,7 +62,7 @@ function TreatmentRecommendations({ onLogout, currentUser }) {
     });
   };
 
-  // ── Build a normalized treatment card from a history record ──────────
+  
   const normalizeTreatment = (record) => {
     const td = record.treatmentData || {};
     const primary = td.primary || td;
@@ -191,7 +191,7 @@ function TreatmentRecommendations({ onLogout, currentUser }) {
           </p>
         </div>
 
-        {/* ── Content ─────────────────────────────────────────────────── */}
+        {/* Content*/}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-16">
             <Loader className="w-8 h-8 text-primary animate-spin mb-4" />
@@ -363,7 +363,7 @@ function TreatmentRecommendations({ onLogout, currentUser }) {
         </div>
       </div>
 
-      {/* ── Full Details Modal ─────────────────────────────────────────── */}
+      {/*Full Details Modal */}
       {selectedTreatment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">

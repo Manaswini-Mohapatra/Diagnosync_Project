@@ -1,4 +1,3 @@
-// SymptomChecker.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,7 +10,7 @@ function SymptomChecker({ onLogout, currentUser }) {
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
 
-  // ── Active chat state ──────────────────────────────────────────────────
+  //Active chat state
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,18 +19,18 @@ function SymptomChecker({ onLogout, currentUser }) {
   const [sessionId, setSessionId] = useState(null);
   const [conversationPhase, setConversationPhase] = useState("initial");
 
-  // ── History state ──────────────────────────────────────────────────────
+  //History state
   const [chatHistory, setChatHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [selectedSession, setSelectedSession] = useState(null);
 
-  // ── Auto-scroll ────────────────────────────────────────────────────────
+  // Auto-scroll 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // ── On mount: load history then start fresh session ───────────────────
+   
   useEffect(() => {
     loadHistory();
     initSession();
@@ -94,7 +93,7 @@ function SymptomChecker({ onLogout, currentUser }) {
       if (data.phase === "results" && data.results) {
         setAnalysisResults(data.results);
         setShowResults(true);
-        // Refresh history to include this new session
+        
         loadHistory();
       }
     } catch (error) {
@@ -132,7 +131,7 @@ function SymptomChecker({ onLogout, currentUser }) {
   };
 
   const getSessionCondition = (session) => {
-    // Try to extract condition from last bot message if results
+    
     const botMsgs = session.messages?.filter((m) => m.role === "bot") || [];
     return botMsgs.length > 0 ? `${session.messages?.length || 0} messages` : "In progress";
   };
@@ -180,7 +179,7 @@ function SymptomChecker({ onLogout, currentUser }) {
       </nav>
 
       <div className="flex flex-1 w-full pl-4 sm:pl-6 lg:pl-8 min-h-0 pb-4">
-        {/* ── History Sidebar ─────────────────────────────────────────── */}
+        {/*  History Sidebar */}
         {showHistory && (
           <aside
             className="w-80 flex flex-col shrink-0 overflow-hidden rounded-2xl shadow-lg border h-full"
@@ -250,7 +249,7 @@ function SymptomChecker({ onLogout, currentUser }) {
           </aside>
         )}
 
-        {/* ── Main Chat Area ──────────────────────────────────────────── */}
+        {/*Main Chat Area */}
         <div className="flex-1 flex flex-col w-full min-w-0 min-h-0">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto mb-4 px-4 lg:px-8 py-4">
@@ -411,7 +410,7 @@ function SymptomChecker({ onLogout, currentUser }) {
         </div>
       </div>
 
-      {/* ── Session Replay Modal ─────────────────────────────────────────── */}
+      {/* Session Replay Modal */}
       {selectedSession && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-xl w-full max-h-[85vh] flex flex-col shadow-2xl">
@@ -451,7 +450,7 @@ function SymptomChecker({ onLogout, currentUser }) {
                 ))}
               </div>
 
-              {/* Prediction analysis results (if session was completed) */}
+              {/* Prediction analysis results */}
               {selectedSession.prediction && (
                 <div className="mx-5 mb-5 rounded-2xl border-l-4 border-warning bg-amber-50 p-5">
                   <div className="flex items-center gap-2 mb-4">
@@ -512,7 +511,7 @@ function SymptomChecker({ onLogout, currentUser }) {
                     </div>
                   )}
 
-                  {/* Urgency high warning */}
+                 
                   {selectedSession.prediction.urgency === 'High' && (
                     <div className="mt-3 p-3 bg-red-50 rounded-xl border border-red-200 flex gap-2">
                       <AlertCircle className="w-4 h-4 text-danger flex-shrink-0 mt-0.5" />

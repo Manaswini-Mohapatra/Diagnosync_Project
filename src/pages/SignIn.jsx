@@ -22,7 +22,7 @@ function SignIn({ onLogin }) {
     setApiError("");
     const newErrors = {};
 
-    // Frontend validation
+    
     if (!formData.email)    newErrors.email    = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
 
@@ -31,7 +31,7 @@ function SignIn({ onLogin }) {
       return;
     }
 
-    // ── Real API call ────────────────────────────────────────────────
+    
     setIsLoading(true);
     try {
       const res = await api.post('/auth/login', {
@@ -42,16 +42,16 @@ function SignIn({ onLogin }) {
 
       const { token, user, weakPassword: isWeak } = res.data;
 
-      // Store token — api.js will attach it automatically from now on
+      
       localStorage.setItem('token',           token);
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('userRole',         user.role);
       localStorage.setItem('currentUser',      JSON.stringify(user));
 
-      // Pass real user (with _id from DB) to App.jsx
+      
       onLogin(user.role, user);
 
-      // Determine correct dashboard based on role
+      
       const navigateTo = user.role === 'admin' 
         ? '/admin/dashboard' 
         : user.role === 'patient' 
@@ -59,7 +59,7 @@ function SignIn({ onLogin }) {
           : '/doctor/dashboard';
 
       if (isWeak) {
-        // Show banner briefly, then navigate
+        
         setWeakPassword(true);
         setTimeout(() => navigate(navigateTo), 3000);
       } else {
@@ -169,7 +169,7 @@ function SignIn({ onLogin }) {
                 </div>
               </div>
 
-              {/* Email */}
+              
               <div>
                 <label className="block text-sm font-semibold text-dark-gray mb-1.5 focus-within:text-primary transition-colors">
                   Email Address
@@ -187,7 +187,7 @@ function SignIn({ onLogin }) {
                 )}
               </div>
 
-              {/* Password */}
+              
               <div>
                 <label className="block text-sm font-semibold text-dark-gray mb-1.5 focus-within:text-primary transition-colors">
                   Password
@@ -232,7 +232,7 @@ function SignIn({ onLogin }) {
                 </Link>
               </div>
 
-              {/* Weak Password Upgrade Banner */}
+              
               {weakPassword && (
                 <div className="p-3 bg-amber-50 border border-amber-300 rounded-xl flex items-start gap-2">
                   <span className="text-amber-500 text-base mt-0.5">⚠️</span>
@@ -276,20 +276,7 @@ function SignIn({ onLogin }) {
             </form>
           </div>
 
-          {/* Demo Credentials */}
-          <div className="mt-8 p-4 bg-white/60 backdrop-blur rounded-xl border border-gray-200/60 shadow-sm text-center">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-              Demo Test Credentials
-            </p>
-            <div className="flex justify-center gap-6">
-              <p className="text-xs text-gray-600">
-                <span className="font-semibold">Patient:</span> rahul@test.com / TestPass1
-              </p>
-              <p className="text-xs text-gray-600">
-                <span className="font-semibold">Doctor:</span> drpriya@test.com / DocPass1
-              </p>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>

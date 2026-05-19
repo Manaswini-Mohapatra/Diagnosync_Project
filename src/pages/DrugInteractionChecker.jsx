@@ -18,7 +18,7 @@ function DrugInteractionChecker({ onLogout, currentUser }) {
 
   const handleLogout = () => { onLogout(); navigate("/"); };
 
-  // Fetch drug suggestions with debounce
+  
   useEffect(() => {
     if (!searchInput.trim()) {
       setSuggestions([]);
@@ -30,7 +30,7 @@ function DrugInteractionChecker({ onLogout, currentUser }) {
       try {
         const res = await api.get(`/medications?search=${encodeURIComponent(searchInput)}&limit=10`);
         if (res.data.success) {
-          // Filter out already selected drugs
+          
           const selectedNames = selectedDrugs.map(d => d.name);
           const filtered = res.data.data.filter(drug => !selectedNames.includes(drug.name));
           setSuggestions(filtered);
@@ -151,7 +151,7 @@ function DrugInteractionChecker({ onLogout, currentUser }) {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {/* Drug Selection */}
+          
           <div className="md:col-span-2">
             <div className="card mb-6">
               <h2 className="text-xl font-bold text-dark-gray mb-4">Add Medications</h2>
@@ -197,7 +197,7 @@ function DrugInteractionChecker({ onLogout, currentUser }) {
                 )}
               </div>
 
-              {/* Selected Drugs */}
+              
               <div className="mb-6">
                 <h3 className="font-semibold text-dark-gray mb-3 flex items-center gap-2">
                   Selected Profile <span className="badge-primary">{selectedDrugs.length}</span>
@@ -223,7 +223,7 @@ function DrugInteractionChecker({ onLogout, currentUser }) {
                 )}
               </div>
 
-              {/* Check Button */}
+              
               <button
                 onClick={checkInteractions}
                 disabled={selectedDrugs.length < 2 || isChecking}
@@ -297,7 +297,7 @@ function DrugInteractionChecker({ onLogout, currentUser }) {
                   </div>
                 ))}
                 
-                {/* Recommendations Callout */}
+               
                 {interactionsReport.recommendations?.length > 0 && (
                   <div className="mt-6 p-5 bg-white border border-gray-200 rounded-lg shadow-sm">
                     <h4 className="font-bold text-dark-gray mb-3 flex items-center gap-2">Clinical Recommendations</h4>
@@ -309,7 +309,7 @@ function DrugInteractionChecker({ onLogout, currentUser }) {
                   </div>
                 )}
                 
-                {/* Alternatives */}
+               
                  {interactionsReport.alternatives?.length > 0 && (
                   <div className="mt-4 p-5 bg-blue-50 border border-blue-100 rounded-lg shadow-sm">
                     <h4 className="font-bold text-primary mb-3">Suggested Alternatives</h4>

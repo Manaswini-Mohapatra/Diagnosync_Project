@@ -2,12 +2,10 @@ import React, { useState, useCallback } from "react";
 import { Check, ChevronLeft, ChevronRight, Upload, File, X, Download } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// ─── Brand tokens ─────────────────────────────────────────────────────────────
+
 const PRIMARY = "#1F5F7A";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Stepper  (converted from stepper.tsx)
-// ─────────────────────────────────────────────────────────────────────────────
+
 export function FormStepper({ steps, currentStep, onStepClick }) {
   return (
     <nav aria-label="Progress" className="w-full">
@@ -104,9 +102,7 @@ export function FormStepper({ steps, currentStep, onStepClick }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FormSection — animated step wrapper (converted from cn + animate-in)
-// ─────────────────────────────────────────────────────────────────────────────
+
 export function FormSection({ children, direction = "forward" }) {
   return (
     <motion.div
@@ -120,9 +116,7 @@ export function FormSection({ children, direction = "forward" }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FormRow / FormTile — 2-column Mayo layout (from form-row.tsx)
-// ─────────────────────────────────────────────────────────────────────────────
+
 export function FormTile({ label, hint, children, required = false }) {
   return (
     <div className="flex flex-col gap-5 py-6 border-b border-gray-100 last:border-b-0 w-full">
@@ -145,9 +139,7 @@ export function FormTile({ label, hint, children, required = false }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FormInput — floating-label underline input (from form-input.tsx)
-// ─────────────────────────────────────────────────────────────────────────────
+
 export function FormInput({ label, optional, error, className = "", ...props }) {
   return (
     <div className="flex flex-col gap-1.5 w-full">
@@ -169,9 +161,7 @@ export function FormInput({ label, optional, error, className = "", ...props }) 
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TextInput / TextArea — for doctor form
-// ─────────────────────────────────────────────────────────────────────────────
+
 export function TextInput({ label, error, className = "", ...props }) {
   return (
     <div className="flex flex-col gap-1.5 w-full">
@@ -209,9 +199,7 @@ export function TextArea({ label, rows = 4, error, className = "", ...props }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// NumberInput — prefixed number field
-// ─────────────────────────────────────────────────────────────────────────────
+
 export function NumberInput({ label, prefix, error, className = "", ...props }) {
   return (
     <div className="flex flex-col gap-1.5 w-full">
@@ -239,10 +227,7 @@ export function NumberInput({ label, prefix, error, className = "", ...props }) 
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SelectionButton / SelectionGroup (from selection-button.tsx)
-// Large clickable tiles for Yes/No/option choices
-// ─────────────────────────────────────────────────────────────────────────────
+
 export function SelectionButton({ label, selected, onClick, className = "" }) {
   return (
     <button
@@ -282,9 +267,7 @@ export function SelectionGroup({ options, value, onChange, className = "" }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TagInput (from tag-input.tsx)
-// ─────────────────────────────────────────────────────────────────────────────
+
 export function TagInput({
   tags,
   onTagsChange,
@@ -372,9 +355,7 @@ export function TagInput({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CheckboxGrid — specialty selector for doctor form (from checkbox-grid.tsx)
-// ─────────────────────────────────────────────────────────────────────────────
+
 export function CheckboxGrid({ options, selected, onChange, columns = 2 }) {
   const toggle = (value) => {
     const next = selected.includes(value)
@@ -419,9 +400,7 @@ export function CheckboxGrid({ options, selected, onChange, columns = 2 }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SpecialtyTags — shows selected specialty chips with remove (from specialty-tags.tsx)
-// ─────────────────────────────────────────────────────────────────────────────
+
 export function SpecialtyTags({ tags, onRemove, className = "" }) {
   if (!tags || tags.length === 0) return null;
   return (
@@ -446,11 +425,7 @@ export function SpecialtyTags({ tags, onRemove, className = "" }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FileUploadZone — drag-and-drop file upload UI (from file-upload.tsx)
-// NOTE: For the patient form this is a LOCAL UI state only component.
-//       For the doctor form, wire onFilesChange to the API handler instead.
-// ─────────────────────────────────────────────────────────────────────────────
+
 function formatBytes(bytes) {
   if (bytes < 1024) return bytes + " B";
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
@@ -475,7 +450,7 @@ export function FileUploadZone({
           name: f.name,
           size: f.size,
           type: f.type,
-          raw: f, // keep raw File object for API upload
+          raw: f, 
         }));
       if (newFiles.length) onFilesChange([...files, ...newFiles]);
     },
@@ -543,9 +518,7 @@ export function FileUploadZone({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// NavigationButtons / StepNav (from navigation-buttons.tsx + doctor-nav-buttons.tsx)
-// ─────────────────────────────────────────────────────────────────────────────
+
 export function StepNav({
   onBack,
   onNext,
@@ -586,7 +559,7 @@ export function StepNav({
   );
 }
 
-// Alias kept for backward compat in case anything imports MobileProgressBar
+
 export function MobileProgressBar({ steps, currentStep }) {
   return (
     <div className="md:hidden mb-6">

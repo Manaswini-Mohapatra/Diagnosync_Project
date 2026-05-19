@@ -41,11 +41,10 @@ function AppointmentManagement({ onLogout }) {
     
     setActionLoading(id);
     try {
-      // Admins can delete or cancel. We'll use the delete endpoint which acts as a soft-cancel or hard-delete depending on role and current status.
-      // Since it's an admin, DELETE /api/appointments/:id acts as a hard delete if already cancelled, or soft cancel if active.
+      
       const res = await api.delete(`/appointments/${id}`);
       if (res.data.success) {
-        // If it was cancelled, update locally. If permanently deleted, remove from list.
+        
         if (res.data.message === 'Appointment cancelled') {
           setAppointments(appointments.map(a => a._id === id ? { ...a, status: 'cancelled' } : a));
         } else {

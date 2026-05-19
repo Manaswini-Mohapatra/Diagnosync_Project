@@ -1,9 +1,7 @@
-// src/components/TermsPopup.jsx
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { X, CheckCircle } from 'lucide-react';
 
-// Simple Button component - inline to avoid import issues
 function Button({ children, onClick, variant = 'primary' }) {
   const baseStyles = 'px-6 py-2 rounded-lg font-semibold transition-colors border-none cursor-pointer';
   const variants = {

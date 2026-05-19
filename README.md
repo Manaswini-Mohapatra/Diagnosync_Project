@@ -1,323 +1,202 @@
-# DiagnoSync - AI Healthcare System MVP
+# DiagnoSync - AI Based Individualized Health Management System
 
- AI-Based Personalized Treatment Recommendation System.
+AI-Based Personalized Treatment Recommendation System.
 
-## 📋 Project Overview
+## Project Overview
 
-This is a complete, ready-to-run implementation of the core healthcare platform with:
-- **10+ Fully Functional Pages**
-- **Two User Roles** (Patient & Doctor)
-- **Authentication System** (Mock)
-- **Responsive Design** (Mobile & Desktop)
-- **Mock Data Integration**
-- **Professional UI/UX** (Tailwind CSS)
+This is the complete frontend implementation of the DiagnoSync healthcare platform. It provides a state-of-the-art cinematic UI, role-based dashboards, and interactive health widgets. The client application connects directly to the Node.js Express backend to deliver secure and responsive healthcare workflows.
+
+### Core Architecture Features
+- Three User Roles: Patient, Doctor, and Administrator.
+- Authentication System: JSON Web Token (JWT) based authentication with role-based protected routes.
+- Responsive Layouts: Fully responsive design across mobile, tablet, and desktop viewports.
+- Real-Time Integration: Direct connection to MongoDB Atlas database API services.
+- Clean Modern UI: Styled with Tailwind CSS, custom components, and smooth page transitions.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- Node.js 14+ installed
+- Node.js 14 or higher installed
 - npm or yarn package manager
 
-### Installation & Setup (3 Steps)
+### Installation and Setup
 
 #### Step 1: Clone/Download the Project
+Go into the project folder:
 ```bash
-cd healthcare-system-mvp
+cd DiagnoSync_Project
 ```
 
 #### Step 2: Install Dependencies
+Install all required Node packages:
 ```bash
 npm install
 ```
 
 #### Step 3: Start the Development Server
+Run the local Vite server:
 ```bash
 npm start
 ```
 
-The application will automatically open in your browser at `http://localhost:3000`
+The application will automatically start and open in your default browser at http://localhost:3000
 
 ---
 
-## 🌐 Pages Included
+## Pages Included
 
 ### Public Pages
-1. **Landing Page** (`/`)
-   - Hero section with CTA
-   - Feature showcase
-   - How it works section
-   - Footer with links
+1. **Landing Page** (/)
+   - Interactive hero introduction section
+   - Features showcase
+   - Multi-role platform workflow explanation
+2. **Sign Up** (/signup)
+   - Account creation forms
+   - Live password strength validation
+   - Role selection for Patients and Doctors
+3. **Sign In** (/signin)
+   - Email and password verification
+   - Secure login generating JWT authentication
+4. **Password Reset** (/password-reset)
+   - Request reset links via registered email address
+   - Verification token confirmation workflow
 
-2. **Sign Up** (`/signup`)
-   - Form validation
-   - Role selection (Patient/Doctor)
-   - Password strength check
+### Patient Dashboard and Management
+5. **Patient Dashboard** (/patient/dashboard)
+   - Calculated health score overview and breakdown
+   - Quick access tabs for scheduling and chatbot
+   - Upcoming appointments alerts
+6. **Patient Profile** (/patient/profile)
+   - View current personal physical profiles
+   - Edit medical history, lifestyle factors, and emergency contacts
+7. **Patient Onboarding** (/patient/registration)
+   - Interactive wizard to input initial health profiles
+8. **Symptom Checker** (/patient/symptom-checker)
+   - AI-powered chat session to log current health complaints
+9. **Treatment Recommendations** (/patient/treatment-recommendations)
+   - View recommended therapies, medications, and self-care plans
+10. **Appointment Booking** (/patient/appointments)
+    - Browse available verified doctors, select dates, and choose open slots
+11. **My Appointments** (/patient/my-appointments)
+    - Consolidated history of past visits and future bookings
+12. **Prescription Page** (/patient/prescriptions)
+    - View active and historical medication sheets issued by clinicians
+13. **Medical Reports** (/patient/reports)
+    - Upload and categorize PDF/image laboratory records
+14. **Payment Page** (/patient/payment/:appointmentId)
+    - Complete booking process with secure invoice review
 
-3. **Sign In** (`/signin`)
-   - Email & password login
-   - Role-based authentication
-   - Demo credentials provided
+### Doctor Workspace
+15. **Doctor Dashboard** (/doctor/dashboard)
+    - Active slots counter, consultation count, and average rating
+    - Urgent patient alert widgets
+16. **Doctor Profile** (/doctor/profile)
+    - Edit consultation fees, languages, and biography
+17. **Doctor Registration** (/doctor/registration)
+    - Multi-step credential verify form with medical license and diploma document upload
+18. **Patient List** (/doctor/patients)
+    - View, search, and audit patient medical history and metrics
+19. **Doctor Appointments** (/doctor/appointments)
+    - Daily appointment list, check-in controls, and treatment planner
+20. **Drug Interaction Checker** (/doctor/drug-checker)
+    - Auto-complete search to identify adverse risks and contraindications between drug groups
+21. **Doctor Analytics** (/doctor/analytics)
+    - Practice performance insights and metrics charts
 
-4. **Password Reset** (`/password-reset`)
-   - Email-based password reset
-   - Confirmation workflow
-
-### Patient Pages
-
-5. **Patient Dashboard** (`/patient/dashboard`)
-   - Quick stats cards
-   - Upcoming appointments
-   - Quick action buttons
-   - Health alerts
-   - Patient-specific navbar
-
-6. **Symptom Checker** (`/patient/symptom-checker`)
-   - Interactive NLP chatbot
-   - Symptom analysis
-   - Treatment recommendations
-   - Results display
-
-7. **Treatment Recommendations** (`/patient/treatment-recommendations`)
-   - Personalized treatment plans
-   - Multiple conditions
-   - Detailed recommendations
-   - Doctor notes
-
-8. **Appointment Booking** (`/patient/appointments`)
-   - Doctor selection
-   - Calendar date picker
-   - Time slot selection
-   - Booking confirmation
-
-### Doctor Pages
-
-9. **Doctor Dashboard** (`/doctor/dashboard`)
-   - Key performance metrics
-   - Today's appointments list
-   - Urgent cases widget
-   - Quick action buttons
-
-10. **Patient List** (`/doctor/patients`)
-    - Search & filter patients
-    - Patient cards with details
-    - Quick action buttons
-    - Contact information
-
-11. **Drug Interaction Checker** (`/doctor/drug-checker`)
-    - Drug search with autocomplete
-    - Interaction detection
-    - Severity levels
-    - Alternative suggestions
-
----
-
-## 📱 Demo Credentials
-
-**Patient Login:**
-- Email: `patient@demo.com`
-- Password: `password123`
-
-**Doctor Login:**
-- Email: `doctor@demo.com`
-- Password: `password123`
-
-You can also create new accounts on the Sign Up page.
+### Administrator Portal
+22. **Admin Dashboard** (/admin/dashboard)
+    - High-level platform stats (Total Users, Registered Doctors, Active Sessions)
+23. **User Management** (/admin/users)
+    - Search, audit, and activate/deactivate accounts
+24. **Doctor Verification** (/admin/doctors/verify)
+    - Approve or reject pending physician credentials
+25. **Appointment Management** (/admin/appointments)
+    - View and cancel scheduled visits globally
+26. **Admin Analytics** (/admin/analytics)
+    - System response speeds and live API logs monitor
 
 ---
 
-## 🎨 Tech Stack
+## Tech Stack
 
-### Frontend
-- **React 18** - UI framework
-- **React Router v6** - Navigation
-- **Tailwind CSS** - Styling
-- **Lucide React** - Icons
-- **Recharts** - Charts and graphs
+### Client Framework
+- React 18 (UI framework)
+- React Router v6 (Client-side routing)
+- Tailwind CSS (CSS utility framework)
+- Lucide React (SVG illustration shapes)
+- Recharts (Data analytics visualization)
 
-### Development
-- **Vite** - Fast development server
-- **PostCSS** - CSS processing
-- **Autoprefixer** - CSS vendor prefixes
-
----
-
-## 📂 Project Structure
-
-```
-healthcare-system-mvp/
-├── src/
-│   ├── pages/
-│   │   ├── Landing.jsx
-│   │   ├── SignUp.jsx
-│   │   ├── SignIn.jsx
-│   │   ├── PasswordReset.jsx
-│   │   ├── PatientDashboard.jsx
-│   │   ├── SymptomChecker.jsx
-│   │   ├── TreatmentRecommendations.jsx
-│   │   ├── AppointmentBooking.jsx
-│   │   ├── DoctorDashboard.jsx
-│   │   ├── PatientList.jsx
-│   │   ├── DrugInteractionChecker.jsx
-│   │   └── NotFound.jsx
-│   ├── App.jsx
-│   ├── main.jsx
-│   └── index.css
-├── index.html
-├── package.json
-├── tailwind.config.js
-├── postcss.config.js
-└── vite.config.js
-```
+### Build Tools
+- Vite (Asset compiler and dev server)
+- PostCSS and Autoprefixer (Styling optimization)
 
 ---
 
-## 🔐 Authentication
-
-The system uses **localStorage** for mock authentication:
-
-```javascript
-// Login
-localStorage.setItem('isAuthenticated', 'true')
-localStorage.setItem('userRole', 'patient') // or 'doctor'
-localStorage.setItem('currentUser', JSON.stringify(userData))
-
-// Check if authenticated
-const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true'
-const userRole = localStorage.getItem('userRole')
-```
-
-All authentication is **client-side only** for this MVP.
-
----
-
-## 💾 Data Persistence
-
-The application uses **localStorage** to persist:
-- Login status
-- User role
-- User data
-- Form submissions
-
-**Note:** All data resets when localStorage is cleared or browser cache is emptied.
-
----
-
-## 🎯 User Flows
+## User Flows
 
 ### Patient Flow
 ```
-Landing → Sign Up → Patient Dashboard → 
-  ├─ Symptom Checker → Treatment Recommendations
-  ├─ Book Appointment
+Landing -> Sign Up -> Patient Onboarding -> Patient Dashboard
+  ├─ Symptom Checker -> AI Recommendation Engine
+  ├─ Doctor Listing -> Schedule -> Book Appointment -> Payment
+  ├─ Upload Lab Report -> Medical Reports
   └─ View Prescriptions
 ```
 
 ### Doctor Flow
 ```
-Landing → Sign In → Doctor Dashboard →
-  ├─ My Patients → Patient List → Patient Details
-  ├─ Drug Interaction Checker
-  └─ Manage Appointments
+Landing -> Sign Up -> Doctor Onboarding -> Admin Verification (Pending) -> Approved
+  └─ Doctor Dashboard
+       ├─ Patient List -> View Patient Profile & Vitals
+       ├─ Appointment Schedule -> Consult -> Write Prescription
+       └─ Drug Interaction Checker
+```
+
+### Admin Flow
+```
+Sign In -> Admin Dashboard
+  ├─ User Management -> Deactivate/Activate User Accounts
+  ├─ Doctor Verification -> Review Uploaded Licenses -> Verify Doctor Profile
+  ├─ Appointment Auditing
+  └─ System Logs & Analytics Monitor
 ```
 
 ---
 
-## 🎨 Color Scheme
+## Available Scripts
 
-The application uses a professional healthcare color palette:
-- **Primary Blue**: `#0066FF` - Main actions
-- **Secondary Cyan**: `#00D4FF` - Accents
-- **Success Green**: `#00B341` - Positive actions
-- **Warning Orange**: `#FFB700` - Cautions
-- **Danger Red**: `#FF3333` - Alerts
-
----
-
-## 📦 Available Scripts
+In the project directory, you can run:
 
 ```bash
 # Start development server
 npm start
 
-# Build for production
+# Build for production deployment
 npm run build
 
-# Run tests (when configured)
+# Run unit and integration tests
 npm test
-
-# Eject Webpack config (not recommended)
-npm run eject
 ```
 
 ---
 
-## 🚀 Deployment
+## Features Included
 
-To deploy this application:
-
-### Option 1: Vercel (Recommended)
-```bash
-npm install -g vercel
-vercel
-```
-
-### Option 2: Netlify
-```bash
-npm install -g netlify-cli
-netlify deploy --prod --dir=dist
-```
-
-### Option 3: GitHub Pages
-Update `vite.config.js`:
-```javascript
-export default {
-  base: '/healthcare-system-mvp/',
-  // ... rest of config
-}
-```
-
-Then: `npm run build` and deploy the `dist` folder.
+- Page-to-page navigation using client-side router
+- Inline form validation and strength assessment
+- Session persistence matching backend JWT lifespans
+- Highly professional dark-mode glassmorphic styling
+- Multi-step stepper wizards for onboarding and registration
+- Chart integrations for statistics and analytics
 
 ---
 
-## 🐛 Features Included
-
-✅ Responsive design (mobile, tablet, desktop)
-✅ Navigation between pages
-✅ Form validation
-✅ Mock authentication
-✅ Data persistence (localStorage)
-✅ Professional UI components
-✅ Interactive elements
-✅ Smooth animations
-✅ Icon integration
-✅ Error pages
-
----
-
-## ⚠️ Limitations (MVP)
-
-This is a frontend-only MVP. The following are NOT included:
-
-❌ Real backend API
-❌ Real database
-❌ Real NLP chatbot (hardcoded responses)
-❌ Real ML models
-❌ Email notifications
-❌ Payment integration
-❌ Video conferencing
-❌ File uploads
-
-These will be implemented in the full development phase.
-
----
-
-## 🔧 Customization
+## Customization
 
 ### Change Colors
-Edit `tailwind.config.js`:
+Edit the tailwind.config.js file:
 ```javascript
 theme: {
   extend: {
@@ -330,57 +209,24 @@ theme: {
 ```
 
 ### Add New Pages
-1. Create file: `src/pages/YourPage.jsx`
-2. Add route in `src/App.jsx`
-3. Add navigation link
-
-### Modify Layout
-- Edit Navbar in each page
-- Modify sidebar in components
-- Adjust padding/margins in Tailwind classes
+1. Create a page component under src/pages/YourPage.jsx
+2. Mount the route path under Routes in src/App.jsx
+3. Add the navigation links inside your navigation menus
 
 ---
 
-## 📚 Learning Resources
+## Learning Resources
 
-- **React Docs**: https://react.dev
-- **React Router**: https://reactrouter.com
-- **Tailwind CSS**: https://tailwindcss.com
-- **Vite**: https://vitejs.dev
-
----
-
-## 🤝 Contributing
-
-For the full development:
-
-1. Implement real backend (Node.js + Express)
-2. Set up database (PostgreSQL)
-3. Integrate NLP for chatbot
-4. Implement ML models
-5. Add payment processing
-6. Set up video conferencing
-7. Deploy to production
+- React Documentation: https://react.dev
+- React Router Documentation: https://reactrouter.com
+- Tailwind CSS Documentation: https://tailwindcss.com
+- Vite Documentation: https://vitejs.dev
 
 ---
 
-## 📝 Notes
-
-- All data is stored in browser localStorage
-- No real authentication (for demo purposes)
-- No API calls (everything is mocked)
-- No database connectivity
-- All interactions are client-side only
-
-
----
-
-## 📄 License
+## License
 
 This is a student project for educational purposes.
 
----
-
-**Version**: 1.0.0 MVP
-**Last Updated**: March 2026
-
+Version: 2.0.0
+Last Updated: May 2026

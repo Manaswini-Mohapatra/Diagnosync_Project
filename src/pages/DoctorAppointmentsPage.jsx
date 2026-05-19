@@ -34,7 +34,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
   const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Modal state for prescriptions
+  
   const [prescriptionPatient, setPrescriptionPatient] = useState(null);
 
   useEffect(() => {
@@ -47,20 +47,20 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
       const res = await api.get("/appointments");
       const all = res.data.appointments || [];
 
-      // Auto-complete any "scheduled" appointments whose date has already passed
+      
       const now = new Date();
       const pastScheduled = all.filter(
         (a) => a.status === "scheduled" && new Date(a.date) < now
       );
 
       if (pastScheduled.length > 0) {
-        // Fire-and-forget PATCH calls; update local state immediately
+        
         await Promise.allSettled(
           pastScheduled.map((a) =>
             api.patch(`/appointments/${a._id || a.id}/status`, { status: "completed" })
           )
         );
-        // Mark them completed in state without re-fetching
+        
         const updatedIds = new Set(pastScheduled.map((a) => a._id || a.id));
         setAppointments(
           all.map((a) =>
@@ -82,10 +82,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
     navigate("/");
   };
 
-  // ── Derived lists ──────────────────────────────────────────────────────────
-  // A "scheduled" appointment whose date has already passed is treated as
-  // completed for display — it stays in the DB as-is but appears in the
-  // Completed tab so the Upcoming tab stays clean.
+  
   const now = new Date();
   const isPast = (apt) => new Date(apt.date) < now;
 
@@ -120,7 +117,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
     );
   };
 
-  // ── Status update helper ───────────────────────────────────────────────────
+  
   const updateStatus = async (id, status) => {
     try {
       await api.patch(`/appointments/${id}/status`, { status });
@@ -143,7 +140,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
     }
   };
 
-  // ── Send reminder ──────────────────────────────────────────────────────────
+  
   const handleSendReminder = async (id) => {
     try {
       await api.patch(`/appointments/${id}/reminder`);
@@ -152,7 +149,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
       );
       alert("Reminder sent to patient successfully!");
     } catch (error) {
-      // Graceful fallback — endpoint may not exist yet
+      
       setAppointments((prev) =>
         prev.map((a) => (a.id === id ? { ...a, reminderSent: true } : a))
       );
@@ -160,7 +157,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
     }
   };
 
-  // ── Edit notes ────────────────────────────────────────────────────────────
+  
   const openEditModal = (apt) => {
     setEditingAppointment(apt);
     setEditNotes(apt.notes || "");
@@ -180,7 +177,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
       setShowEditModal(false);
       setEditingAppointment(null);
     } catch (error) {
-      // Optimistic update if PATCH rejects extra fields
+      
       setAppointments((prev) =>
         prev.map((a) =>
           a.id === editingAppointment.id ? { ...a, notes: editNotes } : a
@@ -191,7 +188,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
     }
   };
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
+  
   const statusBadge = (status) => {
     switch (status) {
       case "scheduled":   return "badge-primary";
@@ -235,7 +232,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
 
       {/* Main Content */}
       <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+       
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-4xl font-bold text-[#E5E7EB] mb-2">Appointments</h1>
@@ -264,7 +261,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
           </div>
         </div>
 
-        {/* Tabs */}
+        
         <div className="flex gap-4 mb-6 border-b border-border-gray overflow-x-auto">
           {[
             { key: "upcoming",   label: "Upcoming",   count: upcomingAppointments.length },
@@ -325,7 +322,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
                   <div className="flex gap-2 flex-shrink-0">
                     {(apt.status === "scheduled" || apt.status === "in-progress") && (
                       <>
-                        {/* Edit notes */}
+                       
                         <button
                           onClick={() => openEditModal(apt)}
                           className="text-primary hover:bg-blue-100 p-2 rounded transition-colors"
@@ -334,7 +331,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
                           <Edit className="w-5 h-5" />
                         </button>
 
-                        {/* Mark complete */}
+                        
                         <button
                           onClick={() => handleComplete(apt.id)}
                           className="text-success hover:bg-green-100 p-2 rounded transition-colors"
@@ -343,7 +340,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
                           <CheckCircle className="w-5 h-5" />
                         </button>
 
-                        {/* Cancel */}
+                        
                         <button
                           onClick={() => handleCancel(apt.id)}
                           className="text-danger hover:bg-red-100 p-2 rounded transition-colors"
@@ -352,7 +349,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
                           <X className="w-5 h-5" />
                         </button>
 
-                        {/* Join Video Call — only for video-type appointments */}
+                        
                         {apt.type === "video" && (
                           <button
                             onClick={() => joinVideoCall(apt._id || apt.id, currentUser?.name)}
@@ -366,7 +363,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
                       </>
                     )}
 
-                    {/* Create Prescription — always visible for completed/ongoing */}
+                    
                     {(apt.status === "scheduled" ||
                       apt.status === "in-progress" ||
                       apt.status === "completed") && (
@@ -386,7 +383,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
                   </div>
                 </div>
 
-                {/* Details Grid */}
+                
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                   <div>
                     <div className="flex items-center gap-2 mb-2">
@@ -465,7 +462,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
         </div>
       </div>
 
-      {/* Edit Notes Modal */}
+      
       {showEditModal && editingAppointment && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl">
@@ -486,7 +483,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
             </div>
 
             <div className="p-6 space-y-4">
-              {/* Read-only reason */}
+             
               <div>
                 <label className="block text-sm font-semibold text-dark-gray mb-2">
                   Reason (set by patient — read only)
@@ -496,7 +493,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
                 </p>
               </div>
 
-              {/* Editable notes */}
+             
               <div>
                 <label className="block text-sm font-semibold text-dark-gray mb-2">
                   Doctor Notes
@@ -525,7 +522,7 @@ function DoctorAppointmentsPage({ onLogout, currentUser }) {
         </div>
       )}
 
-      {/* Prescription Management Modal */}
+     
       <PrescriptionManagementModal 
         isOpen={!!prescriptionPatient}
         onClose={() => setPrescriptionPatient(null)}
