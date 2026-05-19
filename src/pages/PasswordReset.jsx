@@ -28,14 +28,26 @@ function PasswordReset() {
   const [error, setError]           = useState('')
   const [success, setSuccess]       = useState(false)
 
-  // Auto-fill token from URL query param (when user clicks link in Mailtrap email)
+  // Verify token from URL query param (when user clicks link in email)
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const urlToken = params.get('token')
-    if (urlToken) {
-      setToken(urlToken)
-      setStep(2) // jump straight to token step
+    const checkUrlToken = async () => {
+      const params = new URLSearchParams(window.location.search)
+      const urlToken = params.get('token')
+      if (urlToken) {
+        setIsLoading(true)
+        try {
+          await api.post('/auth/verify-reset-token', { token: urlToken })
+          setToken(urlToken)
+          setStep(3) // jump straight to new password step
+        } catch (err) {
+          setError(err.response?.data?.error || 'The reset link is invalid or has expired. Please request a new one.')
+          setStep(1)
+        } finally {
+          setIsLoading(false)
+        }
+      }
     }
+    checkUrlToken()
   }, [])
 
   // ── Step 1: Request reset link ──────────────────────────────────────────
@@ -48,10 +60,7 @@ function PasswordReset() {
 
     setIsLoading(true)
     try {
-      const res = await api.post('/auth/forgot-password', { email })
-      if (res.data && res.data.token) {
-        setToken(res.data.token)
-      }
+      await api.post('/auth/forgot-password', { email })
       setStep(2)
     } catch (err) {
       setError(err.response?.data?.error || 'Something went wrong. Please try again.')
@@ -60,12 +69,21 @@ function PasswordReset() {
     }
   }
 
-  // ── Step 2: Verify token (just advance to step 3) ───────────────────────
-  const handleVerifyToken = (e) => {
+  // ── Step 2: Verify token against backend ──────────────────────────────────
+  const handleVerifyToken = async (e) => {
     e.preventDefault()
     setError('')
     if (!token.trim()) { setError('Please enter the reset token from your email'); return }
-    setStep(3)
+
+    setIsLoading(true)
+    try {
+      await api.post('/auth/verify-reset-token', { token: token.trim() })
+      setStep(3)
+    } catch (err) {
+      setError(err.response?.data?.error || 'Invalid or expired reset token')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const STRONG_PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_#^])[A-Za-z\d@$!%*?&\-_#^]{8,}$/;
@@ -237,13 +255,13 @@ function PasswordReset() {
                   New Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  {/* <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /> */}
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={newPassword}
                     onChange={(e) => { setNewPassword(e.target.value); setError('') }}
                     className={`input-field pl-10 pr-10 ${error ? 'border-danger' : ''}`}
-                    placeholder="Min 8 chars, 1 number"
+                    placeholder="Min 8 chars, 1 number,and 1 special character"
                     autoFocus
                   />
                   <button
@@ -261,13 +279,13 @@ function PasswordReset() {
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  {/* <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" /> */}
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => { setConfirmPassword(e.target.value); setError('') }}
                     className={`input-field pl-10 ${error ? 'border-danger' : ''}`}
-                    placeholder="Repeat your new password"
+                    // placeholder="Repeat your new password"
                   />
                 </div>
               </div>
