@@ -75,7 +75,7 @@ export default function DoctorScheduleModal({ onClose }) {
     }
   };
 
-  // ── Calendar Helpers ───────────────────────────────────────────────────────
+  
   const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
   const getFirstDayOfMonth = (year, month) => new Date(year, month, 1).getDay(); // 0-6
 

@@ -4,31 +4,19 @@ import { CheckCircle, Loader, KeyRound, Mail, Lock, Eye, EyeOff } from 'lucide-r
 import Logo from '../components/Logo'
 import api from '../utils/api'
 
-/**
- * PasswordReset — 3-step flow
- *
- * Step 1: Enter email → POST /api/auth/forgot-password
- *         Backend generates a reset token and (when email is configured) sends it.
- *         For testing: the token is returned in the JSON response.
- *
- * Step 2: Enter the reset token received in email
- *
- * Step 3: Enter new password → POST /api/auth/reset-password
- *         On success, navigate to /signin
- */
 function PasswordReset() {
-  const navigate   = useNavigate()
-  const [step, setStep]             = useState(1)   // 1 | 2 | 3
-  const [email, setEmail]           = useState('')
-  const [token, setToken]           = useState('')
+  const navigate = useNavigate()
+  const [step, setStep] = useState(1)
+  const [email, setEmail] = useState('')
+  const [token, setToken] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading]   = useState(false)
-  const [error, setError]           = useState('')
-  const [success, setSuccess]       = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
 
-  // Verify token from URL query param (when user clicks link in email)
+  // Verify token from URL on mount
   useEffect(() => {
     const checkUrlToken = async () => {
       const params = new URLSearchParams(window.location.search)
@@ -38,7 +26,7 @@ function PasswordReset() {
         try {
           await api.post('/auth/verify-reset-token', { token: urlToken })
           setToken(urlToken)
-          setStep(3) // jump straight to new password step
+          setStep(3)
         } catch (err) {
           setError(err.response?.data?.error || 'The reset link is invalid or has expired. Please request a new one.')
           setStep(1)
@@ -50,7 +38,7 @@ function PasswordReset() {
     checkUrlToken()
   }, [])
 
-  // ── Step 1: Request reset link ──────────────────────────────────────────
+  // Step 1: Request reset link
   const handleRequestReset = async (e) => {
     e.preventDefault()
     setError('')
@@ -69,7 +57,7 @@ function PasswordReset() {
     }
   }
 
-  // ── Step 2: Verify token against backend ──────────────────────────────────
+  // Step 2: Verify token
   const handleVerifyToken = async (e) => {
     e.preventDefault()
     setError('')
@@ -88,7 +76,7 @@ function PasswordReset() {
 
   const STRONG_PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&\-_#^])[A-Za-z\d@$!%*?&\-_#^]{8,}$/;
 
-  // ── Step 3: Set new password ────────────────────────────────────────────
+  // Step 3: Set new password
   const handleResetPassword = async (e) => {
     e.preventDefault()
     setError('')
@@ -107,7 +95,6 @@ function PasswordReset() {
         newPassword
       })
       setSuccess(true)
-      // Auto-redirect to sign in after 3 seconds
       setTimeout(() => navigate('/signin'), 3000)
     } catch (err) {
       setError(err.response?.data?.error || 'Invalid or expired token. Please start over.')
